@@ -1,0 +1,680 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.2 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Using Oracle Wallet with Wildcard Certificates - The Comfy Seat</title>
+<meta name="description" content="Do you have to use Oracle Wallet as part of Fusion Middleware? Do you also have a wildcard SSL certificate?  If so, then this tutorial is for you.  This tutorial is the result of trying to make a new install of Internet Native Banner (INB) play nicely with our wildcard certs so that if we change the hostname of the system or clone the virtual machine SSL does not break or require adjustment.">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="The Comfy Seat">
+<meta property="og:title" content="Using Oracle Wallet with Wildcard Certificates">
+<meta property="og:url" content="http://localhost:4000/jekyll-beanbag/using-oracle-wallet-with-wildcard-certificates/">
+
+
+  <meta property="og:description" content="Do you have to use Oracle Wallet as part of Fusion Middleware? Do you also have a wildcard SSL certificate?  If so, then this tutorial is for you.  This tutorial is the result of trying to make a new install of Internet Native Banner (INB) play nicely with our wildcard certs so that if we change the hostname of the system or clone the virtual machine SSL does not break or require adjustment.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2013-02-05T14:55:56-05:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/jekyll-beanbag/using-oracle-wallet-with-wildcard-certificates/">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/jekyll-beanbag/feed.xml" type="application/atom+xml" rel="alternate" title="The Comfy Seat Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/jekyll-beanbag/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/jekyll-beanbag/"><img src="/jekyll-beanbag/assets/images/the-comfy-seat.png" alt=""></a>
+        
+        <a class="site-title" href="/jekyll-beanbag/">The Comfy Seat</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/posts/" >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/about/" >About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Gene Liverman</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        My awesome biography constrained to a sentence or two goes here.
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Georgia, USA</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://github.com/genebean" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/technicalissues" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+            <li><a href="https://app.vagrantup.com/genebean" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> Vagrant Boxes</a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Using Oracle Wallet with Wildcard Certificates">
+    <meta itemprop="description" content="Do you have to use Oracle Wallet as part of Fusion Middleware? Do you also have a wildcard SSL certificate?  If so, then this tutorial is for you.  This tutorial is the result of trying to make a new install of Internet Native Banner (INB) play nicely with our wildcard certs so that if we change the hostname of the system or clone the virtual machine SSL does not break or require adjustment.">
+    <meta itemprop="datePublished" content="February 05, 2013">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Using Oracle Wallet with Wildcard Certificates
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  7 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Do you have to use Oracle Wallet as part of Fusion Middleware? Do you also have a wildcard SSL certificate?  If so, then this tutorial is for you.  This tutorial is the result of trying to make a new install of Internet Native Banner (INB) play nicely with our wildcard certs so that if we change the hostname of the system or clone the virtual machine SSL does not break or require adjustment.</p>
+
+<p>To start things off, let’s establish a couple of conventions that will be used in the tutorial.  First, I will use a couple of environment variables throughout:</p>
+
+<ul>
+  <li>$OHS_INSTANCE_HOME is the Oracle HTTP Server’s home.  If your application happens to be INB then the directory listing will look something like this:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>genebean ~]<span class="nv">$ </span><span class="nb">sudo ls</span> <span class="nt">-l</span> <span class="nv">$FMW_HOME</span>
+total 780
+drwx------ 3 oracle oinstall 4096 Sep 24 14:11 auditlogs
+drwx------ 2 oracle oinstall 4096 Sep 24 14:11 bin
+drwx------ 11 oracle oinstall 4096 Sep 24 14:44 config
+drwx------ 3 oracle oinstall 4096 Sep 24 14:11 diagnostics
+<span class="nt">-rw-r-----</span> 1 oracle oinstall 682905 Feb 1 13:56 dms.log
+drwx------ 3 oracle oinstall 4096 Sep 24 14:44 EMAGENT
+drwx------ 3 oracle oinstall 4096 Sep 24 14:11 FormsComponent
+drwx------ 4 oracle oinstall 4096 Sep 24 14:11 FRComponent
+drwx------ 3 oracle oinstall 4096 Sep 24 14:11 OHS
+drwx------ 6 oracle oinstall 4096 Sep 24 14:11 reports
+<span class="nt">-rw-r-----</span> 1 oracle oinstall 327 Feb 1 14:13 reports.log
+drwx------ 3 oracle oinstall 4096 Sep 24 14:13 ReportsServerComponent
+drwx------ 3 oracle oinstall 4096 Sep 24 14:11 ReportsToolsComponent
+drwx------ 2 oracle oinstall 4096 Sep 24 14:11 tmp
+</code></pre></div></div>
+
+<ul>
+  <li>$FMW_BASE is where Fusion Middleware Base.  Of particular notability here is that this is where your bin folder is located.  Again, for INB, here is the directory listing.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>genebean ~]<span class="nv">$sudo</span> <span class="nb">ls</span> <span class="nt">-l</span> <span class="nv">$FMW_BASE</span>
+total 716
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:21 admin
+drwxr-x--- 2 oracle oinstall 4096 Sep 12 13:22 adminserver_registration
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:23 Apache
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:23 archives
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:22 asoneofftool
+drwxr-x--- 4 oracle oinstall 4096 Sep 12 13:24 assistants
+drwxr-xr-x 2 oracle oinstall 12288 Sep 12 13:54 bin
+drwxr-x--- 6 oracle oinstall 4096 Sep 12 13:22 browser
+drwxr-x--- 7 oracle oinstall 4096 Sep 12 13:37 ccr
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:23 cdata
+drwxr-x--- 5 oracle oinstall 4096 Sep 12 13:29 cfgtoollogs
+drwxr-x--- 6 oracle oinstall 4096 Sep 12 13:22 chgip
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:35 clone
+drwxr-x--- 9 oracle oinstall 4096 Sep 12 13:35 common
+drwxr-x--- 2 oracle oinstall 4096 Sep 12 13:24 config
+drwxr-x--- 4 oracle oinstall 4096 Sep 12 13:22 crs
+drwxr-x--- 7 oracle oinstall 4096 Sep 12 13:23 css
+drwxr-x--- 2 oracle oinstall 4096 Sep 12 13:22 dbs
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:21 diagnostics
+drwxr-x--- 9 oracle oinstall 4096 Sep 12 13:21 discoverer
+drwxr-x--- 12 oracle oinstall 4096 Sep 12 13:35 doc
+<span class="nt">-rw-r-----</span> 1 oracle oinstall 430 Apr 7 2008 dummy.ic.linux.txt
+<span class="nt">-rw-r-----</span> 1 oracle oinstall 412 Apr 7 2008 dummy.ic.txt
+<span class="nt">-rw-r-----</span> 1 oracle oinstall 415 Apr 7 2008 dummy.ssl.txt
+drwxrwxr-x 2 oracle oinstall 4096 Sep 12 13:24 EMStage
+drwxr-x--- 14 oracle oinstall 4096 Sep 12 13:23 forms
+drwxr-x--- 4 oracle oinstall 4096 Sep 12 13:23 frcommon
+drwxr-x--- 5 oracle oinstall 4096 Sep 12 13:22 guicommon
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:23 has
+drwxr-x--- 6 oracle oinstall 4096 Sep 24 14:49 install
+<span class="nt">-rw-r-----</span> 1 oracle oinstall 37 Sep 12 13:21 install.platform
+drwxr-x--- 2 oracle oinstall 4096 Sep 12 13:22 instantclient
+drwxrwx--- 14 oracle oinstall 4096 Sep 12 13:37 inventory
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:27 j2ee
+drwxr-x--- 6 oracle oinstall 4096 Sep 12 13:23 javavm
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:23 jdbc
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:22 jdev
+drwxr-xr-x 6 oracle oinstall 4096 Sep 12 13:35 jdk
+drwxr-x--- 2 oracle oinstall 4096 Sep 12 13:35 jlib
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:22 jpub
+drwxr-x--- 12 oracle oinstall 4096 Sep 12 13:24 ldap
+drwxr-xr-x 4 oracle oinstall 20480 Sep 12 14:05 lib
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 14:05 lib32
+drwxr-x--- 2 oracle oinstall 4096 Sep 12 13:24 mesg
+drwxr-x--- 40 oracle oinstall 4096 Sep 12 13:36 modules
+drwxr-x--- 12 oracle oinstall 4096 Sep 12 13:24 network
+drwxr-x--- 5 oracle oinstall 4096 Sep 12 13:23 nls
+drwxr-x--- 21 oracle oinstall 4096 Sep 12 13:24 ohs
+drwxr-x--- 2 oracle oinstall 4096 Sep 12 13:36 oneoffpatches
+drwxr-x--- 9 oracle oinstall 4096 Sep 12 14:20 OPatch
+drwxr-x--- 7 oracle oinstall 4096 Sep 12 13:24 opmn
+<span class="nt">-rwx------</span> 1 oracle oinstall 475 Sep 24 13:57 oracleRoot.sh
+drwxr-x--- 4 oracle oinstall 4096 Sep 12 13:22 oracore
+<span class="nt">-rw-r-----</span> 1 oracle oinstall 65 Sep 12 10:28 oraInst.loc
+drwxr-x--- 5 oracle oinstall 4096 Sep 12 13:23 ord
+drwxr-x--- 6 oracle oinstall 4096 Sep 12 13:37 oui
+drwxr-x--- 4 oracle oinstall 4096 Sep 12 13:24 owm
+drwxr-xr-x 5 oracle oinstall 4096 Sep 12 13:24 perl
+drwxr-x--- 6 oracle oinstall 4096 Sep 12 13:24 plsql
+drwxr-x--- 9 oracle oinstall 4096 Sep 12 13:23 portal
+drwxr-x--- 9 oracle oinstall 4096 Sep 12 13:23 precomp
+drwxr-x--- 4 oracle oinstall 4096 Sep 12 13:22 procbuilder
+drwxr-x--- 4 oracle oinstall 4096 Sep 12 13:23 racg
+drwxr-x--- 4 oracle oinstall 4096 Sep 12 13:35 rcu
+drwxr-x--- 6 oracle oinstall 4096 Sep 12 13:35 rda
+drwxr-x--- 10 oracle oinstall 4096 Sep 12 13:23 rdbms
+drwxr-x--- 5 oracle oinstall 4096 Sep 12 13:23 relnotes
+drwxr-x--- 16 oracle oinstall 4096 Sep 12 13:22 reports
+<span class="nt">-rwxr-x---</span> 1 oracle oinstall 7651 Sep 12 13:24 root.sh
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:22 slax
+drwxr-x--- 14 oracle oinstall 4096 Sep 12 13:22 sqldeveloper
+drwxr-x--- 4 oracle oinstall 4096 Sep 12 13:22 sqlj
+drwxr-x--- 8 oracle oinstall 4096 Sep 12 13:24 sqlplus
+drwxr-x--- 7 oracle oinstall 4096 Sep 12 13:23 srvm
+drwxr-x--- 13 oracle oinstall 4096 Sep 24 14:44 sysman
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:23 tg4ifmx
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:23 tg4ingr
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:23 tg4sybs
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:23 tg4tera
+drwxr-x--- 4 oracle oinstall 4096 Sep 12 13:22 tools
+drwxr-x--- 6 oracle oinstall 4096 Sep 12 13:24 upgrade
+drwxr-x--- 10 oracle oinstall 4096 Sep 12 13:24 webcache
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:21 webcenter
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:22 webservices
+drwxr-x--- 3 oracle oinstall 4096 Sep 12 13:22 wwg
+drwxr-x--- 6 oracle oinstall 4096 Sep 12 13:24 xdk
+</code></pre></div></div>
+
+<p>Secondly, this was tested with utilizing wildcard certificates from GoDaddy.  If you are using certificates from elsewhere then use your signing authority’s chain file / intermediate certificate(s) in place of gd_bundle.crt below.</p>
+
+<h2 id="ssl-certificate-creation--installation"> SSL Certificate Creation / Installation</h2>
+
+<ol>
+  <li>Go to <a href="https://www.sslshopper.com/ssl-converter.html">https://www.sslshopper.com/ssl-converter.html</a> and create a PFX cert from the standard wildcard.crt file, the gd_bundle.crt file, and the privatekey.key file. 1. A password must be set and it must be complex.  The minimum length is 8 alphanumeric characters.  Details about these requirements can be found at <a href="http://docs.oracle.com/cd/B10501_01/network.920/a96573/asowalet.htm">http://docs.oracle.com/cd/B10501_01/network.920/a96573/asowalet.htm</a>.</li>
+  <li>If your password does not conform to the complexity requirements then you will get an error stating that your “password is incorrect” when you try to open it with Oracle Wallet Manager.</li>
+  <li>Download the cert and rename it to <em>ewallet.p12</em>. The name is critical here as Oracle Wallet Manager will not see it otherwise.</li>
+  <li>Make a directory for the wallet files in $OHS_INSTANCE_HOME/config/OHS/ohs1/keystores/. I would suggest that you name the directory based on your domain name since the certificate has a generic name. 1. ex: A certificate for *.technicalissues.us would result in a directory named technicalissues_us</li>
+  <li>Assuming you are working on a command line only system, SFTP the certificate into this new directory and ensure it’s permissions and ownership match the parent directory.</li>
+  <li>Run $FMW_BASE/bin/owm 1. Select Wallet → Open</li>
+  <li>Browse to the wallet directory under $OHS_INSTANCE_HOME/config/OHS/ohs1/keystores/</li>
+  <li>Enter the password when prompted</li>
+  <li>Click on Wallet in the Menu and mark the checkbox against Auto Login</li>
+  <li>Save the wallet</li>
+</ol>
+
+<h2 id="making-the-webserver-use-the-wallet">Making the webserver use the wallet</h2>
+
+<p><strong>In Web Tier → ohs1</strong></p>
+
+<ol>
+  <li>Go to Oracle HTTP Server → Administration → Virtual Host</li>
+  <li>Choose *.443 and Configure (SSL)</li>
+  <li>Check Enable SSL</li>
+  <li>Under Server Wallet Name choose the wallet from step 3 in the previous section.</li>
+  <li>Select Oracle HTTP Server → Control → Restart</li>
+</ol>
+
+<h2 id="wrapping-up">Wrapping up</h2>
+
+<p>At this point, you should be able to connect  to you web application via HTTPS without any SSL warning from your browser, assuming your certificate is from a trusted provider.</p>
+
+<p>Lastly, I must give credit where it is due.  Much of the information in this tutorial is adapted from http://fusionapplications-ateam.blogspot.com/2012/08/using-san-certificates-with-oracle-http.html.  Without the info found there, this post would not have come to fruition.</p>
+
+<p><strong>Edit:</strong> The above link is now dead.  I have been told that this is a good replacement to it though: <a href="http://www.ateam-oracle.com/using-san-certificates-with-oracle-http-server-11g">http://www.ateam-oracle.com/using-san-certificates-with-oracle-http-server-11g</a></p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/jekyll-beanbag/tags/#oracle" class="page__taxonomy-item" rel="tag">oracle</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/jekyll-beanbag/tags/#ssl" class="page__taxonomy-item" rel="tag">ssl</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2013-02-05T14:55:56-05:00">February 05, 2013</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Using+Oracle+Wallet+with+Wildcard+Certificates%20http%3A%2F%2Flocalhost%3A4000%2Fjekyll-beanbag%2Fusing-oracle-wallet-with-wildcard-certificates%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjekyll-beanbag%2Fusing-oracle-wallet-with-wildcard-certificates%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjekyll-beanbag%2Fusing-oracle-wallet-with-wildcard-certificates%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/jekyll-beanbag/building-android/" class="pagination--pager" title="Building Android
+">Previous</a>
+    
+    
+      <a href="/jekyll-beanbag/more-monitoring-now/" class="pagination--pager" title="More Monitoring… NOW!
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/breaking-up-a-large-pull-request/" rel="permalink">Breaking up a large pull request
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ever finished up all the changes for a pull request on GitHub and realized it was just too big to review easily or to reason about what’s going on? I had jus...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/protecting-sensitive-data-in-puppet-code/" rel="permalink">My journey to securing sensitive data in Puppet code
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  13 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Dealing with secrets and sensitive data in Puppet is daunting, right? Nope, not at all. Let me show you how to do it. I’ve wrapped my head around the options...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/dual-booting-macos-high-sierra-and-linux-mint/" rel="permalink">Dual Booting macOS High Sierra and Linux Mint
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  11 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">This is a step-by-step walkthrough for dual booting a MacBook Pro (Mid-2015 aka MacBookPro11,5) that already has macOS High Sierra on it with Linux Mint. The...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/gitlab-ci-and-chocolatey-server/" rel="permalink">GitLab CI and Chocolatey Server
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">If you are not familiar with chocolatey, its an awesome package manager, like apt or yum, for Windows. You can also host your own internal chocolatey feed an...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><input type="search" id="search" aria-placeholder="Enter your search term..." class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://github.com/genebean" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/technicalissues" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://app.vagrantup.com/genebean" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> Vagrant Boxes</a></li>
+        
+      
+    
+
+    <li><a href="/jekyll-beanbag/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 The Comfy Seat. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/jekyll-beanbag/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/jekyll-beanbag/assets/js/lunr/lunr.min.js"></script>
+<script src="/jekyll-beanbag/assets/js/lunr/lunr-store.js"></script>
+<script src="/jekyll-beanbag/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -4,7 +4,7 @@ post_title: 'What&#8217;s missing from GitLab?'
 author: GeneBean
 post_date: 2014-05-02 00:09:53
 post_excerpt: ""
-layout: post
+
 permalink: >
   http://beanbag.technicalissues.us/2014/05/whats-missing-from-gitlab/
 published: true

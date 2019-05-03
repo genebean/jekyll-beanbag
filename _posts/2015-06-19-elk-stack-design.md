@@ -4,7 +4,7 @@ post_title: ELK Stack Design
 author: GeneBean
 post_date: 2015-06-19 23:56:48
 post_excerpt: ""
-layout: post
+
 permalink: >
   http://beanbag.technicalissues.us/2015/06/elk-stack-design/
 published: true

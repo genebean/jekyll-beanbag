@@ -4,7 +4,7 @@ post_title: ELK Stack v2 (and a correction)
 author: GeneBean
 post_date: 2015-07-20 23:31:12
 post_excerpt: ""
-layout: post
+
 permalink: >
   http://beanbag.technicalissues.us/2015/07/elk-stack-v2-and-a-correction/
 published: true

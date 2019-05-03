@@ -1,0 +1,716 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.2 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Automatically generate GoAccess stats - The Comfy Seat</title>
+<meta name="description" content="I’ve been using GoAccess to look at my logs for a while now. The other day I decided I wanted be able to look at these stats for the different sites on my web server in a variety of ways including:">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="The Comfy Seat">
+<meta property="og:title" content="Automatically generate GoAccess stats">
+<meta property="og:url" content="http://localhost:4000/jekyll-beanbag/easy-automatic-generation-of-goaccess-stats/">
+
+
+  <meta property="og:description" content="I’ve been using GoAccess to look at my logs for a while now. The other day I decided I wanted be able to look at these stats for the different sites on my web server in a variety of ways including:">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2017-06-16T05:15:53-04:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/jekyll-beanbag/easy-automatic-generation-of-goaccess-stats/">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/jekyll-beanbag/feed.xml" type="application/atom+xml" rel="alternate" title="The Comfy Seat Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/jekyll-beanbag/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/jekyll-beanbag/"><img src="/jekyll-beanbag/assets/images/the-comfy-seat.png" alt=""></a>
+        
+        <a class="site-title" href="/jekyll-beanbag/">The Comfy Seat</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/posts/" >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/about/" >About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Gene Liverman</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        My awesome biography constrained to a sentence or two goes here.
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Georgia, USA</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://github.com/genebean" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/technicalissues" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+            <li><a href="https://app.vagrantup.com/genebean" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> Vagrant Boxes</a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Automatically generate GoAccess stats">
+    <meta itemprop="description" content="I’ve been using GoAccess to look at my logs for a while now. The other day I decided I wanted be able to look at these stats for the different sites on my web server in a variety of ways including:">
+    <meta itemprop="datePublished" content="June 16, 2017">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Automatically generate GoAccess stats
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  8 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>I’ve been using <a href="https://goaccess.io">GoAccess</a> to look at my logs for a while now. The other day I decided I wanted be able to look at these stats for the different sites on my web server in a variety of ways including:</p>
+
+<ul>
+  <li>all data from all sites combined</li>
+  <li>all data on a per-site basis</li>
+  <li>daily stats from each site kept for a week</li>
+</ul>
+
+<p>The thing with wanting daily stats is it helps if they are created in a way that only covers that day. That sounds simple, but the logrotate generally runs around around 3am. So what’s the solution? Cron. To be more exact, run logrotate from cron and generate stats while you’re at it.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Puppet Name: rotate nginx logs</span>
+0 0 <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> /root/updatestats.sh
+</code></pre></div></div>
+
+<p>Now, if you are going to run logrotate from cron you’d better turn of the original one. Here’s how I did that:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat</span> /etc/logrotate.d/nginx
+<span class="c"># this is managed by a cron job.</span>
+<span class="c"># the script that would normally be here is at /root/nginx-logroate.conf</span>
+</code></pre></div></div>
+
+<p>You have to do something like this instead of just deleting the file because otherwise the next time there is an update to Nginx (or whatever web server you are running) it will just recreate the file. The reason this works is that installers generally don’t clobber existing files. Below is the referenced replacement:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cat</span> /root/nginx-logroate.conf
+<span class="c"># use date as a suffix of the rotated file</span>
+dateext
+
+/var/log/nginx/<span class="k">*</span>log <span class="o">{</span>
+    create 0644 nginx nginx
+    daily
+    rotate 10
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        /bin/kill <span class="nt">-USR1</span> <span class="sb">`</span><span class="nb">cat</span> /run/nginx.pid 2&gt;/dev/null<span class="sb">`</span> 2&gt;/dev/null <span class="o">||</span> <span class="nb">true
+    </span>endscript
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="updatestatssh">updatestats.sh</h4>
+
+<p>This is the script where all the magic happens. Let’s break it down to see what’s going on. A copy of the full script will be at the end of this article in case you want to copy it.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">day</span><span class="o">=</span><span class="sb">`</span>date <span class="nt">--date</span> yesterday +<span class="s2">"%A"</span> | tr <span class="s1">'[:upper:]'</span> <span class="s1">'[:lower:]'</span><span class="sb">`</span>
+</code></pre></div></div>
+
+<p>The script runs at midnight which is just barely into the day after the logs that we are going to process. For that reason we need to determine what the day was yesterday. For example, when I ran <code class="highlighter-rouge">$ date --date yesterday +"%A"</code> it returned <code class="highlighter-rouge">Thursday</code>. Seeing as I want everything to be lower case I piped the output through <code class="highlighter-rouge">tr</code> to convert it. The end result is <code class="highlighter-rouge">thrusday</code>. This will be used as part of the file name for the daily logs.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">date</span><span class="o">=</span><span class="sb">`</span>date +<span class="s2">"%Y%m%d"</span><span class="sb">`</span>
+</code></pre></div></div>
+
+<p>Next we get the current date in year month day format which results in something like <code class="highlighter-rouge">20170616</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">gitcmd</span><span class="o">=</span><span class="s1">'git --git-dir=/storage/nginx/html/goaccess/.git/ --work-tree=/storage/nginx/html/goaccess/'</span>
+</code></pre></div></div>
+
+<p>This one is a bit more interesting. When you run git from somewhere outside of the repository you have to tell it where to find its configuration (<a href="https://git-scm.com/docs/git">git-dir</a>) and where the base of the repo is (<a href="https://git-scm.com/docs/git">work-tree</a>). Adding in all that info makes for a long command so I’ve stashed it in a variable that I can refer to later.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Create a backup of the dbs</span>
+<span class="nb">tar</span> <span class="nt">-czvf</span> /root/dbbackup-<span class="sb">`</span>date +<span class="s2">"%Y%m%d-%H%M%S"</span><span class="sb">`</span>.tgz /storage/goaccess-dbs
+
+<span class="c"># keep only the 5 newest backups (to keep x, pass x+1 to tail)</span>
+<span class="nb">ls</span> <span class="nt">-tp</span> /root/dbbackup-<span class="k">*</span> | tail <span class="nt">-n</span> +6 | xargs <span class="nt">-d</span> <span class="s1">'\n'</span> rm <span class="nt">-f</span> <span class="nt">--</span>
+</code></pre></div></div>
+
+<p>Nest we take a backup of the databases GoAccess is using for the stats in case something goes haywire. Backup take a lot of space so after the new one is taken I prune out the old ones.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Rotate logs</span>
+/sbin/logrotate <span class="nt">-s</span> /var/lib/logrotate/logrotate.status /root/nginx-logroate.conf
+</code></pre></div></div>
+
+<p>Remember the disabled logrotate from earlier? Well, this is where I run its replacement.</p>
+
+<p>Now, before we move on to the next part I need to provide some context. As a byproduct of the way I have configured Nginx my logs are named like this after being rotated:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">access.log-20170616.gz</code></li>
+  <li><code class="highlighter-rouge">beanbag.technicalissues.us.access.log-20170616.gz</code></li>
+</ul>
+
+<p>Keep this format in mind as you look through the next part and it will make more sense. Also remember the date variables from earlier.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Process each newly rotated log</span>
+<span class="k">for </span>log <span class="k">in</span> <span class="sb">`</span><span class="nb">ls</span> /var/log/nginx/<span class="k">*</span>access.log-<span class="k">${</span><span class="nv">date</span><span class="k">}</span>.gz<span class="sb">`</span><span class="p">;</span> <span class="k">do
+  </span><span class="nb">echo</span> <span class="s2">"processing </span><span class="k">${</span><span class="nv">log</span><span class="k">}</span><span class="s2">..."</span>
+  <span class="nv">name</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | rev | cut <span class="nt">-f1</span> <span class="nt">-d</span> <span class="s1">'/'</span> |rev | cut <span class="nt">-f1</span> <span class="nt">-d</span> <span class="s1">'.'</span><span class="sb">`</span>
+</code></pre></div></div>
+
+<p>I am going to pause right here and break down that <code class="highlighter-rouge">name=</code> bit. Lets assume <code class="highlighter-rouge">${log}</code> equals the <code class="highlighter-rouge">beanbag</code> log from above. Going on that assumption here is what each part of that line does:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">echo</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span>
+/var/log/nginx/beanbag.technicalissues.us.access.log-20170616.gz
+
+<span class="nv">$ </span><span class="nb">echo</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> |rev
+zg.61607102-gol.ssecca.su.seussilacinhcet.gabnaeb/xnign/gol/rav/
+
+<span class="nv">$ </span><span class="nb">echo</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | rev | cut <span class="nt">-f1</span> <span class="nt">-d</span> <span class="s1">'/'</span>
+zg.61607102-gol.ssecca.su.seussilacinhcet.gabnaeb
+
+<span class="nv">$ </span><span class="nb">echo</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | rev | cut <span class="nt">-f1</span> <span class="nt">-d</span> <span class="s1">'/'</span> |rev
+beanbag.technicalissues.us.access.log-20170616.gz
+
+<span class="nv">$ </span><span class="nb">echo</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | rev | cut <span class="nt">-f1</span> <span class="nt">-d</span> <span class="s1">'/'</span> |rev | cut <span class="nt">-f1</span> <span class="nt">-d</span> <span class="s1">'.'</span>
+beanbag
+</code></pre></div></div>
+
+<p>As you can see, that chain of commands produces just the first part of each log’s name which, in this case, is <code class="highlighter-rouge">beanbag</code>. This word is something that is unique to each set of logs which lets me easily correlate them with the associated site or function. By function I mean <code class="highlighter-rouge">access</code> or <code class="highlighter-rouge">redirects</code> which are special sets of logs I generate for non-site-specific functions within my <code class="highlighter-rouge">nginx.conf</code>. Now, lets get back to the script.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">processed_logs</span><span class="o">=</span><span class="s1">''</span>
+</code></pre></div></div>
+
+<p>This is kind of a storage bin… more on it in a moment.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="o">[</span> <span class="nt">-d</span> <span class="s2">"/storage/goaccess-dbs/</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="s2">"</span> <span class="o">]</span> <span class="o">||</span> mkdir <span class="nt">-p</span> <span class="s2">"/storage/goaccess-dbs/</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<p>Here if the one-word name generated previously corresponds to a directory where all the GoAccess databases are kept I return true. If, on the other hand, it doesn’t exist then it gets created.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="o">[</span> <span class="nt">-s</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> zcat <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | /usr/bin/goaccess <span class="nt">-o</span> /storage/nginx/html/goaccess/<span class="k">${</span><span class="nv">name</span><span class="k">}</span>-<span class="k">${</span><span class="nv">day</span><span class="k">}</span>.html <span class="se">\</span>
+                <span class="o">&amp;&amp;</span> <span class="nv">processed_logs</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">processed_logs</span><span class="k">}</span><span class="s2">/storage/nginx/html/goaccess/</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="s2">-</span><span class="k">${</span><span class="nv">day</span><span class="k">}</span><span class="s2">.html "</span>
+
+  <span class="o">[</span> <span class="nt">-s</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> zcat <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | /usr/bin/goaccess <span class="nt">-o</span> /storage/nginx/html/goaccess/<span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="nt">-overall</span>.html <span class="nt">--load-from-disk</span> <span class="nt">--keep-db-files</span> <span class="nt">--db-path</span><span class="o">=</span>/storage/goaccess-dbs/<span class="k">${</span><span class="nv">name</span><span class="k">}</span>/ <span class="se">\</span>
+                <span class="o">&amp;&amp;</span> <span class="nv">processed_logs</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">processed_logs</span><span class="k">}</span><span class="s2">/storage/nginx/html/goaccess/</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="s2">-overall.html "</span>
+
+  <span class="o">[</span> <span class="nt">-s</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> zcat <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | /usr/bin/goaccess <span class="nt">-o</span> /storage/nginx/html/goaccess/overall.html <span class="nt">--load-from-disk</span> <span class="nt">--keep-db-files</span> <span class="nt">--db-path</span><span class="o">=</span>/storage/goaccess-dbs/overall/ <span class="se">\</span>
+                <span class="o">&amp;&amp;</span> <span class="nv">processed_logs</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">processed_logs</span><span class="k">}</span><span class="s2">/storage/nginx/html/goaccess/overall.html "</span>
+</code></pre></div></div>
+
+<p>Now we finally get to generate some stats. <code class="highlighter-rouge">[ -s ${log} ]</code> verifies that the log file’s size is not zero. Each command is prefixed with this so that the script doesn’t error out as a result of an empty file. Here’s a breakdown of what the three chunks of code above do assuming there is a non-zero-sized log file:</p>
+
+<ol>
+  <li>cat the gzipped log to <code class="highlighter-rouge">goaccess</code>, output the results to a file that is named something like <code class="highlighter-rouge">beanbag-thrusday.html</code></li>
+  <li>add something like this to the end of the <code class="highlighter-rouge">processed_logs</code> variable: “/storage/nginx/html/goaccess/beanbag-thrusday.html “ (note the space between the last character and the quote… that ensures each path ends up with a space between it and the next one.</li>
+  <li>cat the gzipped log to <code class="highlighter-rouge">goaccess</code>, output the results to a file that is named something like <code class="highlighter-rouge">beanbag-overall.html</code>. The last bit of this line loads up the database that tracks all the previous traffic to the site associated with this log.</li>
+  <li>add this new file’s path to <code class="highlighter-rouge">processed_logs</code></li>
+  <li>this is the same as #3 except its adding the stats to the database that includes all the sites. Those stats are stored in <code class="highlighter-rouge">overall.html</code>.</li>
+  <li>add this new file’s path to <code class="highlighter-rouge">processed_logs</code></li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="o">[</span> <span class="nt">-s</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">${</span><span class="nv">gitcmd</span><span class="k">}</span> add <span class="k">${</span><span class="nv">processed_logs</span><span class="k">}</span>
+</code></pre></div></div>
+
+<p>Remember that storage bin called <code class="highlighter-rouge">processed_logs</code>? Here’s why it exists. This line uses the really long git command stored in a variable at the top of the script to add all file paths in <code class="highlighter-rouge">processed_logs</code> to the git repo whose base is the directory the stats files are output to.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="o">[</span> <span class="nt">-s</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">${</span><span class="nv">gitcmd</span><span class="k">}</span> commit <span class="nt">-m</span> <span class="s2">"Updated stats from </span><span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="s2">"</span> <span class="k">${</span><span class="nv">processed_logs</span><span class="k">}</span>
+<span class="k">done</span>
+</code></pre></div></div>
+
+<p>This line takes all the new and/or changed files and does a <code class="highlighter-rouge">git commit</code> on them with a commit message that includes the site name of the stats that caused the update. Right after the git commit is the <code class="highlighter-rouge">done</code> marker that signifies the end of the for loop that processes all of the day’s logs.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Push to BitBucket</span>
+<span class="k">${</span><span class="nv">gitcmd</span><span class="k">}</span> push <span class="nt">-u</span> origin master
+</code></pre></div></div>
+
+<p>Since the part before this is happening inside a for loop there is generally one commit for each site, one for the access logs, and one for the redirect logs. This line takes all those new commits and pushes them to a private repository on BitBucket as a backup.</p>
+
+<p>Remember I said that when running a commit from outside of the repository it could end up being a really long command? Well, here is an example of what the command for committing the files for the beanbag log would look like:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[ -s /var/log/nginx/beanbag.technicalissues.us.access.log-20170616.gz ] &amp;&amp; git --git-dir=/storage/nginx/html/goaccess/.git/ --work-tree=/storage/nginx/html/goaccess/ commit -m "Updated stats from beanbag" /storage/nginx/html/goaccess/beanbag-thrusday.html /storage/nginx/html/goaccess/beanbag-overall.html /storage/nginx/html/goaccess/overall.html
+</code></pre></div></div>
+
+<p>That’s a little unweildy when all the variable are expanded and much harder to read in my opinion.</p>
+
+<h4 id="next-steps">Next Steps:</h4>
+
+<p>This setup has produced some really useful information but lacks a little polish when it comes to being able to review it. With that in mind I have a few tasks that I’d like to do in the coming months.</p>
+
+<p>First, I’d like to prune parts of the dailies that aren’t useful. For example, there are sections of the generated web page that don’t have any useful data unless you are looking at multiple day’s logs.</p>
+
+<p>Second, I want to look into alternate display methods for the data. GoAccess makes a perfectly nice html web page but maybe I could tell it to generate JSON data instead, throw that into <a href="https://www.mongodb.com/">MongoDB</a>, and then display the data as part of a formatted, cohesive website instead of just having a bunch of standalone html pages.</p>
+
+<p>Lastly, and honestly, this will probably happen first, I want to compare what I am getting from GoAccess to what <a href="https://piwik.org/">Piwik</a> would give me.</p>
+
+<h4 id="the-entire-updatestatssh-script">The Entire <code class="highlighter-rouge">updatestats.sh</code> script</h4>
+
+<p>As promised, here is the script in its entirety.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">day</span><span class="o">=</span><span class="sb">`</span>date <span class="nt">--date</span> yesterday +<span class="s2">"%A"</span> | tr <span class="s1">'[:upper:]'</span> <span class="s1">'[:lower:]'</span><span class="sb">`</span>
+<span class="nv">date</span><span class="o">=</span><span class="sb">`</span>date +<span class="s2">"%Y%m%d"</span><span class="sb">`</span>
+<span class="nv">gitcmd</span><span class="o">=</span><span class="s1">'git --git-dir=/storage/nginx/html/goaccess/.git/ --work-tree=/storage/nginx/html/goaccess/'</span>
+
+<span class="c"># Create a backup of the dbs</span>
+<span class="nb">tar</span> <span class="nt">-czvf</span> /root/dbbackup-<span class="sb">`</span>date +<span class="s2">"%Y%m%d-%H%M%S"</span><span class="sb">`</span>.tgz /storage/goaccess-dbs
+
+<span class="c"># keep only the 5 newest backups (to keep x, pass x+1 to tail)</span>
+<span class="nb">ls</span> <span class="nt">-tp</span> /root/dbbackup-<span class="k">*</span> | tail <span class="nt">-n</span> +6 | xargs <span class="nt">-d</span> <span class="s1">'\n'</span> rm <span class="nt">-f</span> <span class="nt">--</span>
+
+<span class="c"># Rotate logs</span>
+/sbin/logrotate <span class="nt">-s</span> /var/lib/logrotate/logrotate.status /root/nginx-logroate.conf
+
+<span class="c"># Process each newly rotated log</span>
+<span class="k">for </span>log <span class="k">in</span> <span class="sb">`</span><span class="nb">ls</span> /var/log/nginx/<span class="k">*</span>access.log-<span class="k">${</span><span class="nv">date</span><span class="k">}</span>.gz<span class="sb">`</span><span class="p">;</span> <span class="k">do
+  </span><span class="nb">echo</span> <span class="s2">"processing </span><span class="k">${</span><span class="nv">log</span><span class="k">}</span><span class="s2">..."</span>
+  <span class="nv">name</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | rev | cut <span class="nt">-f1</span> <span class="nt">-d</span> <span class="s1">'/'</span> |rev | cut <span class="nt">-f1</span> <span class="nt">-d</span> <span class="s1">'.'</span><span class="sb">`</span>
+  <span class="nv">processed_logs</span><span class="o">=</span><span class="s1">''</span>
+
+  <span class="o">[</span> <span class="nt">-d</span> <span class="s2">"/storage/goaccess-dbs/</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="s2">"</span> <span class="o">]</span> <span class="o">||</span> mkdir <span class="nt">-p</span> <span class="s2">"/storage/goaccess-dbs/</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="s2">"</span>
+
+  <span class="o">[</span> <span class="nt">-s</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> zcat <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | /usr/bin/goaccess <span class="nt">-o</span> /storage/nginx/html/goaccess/<span class="k">${</span><span class="nv">name</span><span class="k">}</span>-<span class="k">${</span><span class="nv">day</span><span class="k">}</span>.html <span class="se">\</span>
+                <span class="o">&amp;&amp;</span> <span class="nv">processed_logs</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">processed_logs</span><span class="k">}</span><span class="s2">/storage/nginx/html/goaccess/</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="s2">-</span><span class="k">${</span><span class="nv">day</span><span class="k">}</span><span class="s2">.html "</span>
+
+  <span class="o">[</span> <span class="nt">-s</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> zcat <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | /usr/bin/goaccess <span class="nt">-o</span> /storage/nginx/html/goaccess/<span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="nt">-overall</span>.html <span class="nt">--load-from-disk</span> <span class="nt">--keep-db-files</span> <span class="nt">--db-path</span><span class="o">=</span>/storage/goaccess-dbs/<span class="k">${</span><span class="nv">name</span><span class="k">}</span>/ <span class="se">\</span>
+                <span class="o">&amp;&amp;</span> <span class="nv">processed_logs</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">processed_logs</span><span class="k">}</span><span class="s2">/storage/nginx/html/goaccess/</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="s2">-overall.html "</span>
+
+  <span class="o">[</span> <span class="nt">-s</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> zcat <span class="k">${</span><span class="nv">log</span><span class="k">}</span> | /usr/bin/goaccess <span class="nt">-o</span> /storage/nginx/html/goaccess/overall.html <span class="nt">--load-from-disk</span> <span class="nt">--keep-db-files</span> <span class="nt">--db-path</span><span class="o">=</span>/storage/goaccess-dbs/overall/ <span class="se">\</span>
+                <span class="o">&amp;&amp;</span> <span class="nv">processed_logs</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">processed_logs</span><span class="k">}</span><span class="s2">/storage/nginx/html/goaccess/overall.html "</span>
+
+  <span class="o">[</span> <span class="nt">-s</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">${</span><span class="nv">gitcmd</span><span class="k">}</span> add <span class="k">${</span><span class="nv">processed_logs</span><span class="k">}</span>
+  <span class="o">[</span> <span class="nt">-s</span> <span class="k">${</span><span class="nv">log</span><span class="k">}</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">${</span><span class="nv">gitcmd</span><span class="k">}</span> commit <span class="nt">-m</span> <span class="s2">"Updated stats from </span><span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="s2">"</span> <span class="k">${</span><span class="nv">processed_logs</span><span class="k">}</span>
+<span class="k">done</span>
+
+<span class="c"># Push to BitBucket</span>
+<span class="k">${</span><span class="nv">gitcmd</span><span class="k">}</span> push <span class="nt">-u</span> origin master
+</code></pre></div></div>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2017-06-16T05:15:53-04:00">June 16, 2017</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Automatically+generate+GoAccess+stats%20http%3A%2F%2Flocalhost%3A4000%2Fjekyll-beanbag%2Feasy-automatic-generation-of-goaccess-stats%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjekyll-beanbag%2Feasy-automatic-generation-of-goaccess-stats%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjekyll-beanbag%2Feasy-automatic-generation-of-goaccess-stats%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/jekyll-beanbag/node-js-centos7-and-libhttp_parser-so-2/" class="pagination--pager" title="Node.js, CentOS7, and libhttp_parser.so.2
+">Previous</a>
+    
+    
+      <a href="/jekyll-beanbag/upgrade-to-puppet-5/" class="pagination--pager" title="Upgrade to Puppet 5
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/breaking-up-a-large-pull-request/" rel="permalink">Breaking up a large pull request
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ever finished up all the changes for a pull request on GitHub and realized it was just too big to review easily or to reason about what’s going on? I had jus...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/protecting-sensitive-data-in-puppet-code/" rel="permalink">My journey to securing sensitive data in Puppet code
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  13 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Dealing with secrets and sensitive data in Puppet is daunting, right? Nope, not at all. Let me show you how to do it. I’ve wrapped my head around the options...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/dual-booting-macos-high-sierra-and-linux-mint/" rel="permalink">Dual Booting macOS High Sierra and Linux Mint
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  11 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">This is a step-by-step walkthrough for dual booting a MacBook Pro (Mid-2015 aka MacBookPro11,5) that already has macOS High Sierra on it with Linux Mint. The...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/gitlab-ci-and-chocolatey-server/" rel="permalink">GitLab CI and Chocolatey Server
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">If you are not familiar with chocolatey, its an awesome package manager, like apt or yum, for Windows. You can also host your own internal chocolatey feed an...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><input type="search" id="search" aria-placeholder="Enter your search term..." class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://github.com/genebean" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/technicalissues" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://app.vagrantup.com/genebean" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> Vagrant Boxes</a></li>
+        
+      
+    
+
+    <li><a href="/jekyll-beanbag/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 The Comfy Seat. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/jekyll-beanbag/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/jekyll-beanbag/assets/js/lunr/lunr.min.js"></script>
+<script src="/jekyll-beanbag/assets/js/lunr/lunr-store.js"></script>
+<script src="/jekyll-beanbag/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

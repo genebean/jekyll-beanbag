@@ -1,0 +1,1215 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/jekyll-beanbag/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/jekyll-beanbag/" rel="alternate" type="text/html" /><updated>2019-05-03T01:41:36-04:00</updated><id>http://localhost:4000/jekyll-beanbag/feed.xml</id><title type="html">The Comfy Seat</title><subtitle>My online seat to geek out and share my thoughts</subtitle><author><name>Gene Liverman</name></author><entry><title type="html">Breaking up a large pull request</title><link href="http://localhost:4000/jekyll-beanbag/breaking-up-a-large-pull-request/" rel="alternate" type="text/html" title="Breaking up a large pull request" /><published>2018-10-17T01:32:22-04:00</published><updated>2018-10-17T01:32:22-04:00</updated><id>http://localhost:4000/jekyll-beanbag/breaking-up-a-large-pull-request</id><content type="html" xml:base="http://localhost:4000/jekyll-beanbag/breaking-up-a-large-pull-request/">&lt;p&gt;Ever finished up all the changes for a pull request on GitHub and realized it was just too big to review easily or to reason about what’s going on? I had just this issue recently. The solution: create multiple patches that each contain a subset of the changes and use them to generate more manageable pull requests.&lt;/p&gt;
+
+&lt;p&gt;For this guide let’s make a few assumptions:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the default branch in your git repo is &lt;code class=&quot;highlighter-rouge&quot;&gt;master&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;the branch containing the big PR is called &lt;code class=&quot;highlighter-rouge&quot;&gt;my_massive_change&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;the changes encompass many different files, many of which are in subfolders&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;To expedite things I am also using &lt;a href=&quot;https://hub.github.com/&quot;&gt;hub&lt;/a&gt; to interact with GitHub.&lt;/p&gt;
+
+&lt;p&gt;Example file structure:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;╔ ☕️  gene:~/Downloads/my_repo (my_massive_change ✔)
+╚ᐅ tree
+.
+├── a
+│   ├── a.txt
+│   └── another_file_in_a.txt
+├── a.pp
+├── b
+│   ├── another_file_in_b.txt
+│   └── b.txt
+├── b.pp
+├── c
+│   ├── another_file_in_c.txt
+│   └── c.txt
+├── c.pp
+├── d
+│   ├── another_file_in_d.txt
+│   └── d.txt
+├── d.pp
+├── e
+│   ├── another_file_in_e.txt
+│   └── e.txt
+├── e.pp
+├── f
+│   ├── another_file_in_f.txt
+│   └── f.txt
+├── f.pp
+├── g
+│   ├── another_file_in_g.txt
+│   └── g.txt
+├── g.pp
+├── h
+│   ├── another_file_in_h.txt
+│   └── h.txt
+└── h.pp
+
+8 directories, 24 files
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Assuming you made changes related to some root level files and some files in similarly named subfolders you could break your changes up like show below.&lt;/p&gt;
+
+&lt;p&gt;First, make a place outside your repo for all the patches:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;╔ ☕️  gene:~/Downloads/my_repo (my_massive_change ✔)
+╚ᐅ mkdir ~/Downloads/patches_for_my_repo/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next, generate patches of related content:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;╔ ☕️  gene:~/Downloads/my_repo (my_massive_change ✔)
+╚ᐅ git diff master a.pp a/ &amp;gt; ~/Downloads/patches_for_my_repo/changes_to_a.patch
+╔ ☕️  gene:~/Downloads/my_repo (my_massive_change ✔)
+╚ᐅ git diff master b.pp b/ c.pp c/ &amp;gt; ~/Downloads/patches_for_my_repo/changes_to_b_c.patch
+╔ ☕️  gene:~/Downloads/my_repo (my_massive_change ✔)
+╚ᐅ git diff master e/ g/ &amp;gt; ~/Downloads/patches_for_my_repo/changes_to_e_g.patch
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;These commands each compare the listed files and folders to the master branch and generate a file that contains all the differences. For example, here’s what one of the patches looks like:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;╔ ☕️  gene:~/Downloads/my_repo (my_massive_change ✔)
+╚ᐅ cat ~/Downloads/patches_for_my_repo/changes_to_b_c.patch
+diff --git a/b/another_file_in_b.txt b/b/another_file_in_b.txt
+index e69de29..2ef267e 100644
+--- a/b/another_file_in_b.txt
++++ b/b/another_file_in_b.txt
+@@ -0,0 +1 @@
++some content
+diff --git a/c/another_file_in_c.txt b/c/another_file_in_c.txt
+index e69de29..2ef267e 100644
+--- a/c/another_file_in_c.txt
++++ b/c/another_file_in_c.txt
+@@ -0,0 +1 @@
++some content
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now that we have our patches we can use &lt;code class=&quot;highlighter-rouge&quot;&gt;git apply&lt;/code&gt; to put them to use.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# switch to your starting point:
+╔ ☕️  gene:~/Downloads/my_repo (my_massive_change ✔)
+╚ᐅ git checkout master
+Switched to branch 'master'
+
+# make a branch for the patch's changes:
+╔ ☕️  gene:~/Downloads/my_repo (master ✔)
+╚ᐅ git checkout -b changes_to_a
+Switched to a new branch 'changes_to_a'
+
+# apply the changes:
+╔ ☕️  gene:~/Downloads/my_repo (changes_to_a ✔)
+╚ᐅ git apply ~/Downloads/patches_for_my_repo/changes_to_a.patch
+╔ ☕️  gene:~/Downloads/my_repo (changes_to_a ✘) ✹
+╚ᐅ git commit -am 'applying changes to a*'
+[changes_to_a 4425166] applying changes to a*
+ 1 file changed, 1 insertion(+)
+
+# push changes to GitHub
+╔ ☕️  gene:~/Downloads/my_repo (changes_to_a ✔)
+╚ᐅ git push -u origin changes_to_a
+
+# create a pull request that is just for these changes:
+╔ ☕️  gene:~/Downloads/my_repo (changes_to_a ✔)
+╚ᐅ hub pull-request -m 'changes to a*'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Repeat this process for each patch and voilà, you now have a set of PR’s that contain the same changes as before but in more manageable chunks.&lt;/p&gt;
+
+&lt;p&gt;Want to make sure you got everything or just see what other patches you need to apply once your PR’s have been merged? Do this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# get the latest version of master
+# that includes the merged changes
+$ git checkout master
+$ git pull
+
+# Rebase your big change set so that you
+# can see how it compares:
+$ git checkout my_massive_change
+$ git rebase -i master
+
+# Push the updated branch to GitHub so
+# you can easily see what's left in the big PR
+$ git push -f
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Once you’ve generated and applied all the changes you will end up with &lt;code class=&quot;highlighter-rouge&quot;&gt;my_massive_change&lt;/code&gt; not being any different than &lt;code class=&quot;highlighter-rouge&quot;&gt;master&lt;/code&gt;.&lt;/p&gt;</content><author><name>Gene Liverman</name></author><summary type="html">Ever finished up all the changes for a pull request on GitHub and realized it was just too big to review easily or to reason about what’s going on? I had just this issue recently. The solution: create multiple patches that each contain a subset of the changes and use them to generate more manageable pull requests.</summary></entry><entry><title type="html">My journey to securing sensitive data in Puppet code</title><link href="http://localhost:4000/jekyll-beanbag/protecting-sensitive-data-in-puppet-code/" rel="alternate" type="text/html" title="My journey to securing sensitive data in Puppet code" /><published>2018-08-15T14:50:40-04:00</published><updated>2018-08-15T14:50:40-04:00</updated><id>http://localhost:4000/jekyll-beanbag/protecting-sensitive-data-in-puppet-code</id><content type="html" xml:base="http://localhost:4000/jekyll-beanbag/protecting-sensitive-data-in-puppet-code/">&lt;p&gt;Dealing with secrets and sensitive data in Puppet is daunting, right? Nope, not at all. Let me show you how to do it. I’ve wrapped my head around the options available and want to share my journey in hopes of saving you from a few trials and tribulations. Just interested in the end result? Feel free to scroll down to the last section fittingly entitled &lt;a href=&quot;#finalproduct&quot;&gt;&lt;em&gt;The final product&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;preface&quot;&gt;Preface&lt;/h2&gt;
+
+&lt;p&gt;Puppet’s InfraCore team manages engineering’s core infrastructure from hardware to the actual host configuration of running applications and services. The InfraCore team was already utilizing &lt;a href=&quot;https://github.com/voxpupuli/hiera-eyaml&quot;&gt;hiera-eyaml&lt;/a&gt; in their control repo when I joined them last April. That control repo is used by all of SRE at Puppet so this meant other teams could take advantage of having secrets, like passwords and AWS keys, versioned in git without fear of exposure to everyone with access to the repo. That’s a big deal since we open up our repositories to the entire company by default.&lt;/p&gt;
+
+&lt;h3 id=&quot;infracores-hiera-eyaml-setup&quot;&gt;InfraCore’s hiera-eyaml setup&lt;/h3&gt;
+
+&lt;p&gt;The maintainers of hiera-eyaml, &lt;a href=&quot;https://voxpupuli.org/&quot;&gt;Vox Pupuli&lt;/a&gt;, describe one way to set it up in its &lt;a href=&quot;https://github.com/voxpupuli/hiera-eyaml#setup&quot;&gt;readme&lt;/a&gt;. We bootstrapped our eyaml setup by placing the keys on our &lt;a href=&quot;https://puppet.com/docs/pe/2018.1/overview/pe_architecture_overview.html#pe-architecture-the-master-of-masters-mom&quot;&gt;master of masters&lt;/a&gt; (MoM) and manually running &lt;code class=&quot;highlighter-rouge&quot;&gt;puppetserver gem install hiera-eyaml&lt;/code&gt;. Once the MoM was bootstrapped, everything else was managed by our control repo. To do this we added &lt;a href=&quot;https://forge.puppet.com/puppetlabs/puppetserver_gem&quot;&gt;puppetlabs-puppetserver_gem&lt;/a&gt; to our Puppetfile and then added the code below to the profile used by our MoM and compile masters:&lt;/p&gt;
+
+&lt;div class=&quot;language-puppet highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;ensure&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;owner&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'root'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;group&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'root'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'/etc/puppetlabs/puppet/eyaml'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;ensure&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;directory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;mode&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'0755'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'/etc/puppetlabs/puppet/eyaml/private_key.pkcs7.pem'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;group&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'pe-puppet'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;mode&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'0440'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;content&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;lookup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'profile::pe::master::eyaml_private_key'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'/etc/puppetlabs/puppet/eyaml/public_key.pkcs7.pem'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;mode&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'0444'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'puppet:///modules/profile/pe/master/eyaml_public_key.pkcs7.pem'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'hiera-eyaml puppetserver_gem'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;ensure&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'2.1.0'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;name&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'hiera-eyaml'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;provider&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'puppetserver_gem'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;kp&quot;&gt;notify&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Service&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'pe-puppetserver'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This took care of installing the needed gem and distributing the keys since all the compile masters get their catalogs from the MoM.&lt;/p&gt;
+
+&lt;h3 id=&quot;deploying-secrets&quot;&gt;Deploying secrets&lt;/h3&gt;
+
+&lt;p&gt;We have a Confluence page to help anyone who wants to store sensitive data in our control repo. It contains a copy of our eyaml public key and explains how they can use it:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Install the hiera-eyaml gem via &lt;code class=&quot;highlighter-rouge&quot;&gt;gem install hiera-eyaml&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Place the public key in &lt;code class=&quot;highlighter-rouge&quot;&gt;~/.eyaml/key.pub&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Create &lt;code class=&quot;highlighter-rouge&quot;&gt;~/.eyaml/config.yaml&lt;/code&gt; and add a line like &lt;code class=&quot;highlighter-rouge&quot;&gt;pkcs7_public_key: '/Users/&amp;lt;your username&amp;gt;/.eyaml/key.pub'&lt;/code&gt; to it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;They can then encrypt their string, file, or password like shown in the example below. Note that:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;-f&lt;/code&gt; encrypts a file.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;-s&lt;/code&gt; encrypts a string.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;-p&lt;/code&gt; prompts for a password (or other string) and encrypts it.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;eyaml encrypt [-f|-s] $my_string_or_file
+
+eyaml encrypt -p
+Enter password: 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This generates a single-line and a multi-line encrypted version of the crypto-text that you can place in the relevant yaml file.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-journey&quot;&gt;The journey&lt;/h2&gt;
+
+&lt;p&gt;My journey began a couple of weeks ago when I was working on converting a &lt;a href=&quot;https://fog.io/about/getting_started.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;~/.fog&lt;/code&gt; file&lt;/a&gt; used by our Jenkins servers from a flat file to one generated by a Puppet profile. I created a new profile with parameters for each setting. The values that were not sensitive were set with sane defaults while the sensitive values were pulled from Hiera via &lt;a href=&quot;https://puppet.com/docs/hiera/3.3/puppet.html#automatic-parameter-lookup&quot;&gt;automatic parameter lookup&lt;/a&gt; where they are stored as eyaml-encrypted strings. In the body of the profile I created a local variable with a hash that mirrored the structure of the fog file. I then created a file resource that converted the hash to yaml as the content. It looked something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-puppet highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;profile::jenkins::agent::fog&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;           &lt;span class=&quot;nv&quot;&gt;$default_some_password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_array&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'item1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'item2'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;           &lt;span class=&quot;nv&quot;&gt;$default_some_username&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'jdoe'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;$fog_hash&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s1&quot;&gt;'default'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'some_array'&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'some_username'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_username&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'some_password'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nv&quot;&gt;$agent_home&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/var/lib/jenkins'&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;${agent_home}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/.fog&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;ensure&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;mode&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'0640'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;owner&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'jenkins'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;group&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'jenkins'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;content&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;to_yaml&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$fog_hash&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;kp&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'jenkins'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That code generates this file:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;some_array&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;item1&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;item2&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;some_username&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;jdoe&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;some_password&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;pa$$w0rd&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I tested this new profile out locally and all looked good so I ran it on one of the targeted nodes. Nothing about the file changed, which was what I expected, so I created a pull request and a little later it was merged. Success!&lt;/p&gt;
+
+&lt;p&gt;Coincidentally, right as I finished the code above one of our devs hit me up about adding a new section to the file. I told them “no problem!” since facilitating that process was part of why I was reworking the file’s management anyhow. So… I created a branch, made the change, and tested it on the same node as before.&lt;/p&gt;
+
+&lt;h3 id=&quot;oh-crap-passwords-are-showing-up-in-diffs&quot;&gt;Oh crap! Passwords are showing up in diffs…&lt;/h3&gt;
+
+&lt;p&gt;When I ran &lt;code class=&quot;highlighter-rouge&quot;&gt;puppet agent -t --noop -E new_fog_section&lt;/code&gt; two things happened:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;I saw the new section being added to the file (as expected)&lt;/li&gt;
+  &lt;li&gt;I &lt;strong&gt;saw&lt;/strong&gt; the new section, including the passwords, right there on my monitor which also meant it was in the report sent back to the PE console.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The whole point of encrypting the password in Hiera was to keep it out of plain text in places it shouldn’t be. The current process was obviously failing at this so I figured it was time to learn how to put this thing I’d heard people talk about called “the &lt;a href=&quot;https://puppet.com/docs/puppet/5.5/lang_data_sensitive.html&quot;&gt;Sensitive&lt;/a&gt; data type” to use.&lt;/p&gt;
+
+&lt;h3 id=&quot;help&quot;&gt;HELP!&lt;/h3&gt;
+
+&lt;p&gt;I read everything I could find on this subject but was still confused, so I posted the message below to an internal mailing list:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Subject: Sensitive and Class params from Hiera&lt;/p&gt;
+
+  &lt;p&gt;How can I use the sensitive data type to keep strings that are encrypted via eyaml in Hiera from being displayed in the diff of a file? The use case here is for the params in a manifest that do not have defaults assigned to them.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Later that same day I got two tips that set the path for the rest of my journey:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;One of our solutions consultants suggested I have a look at Ben Ford’s &lt;a href=&quot;https://forge.puppet.com/binford2k/node_encrypt&quot;&gt;binford2k-node_encrypt&lt;/a&gt; module.&lt;/li&gt;
+  &lt;li&gt;A long-time professional services engineer (PSE) expanded on that by telling me that
+    &lt;ul&gt;
+      &lt;li&gt;in Puppet 5.5.0 we added the ability to cast a parameter looked up via automatic parameter lookup to Sensitive by way of &lt;code class=&quot;highlighter-rouge&quot;&gt;lookup_options&lt;/code&gt;. (&lt;a href=&quot;https://tickets.puppetlabs.com/browse/PUP-7675&quot;&gt;PUP-7675&lt;/a&gt;)&lt;/li&gt;
+      &lt;li&gt;when building a file using the content attribute, you can’t restrict the diff to hide Sensitive types and show non-Sensitive types so I’d need to not show the diff at all. To do that I’d need to add &lt;code class=&quot;highlighter-rouge&quot;&gt;show_diff =&amp;gt; false&lt;/code&gt; to the file resource.&lt;/li&gt;
+      &lt;li&gt;if I want to hide the Sensitive values from the catalog and from PuppetDB then I’d need to use the node_encrypt module mentioned earlier.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;stumbling-around&quot;&gt;Stumbling around&lt;/h3&gt;
+
+&lt;p&gt;This was all great info and sounded like what I was looking for but I was also not quite getting it yet. In particular, I didn’t understand how to do the casting and I had a total memory lapse when it comes to how &lt;a href=&quot;https://puppet.com/docs/hiera/3.3/puppet.html#automatic-parameter-lookup&quot;&gt;automatic parameter lookup&lt;/a&gt; works. With regards to the latter, I got it in my head somehow that parameters were only automatically looked up if defaults were not supplied so I was baffled when setting a parameter to something like &lt;code class=&quot;highlighter-rouge&quot;&gt;Sensitive[String[1]] $bar = Sensitive(lookup('profile::foo:bar'))&lt;/code&gt; complained that &lt;code class=&quot;highlighter-rouge&quot;&gt;parameter 'bar' expects a Sensitive[String] value, got String&lt;/code&gt;. That’s where the casting via &lt;code class=&quot;highlighter-rouge&quot;&gt;lookup_options&lt;/code&gt; comes in.&lt;/p&gt;
+
+&lt;h3 id=&quot;lookup_options-to-the-rescue&quot;&gt;lookup_options to the rescue&lt;/h3&gt;
+
+&lt;p&gt;One of our other PSEs was kind enough to hop in chat with me and helped me understand the flaw in how I was doing the casting. It turns out that since the values are in Hiera I needed to do the casting in Hiera too. The result was me going into the Hiera file where the sensitive values were stored and adding this:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;lookup_options&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;^profile::jenkins::agent::fog::default_some_password:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;convert_to:&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Sensitive'&lt;/span&gt;
+  &lt;span class=&quot;s&quot;&gt;'^profile::jenkins::agent::fog::second_special_param'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;convert_to&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Sensitive'&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;^profile::jenkins::agent::fog::another_param_thats_encrypted'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;convert_to&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Sensitive'&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;^profile::jenkins::agent::fog::p4_special_param'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;convert_to&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Sensitive'&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;^profile::jenkins::agent::fog::special_param_no_5'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;convert_to&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Sensitive'&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;^profile::jenkins::agent::fog::special_param_no_6'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;convert_to&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Sensitive'&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;^profile::jenkins::agent::fog::special_param_no_7'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;convert_to&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Sensitive'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Back in the manifest I adjusted it to look something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-puppet highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;profile::jenkins::agent::fog&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;Sensitive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;  &lt;span class=&quot;nv&quot;&gt;$default_some_array&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'item1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'item2'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;            &lt;span class=&quot;nv&quot;&gt;$default_some_username&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'jdoe'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# several more parameters omitted here
+&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;$fog_hash&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s1&quot;&gt;'default'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'some_array'&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'some_username'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_username&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'some_password'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;c&quot;&gt;# file resource unchanged below here
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;regex-for-the-win&quot;&gt;Regex for the win&lt;/h3&gt;
+
+&lt;p&gt;Notice some redundancy in those Hiera entries? Yeah, me too. Along the way there was mention that you could use a regex with &lt;code class=&quot;highlighter-rouge&quot;&gt;lookup_options&lt;/code&gt; so I hunted around and found &lt;a href=&quot;https://puppet.com/docs/puppet/5.5/hiera_merging.html#use-a-regular-expression-in-lookup-options&quot;&gt;a docs page&lt;/a&gt; that showed me how this worked. Thanks to that info I refactored the parameter names to always start with “sensitive_” and replaced the entries above with this:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;lookup_options&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;^profile::jenkins::agent::fog::sensitive_.*'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;convert_to&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Sensitive'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Great. Now any param in that profile that starts with &lt;code class=&quot;highlighter-rouge&quot;&gt;sensitive_&lt;/code&gt; with an entry in this particular yaml file will be cast to Sensitive… but what about parameters saved in other files?&lt;/p&gt;
+
+&lt;h3 id=&quot;going-global&quot;&gt;Going global&lt;/h3&gt;
+
+&lt;p&gt;Our hiera.yaml follows the has &lt;code class=&quot;highlighter-rouge&quot;&gt;common.yaml&lt;/code&gt; as the lowest level. With that in mind I took the &lt;code class=&quot;highlighter-rouge&quot;&gt;lookup_options&lt;/code&gt; block and moved it there. I then refactored it to cover any parameter in any profile that begins with &lt;code class=&quot;highlighter-rouge&quot;&gt;sensitive_&lt;/code&gt; by expanding the regex:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;lookup_options&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;^profile::.+::sensitive_\w+$'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;convert_to&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Sensitive'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;implementing-node_encrypt&quot;&gt;Implementing node_encrypt&lt;/h3&gt;
+
+&lt;p&gt;At this stage I was quite happy with how things were coming along but still wanted to implement &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt&lt;/code&gt; before declaring victory. To that end, I added the latest versions of &lt;a href=&quot;https://forge.puppet.com/binford2k/node_encrypt&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;binford2k-node_encrypt&lt;/code&gt;&lt;/a&gt; and &lt;a href=&quot;https://forge.puppet.com/puppetlabs/puppet_authorization&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;puppetlabs-puppet_authorization&lt;/code&gt;&lt;/a&gt; from &lt;a href=&quot;https://forge.puppet.com/&quot;&gt;Puppet Forge&lt;/a&gt; to our Puppetfile and replaced my file resource with a &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt::file&lt;/code&gt; resource. Doing so just required prefixing &lt;code class=&quot;highlighter-rouge&quot;&gt;file&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt::&lt;/code&gt;. The updated resource looked like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-puppet highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;node_encrypt::file&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;${agent_home}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/.fog&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;ensure&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;mode&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'0640'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;owner&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'jenkins'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;group&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'jenkins'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;content&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;to_yaml&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$fog_hash&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+  &lt;span class=&quot;kp&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'jenkins'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I then modified the profile for our Puppet masters again (the one used by the MoM and compile masters) and added these two lines:&lt;/p&gt;
+
+&lt;div class=&quot;language-puppet highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;include&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;node_encrypt::certificates&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt&lt;/code&gt; &lt;a href=&quot;https://forge.puppet.com/binford2k/node_encrypt#automatically-distributing-certificates-to-compile-masters&quot;&gt;readme&lt;/a&gt; has this to say about the above line:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt::certificates&lt;/code&gt; class can synchronize certificates across your infrastructure so that encryption works from all compile masters.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-puppet highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nc&quot;&gt;Puppet_authorization&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Rule&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;~&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Service&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'pe-puppetserver'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This line ensures that authorization rules like the one added by &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt::certificates&lt;/code&gt; get applied right away by &lt;a href=&quot;https://puppet.com/docs/puppet/5.5/lang_collectors.html&quot;&gt;collecting them all&lt;/a&gt; and then notifying the pe-puppetserver service when needed.&lt;/p&gt;
+
+&lt;h4 id=&quot;our-mom-has-an-alias&quot;&gt;Our MoM has an alias…&lt;/h4&gt;
+
+&lt;p&gt;Like many people we have set up an alias for our certificate authority (and most everything else) so that configurations don’t have to change when a server is replaced. This means we need to override a parameter on the &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt::certificates&lt;/code&gt; class on our MoM but nowhere else. To do this I added this line to its node-specific Hiera file:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;node_encrypt::certificates::ca_server&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;%{facts.fqdn}&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;testing-time&quot;&gt;Testing time&lt;/h3&gt;
+
+&lt;p&gt;With the code completed it’s time to make sure tests still pass. We use &lt;a href=&quot;https://github.com/dylanratcliffe/onceover&quot;&gt;Onceover&lt;/a&gt; to test all pull requests to our control repo. The &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt&lt;/code&gt; module does some unique things like access a node’s public Puppet certificates during catalog compilation. This is awesome for protecting sensitive data but caused me quite a bit of consternation when trying to figure out how to get tests to pass again. Fortunately, I work with some awesome people who are always willing to lend a hand. I reached out to &lt;a href=&quot;https://www.linkedin.com/in/dylan-ratcliffe-0b93301a&quot;&gt;Dylan Ratcliffe&lt;/a&gt; (the author of Onceover) and &lt;a href=&quot;https://www.linkedin.com/in/ben-ford-061b344&quot;&gt;Ben Ford&lt;/a&gt; (the author of &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt&lt;/code&gt;) to see if they could help get me unstuck and, sure enough, they did. In the end they helped me write some code in &lt;code class=&quot;highlighter-rouge&quot;&gt;spec/onceover.yaml&lt;/code&gt; to mock the internal functions and prevent the catalog compilation from reading the file system during testing:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;functions&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;node_encrypt&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;rvalue&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;returns&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;-----BEGIN&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;PKCS7-----&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;encrypted&quot;&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;before&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;require_relative&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'../../etc/puppetlabs/code/environments/production/modules/node_encrypt/lib/puppet_x/binford2k/node_encrypt.rb'&quot;&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Puppet_X::Binford2k::NodeEncrypt.stubs(:encrypt).with('foobar','testhost.example.com').returns('encrypted')&quot;&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Puppet_X::Binford2k::NodeEncrypt.stubs(:decrypt).with('-----BEGIN&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;PKCS7-----&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;encrypted').returns('decrypted')&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;tests-pass-lets-roll&quot;&gt;Tests pass, let’s roll&lt;/h3&gt;
+
+&lt;p&gt;Everything &lt;em&gt;seemed&lt;/em&gt; to be good so after a couple of code review approvals I applied the environment associated with this code to our MoM so that &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt::certificates&lt;/code&gt; could do its magic. Next I dipped into our tool bag and used &lt;a href=&quot;https://puppet.com/products/puppet-bolt&quot;&gt;bolt&lt;/a&gt; to do the same on all the compile masters:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# bolt gets updated often...
+$ gem update bolt
+$ bolt command run 'sudo -i puppet agent --onetime --no-daemonize --no-usecacheonfailure --no-splay --verbose -E sensitive_and_node_encrypt' --nodes @/Users/&amp;lt;my username&amp;gt;/Downloads/prod-compilers.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;With the certificates distributed, I did a &lt;code class=&quot;highlighter-rouge&quot;&gt;--noop&lt;/code&gt; run in this environment followed by a real run on the same server that was used for testing earlier. Everything looked good so we merged the pull request and let it roll out to all the places fog is used.&lt;/p&gt;
+
+&lt;h3 id=&quot;annnnd-i-broke-it&quot;&gt;Annnnd I broke it&lt;/h3&gt;
+
+&lt;p&gt;As it turns out I missed something in my first implementation of the Sensitive data type… I didn’t realize I had to apply the unwrap function to each parameter when using it inside of a hash. This caused every place that should look like &lt;code class=&quot;highlighter-rouge&quot;&gt;some_password: pa$$w0rd&lt;/code&gt; to look like this instead:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; some_password: !ruby/object:Puppet::Pops::Types::PSensitiveType::Sensitive
+    value: pa$$w0rd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Not surprisingly, this broke fog. I could have reverted the change and triggered a Puppet run on all the Jenkins agents but our developers were okay with letting it sit until I fixed the issue. To get rid of all the extra text I just needed to go back and surround each of the sensitive values in the hash with &lt;code class=&quot;highlighter-rouge&quot;&gt;unwrap()&lt;/code&gt; like so:&lt;/p&gt;
+
+&lt;div class=&quot;language-puppet highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$fog_hash&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'default'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s1&quot;&gt;'some_array'&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;s1&quot;&gt;'some_username'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_username&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;s1&quot;&gt;'some_password'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;unwrap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$sensitive_default_some_password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# function added here
+&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;With the fix in place we stepped through the PR process and then merged it to fix the other servers.&lt;/p&gt;
+
+&lt;p&gt;&lt;a name=&quot;finalproduct&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;the-final-product&quot;&gt;The final product&lt;/h2&gt;
+
+&lt;p&gt;The final product is a setup that:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;has secrets stored as encrypted strings in Hiera via &lt;a href=&quot;https://github.com/voxpupuli/hiera-eyaml&quot;&gt;hiera-eyaml&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;automatically casts all Hiera values that start with &lt;code class=&quot;highlighter-rouge&quot;&gt;profile::&lt;/code&gt; and end with &lt;code class=&quot;highlighter-rouge&quot;&gt;sensitive_*&lt;/code&gt; to &lt;a href=&quot;https://puppet.com/docs/puppet/5.5/lang_data_sensitive.html&quot;&gt;Sensitive&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;allows utilizing the &lt;a href=&quot;https://forge.puppet.com/binford2k/node_encrypt&quot;&gt;binford2k-node_encrypt&lt;/a&gt; module to encrypt secrets in a node’s catalog and prevent them from being disclosed in reports and diffs&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This is done by:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Deploying hiera-eyaml to the master of masters manually as described in the backend’s readme file&lt;/li&gt;
+  &lt;li&gt;Using &lt;a href=&quot;https://forge.puppet.com/puppetlabs/puppetserver_gem&quot;&gt;puppetserver_gem&lt;/a&gt; and some file resources to deploy the hiera-eyaml gem and the needed keys to the compile masters&lt;/li&gt;
+  &lt;li&gt;Adding a &lt;code class=&quot;highlighter-rouge&quot;&gt;lookup_options&lt;/code&gt; entry to &lt;code class=&quot;highlighter-rouge&quot;&gt;common.yaml&lt;/code&gt; that utilizes a regex matcher&lt;/li&gt;
+  &lt;li&gt;Refactoring parameters on profiles that access secrets in Hiera to enforce the Sensitive data type&lt;/li&gt;
+  &lt;li&gt;Adding code to the master of masters and compilers to make the public certs from nodes available when compiling catalogs&lt;/li&gt;
+  &lt;li&gt;Add a collector to the same servers to ensure authorization rules like the one added by &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt::certificates&lt;/code&gt; trigger a restart of the pe-puppetserver service&lt;/li&gt;
+  &lt;li&gt;Switch from a &lt;code class=&quot;highlighter-rouge&quot;&gt;file&lt;/code&gt; resource to a &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt::file&lt;/code&gt; resource for sensitive files&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Examples of each of these are below:&lt;/p&gt;
+
+&lt;h3 id=&quot;profile-for-masters&quot;&gt;Profile for masters&lt;/h3&gt;
+
+&lt;div class=&quot;language-puppet highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;include&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;node_encrypt::certificates&lt;/span&gt;  
+
+&lt;span class=&quot;nc&quot;&gt;Puppet_authorization&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Rule&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;&amp;lt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;~&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Service&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'pe-puppetserver'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;ensure&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;owner&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'root'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;group&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'root'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'/etc/puppetlabs/puppet/eyaml'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;ensure&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;directory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;mode&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'0755'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'/etc/puppetlabs/puppet/eyaml/private_key.pkcs7.pem'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;group&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'pe-puppet'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;mode&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'0440'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;content&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;lookup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'profile::pe::master::eyaml_private_key'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'/etc/puppetlabs/puppet/eyaml/public_key.pkcs7.pem'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;mode&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'0444'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'puppet:///modules/profile/pe/master/eyaml_public_key.pkcs7.pem'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'hiera-eyaml puppetserver_gem'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;ensure&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'2.1.0'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;name&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'hiera-eyaml'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;py&quot;&gt;provider&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'puppetserver_gem'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;kp&quot;&gt;notify&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Service&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'pe-puppetserver'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;hiera-node-file-for-master-of-masters&quot;&gt;Hiera node file for master of masters&lt;/h3&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;node_encrypt::certificates::ca_server&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;%{facts.fqdn}&quot;&lt;/span&gt;  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;hiera-commonyaml&quot;&gt;Hiera common.yaml&lt;/h3&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;lookup_options&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;^profile::.+::sensitive_\w+$'&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;convert_to&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Sensitive'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;profile-with-sensitive-params&quot;&gt;Profile with sensitive params&lt;/h3&gt;
+
+&lt;div class=&quot;language-puppet highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;profile::jenkins::agent::fog&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;Sensitive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$sensitive_default_some_password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;  &lt;span class=&quot;nv&quot;&gt;$default_some_array&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;s1&quot;&gt;'item1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;s1&quot;&gt;'item2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;            &lt;span class=&quot;nv&quot;&gt;$default_some_username&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'jdoe'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# several more parameters omitted here
+&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;$fog_hash&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s1&quot;&gt;'default'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'some_array'&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'some_username'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$default_some_username&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;s1&quot;&gt;'some_password'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;unwrap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$sensitive_default_some_password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;node_encrypt::file&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;${agent_home}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/.fog&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;  
+    &lt;span class=&quot;py&quot;&gt;ensure&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;mode&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'0640'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;owner&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'jenkins'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;group&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'jenkins'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;py&quot;&gt;content&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;to_yaml&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$fog_hash&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;kp&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'jenkins'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;whats-next&quot;&gt;What’s next?&lt;/h2&gt;
+
+&lt;p&gt;This is all great stuff… if it’s used. Next up is ensuring our Confluence page on deploying secrets is updated to help others utilize the Sensitive data type and the options provided by &lt;code class=&quot;highlighter-rouge&quot;&gt;node_encrypt&lt;/code&gt;. After that it’s all about communication. Many of the people who work with secrets have been doing so long enough they probably don’t need to look at the directions anymore so I need to ensure they know that the process has been enhanced.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;This article was originally posted at &lt;a href=&quot;https://puppet.com/blog/my-journey-securing-sensitive-data-puppet-code&quot;&gt;https://puppet.com/blog/my-journey-securing-sensitive-data-puppet-code&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;I am a senior site reliability engineer at Puppet.&lt;/em&gt;&lt;/p&gt;</content><author><name>Gene Liverman</name></author><summary type="html">Dealing with secrets and sensitive data in Puppet is daunting, right? Nope, not at all. Let me show you how to do it. I’ve wrapped my head around the options available and want to share my journey in hopes of saving you from a few trials and tribulations. Just interested in the end result? Feel free to scroll down to the last section fittingly entitled The final product.</summary></entry><entry><title type="html">Dual Booting macOS High Sierra and Linux Mint</title><link href="http://localhost:4000/jekyll-beanbag/dual-booting-macos-high-sierra-and-linux-mint/" rel="alternate" type="text/html" title="Dual Booting macOS High Sierra and Linux Mint" /><published>2018-02-06T05:43:11-05:00</published><updated>2018-02-06T05:43:11-05:00</updated><id>http://localhost:4000/jekyll-beanbag/dual-booting-macos-high-sierra-and-linux-mint</id><content type="html" xml:base="http://localhost:4000/jekyll-beanbag/dual-booting-macos-high-sierra-and-linux-mint/">&lt;p&gt;This is a step-by-step walkthrough for dual booting a MacBook Pro (Mid-2015 aka MacBookPro11,5) that already has macOS High Sierra on it with Linux Mint. The hard drive is formatted APFS and has File Vault turned on.&lt;/p&gt;
+
+&lt;p&gt;Before beginning I suggest reading this entire post to see how involved it is or, at a minimum, read the known issues at the bottom.&lt;/p&gt;
+
+&lt;h4 id=&quot;full-backup&quot;&gt;Full Backup&lt;/h4&gt;
+
+&lt;p&gt;Any time you start messing with the partitions of existing drives its a good idea to have a full backup you can fall back on as its really easy to have your drive become unbootable. One way to do this is to use &lt;a href=&quot;https://bombich.com/&quot;&gt;Carbon Copy Cloner&lt;/a&gt;. It’ll take care of backing up all your files along with the special partitions needed to make things work including the recovery partition. Be sure to put the backup on an external hard drive.&lt;/p&gt;
+
+&lt;h5 id=&quot;formatting-your-external-drive&quot;&gt;Formatting your external drive&lt;/h5&gt;
+&lt;p&gt;When you go to format your external hard drive there are two things you need to be sure and do to have the best chance at success:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;In the top left of Disk Utility click the button above “View” and tell it to show all devices&lt;/li&gt;
+  &lt;li&gt;Select the drive, not one of the partitions on it&lt;/li&gt;
+  &lt;li&gt;When you “Erase” the disk be sure to pick “Mac OS Extended (Journaled)” regardless of how your internal drive is formatted.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Once your backup completes go into System Preferences and change the startup disk to the external drive and reboot. If your internal drive is encrypted you’ll be prompted for its password when you login… don’t enter it. By not entering your password you can ensure that everything you see is from the backup and not the internal one. Once you have verified everything looks good go into System Preference again, set the startup disk back to the internal drive, and reboot. Once the system comes back up eject the backup disk and sit it aside. Sitting it aside is especially important as that ensures you don’t accidentally damage the the backup while installing Linux.&lt;/p&gt;
+
+&lt;h4 id=&quot;tools&quot;&gt;Tools&lt;/h4&gt;
+
+&lt;p&gt;The next step is to download a few tool that will be used in subsequent steps:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://etcher.io&quot;&gt;Etcher&lt;/a&gt; for creating a bootable USB drive.&lt;/li&gt;
+  &lt;li&gt;A &lt;a href=&quot;https://linuxmint.com/download.php&quot;&gt;Linux Mint&lt;/a&gt; ISO&lt;/li&gt;
+  &lt;li&gt;The &lt;a href=&quot;http://www.rodsbooks.com/refind/getting.html&quot;&gt;rEFInd&lt;/a&gt; binary zip file. Unzip this in your Downloads folder.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Once you have everything downloaded open up Etcher use it to put the Mint ISO onto a thumb drive.&lt;/p&gt;
+
+&lt;h4 id=&quot;make-room-for-mint&quot;&gt;Make room for Mint&lt;/h4&gt;
+
+&lt;p&gt;The new &lt;a href=&quot;https://en.wikipedia.org/wiki/Apple_File_System&quot;&gt;Apple File System (APFS)&lt;/a&gt; has introduced some extra hurdles you have to jump through to be able to resize an existing partition. The new process looks like this:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Disable Time Machine automatic backups&lt;/li&gt;
+  &lt;li&gt;Delete local Time Machine snapshots&lt;/li&gt;
+  &lt;li&gt;Shrink your macOS install&lt;/li&gt;
+  &lt;li&gt;Re-enable automatic backups&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;If you try and shrink your macOS partition without taking these extra steps you will likely run into unhelpful error message and a failed process. On the plus side, this can all be done easily from the terminal.&lt;/p&gt;
+
+&lt;h5 id=&quot;disable-automatic-backups--delete-snapshots&quot;&gt;Disable Automatic Backups &amp;amp; Delete Snapshots&lt;/h5&gt;
+
+&lt;p&gt;While your Time Machine disk isn’t attached your machine will create and store some snapshots locally. These need to be deleted before you can shrink your partition. Open Terminal (or iTerm) and run the following commands:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Disable automatic backups&lt;/span&gt;
+╔ ☕️ genebean:~
+╚ᐅ &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;tmutil disable
+
+&lt;span class=&quot;c&quot;&gt;# List the snapshots&lt;/span&gt;
+╔ ☕️ genebean:~
+╚ᐅ tmutil listLocalSnapShots /
+
+&lt;span class=&quot;c&quot;&gt;# Delete all the snapshots, 1 at a time:&lt;/span&gt;
+╔ ☕️ genebean:~
+╚ᐅ &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;snap &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;tmutil listLocalSnapShots / | &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+cut &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'.'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; 4&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;tmutil deleteLocalSnapshots &lt;span class=&quot;nv&quot;&gt;$snap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Verify that all of the snapshots are gone:&lt;/span&gt;
+╔ ☕️ genebean:~
+╚ᐅ tmutil listLocalSnapShots /
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Here’s what all that looked like for me:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;╔ ☕️ genebean:~
+╚ᐅ &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;tmutil disable
+
+╔ ☕️ genebean:~
+╚ᐅ tmutil listLocalSnapShots /
+com.apple.TimeMachine.2018-01-26-230115
+com.apple.TimeMachine.2018-01-27-000451
+com.apple.TimeMachine.2018-01-27-010032
+com.apple.TimeMachine.2018-01-27-030027
+com.apple.TimeMachine.2018-01-27-040022
+com.apple.TimeMachine.2018-01-27-050314
+com.apple.TimeMachine.2018-01-27-060259
+com.apple.TimeMachine.2018-01-27-070017
+com.apple.TimeMachine.2018-01-27-092621
+com.apple.TimeMachine.2018-01-27-223433
+
+╔ ☕️ genebean:~
+╚ᐅ &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;snap &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;tmutil listLocalSnapShots / | &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+cut &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'.'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; 4&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;tmutil deleteLocalSnapshots &lt;span class=&quot;nv&quot;&gt;$snap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;done
+&lt;/span&gt;Deleted &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;snapshot &lt;span class=&quot;s1&quot;&gt;'2018-01-26-230115'&lt;/span&gt;
+Deleted &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;snapshot &lt;span class=&quot;s1&quot;&gt;'2018-01-27-000451'&lt;/span&gt;
+Deleted &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;snapshot &lt;span class=&quot;s1&quot;&gt;'2018-01-27-010032'&lt;/span&gt;
+Deleted &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;snapshot &lt;span class=&quot;s1&quot;&gt;'2018-01-27-030027'&lt;/span&gt;
+Deleted &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;snapshot &lt;span class=&quot;s1&quot;&gt;'2018-01-27-040022'&lt;/span&gt;
+Deleted &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;snapshot &lt;span class=&quot;s1&quot;&gt;'2018-01-27-050314'&lt;/span&gt;
+Deleted &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;snapshot &lt;span class=&quot;s1&quot;&gt;'2018-01-27-060259'&lt;/span&gt;
+Deleted &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;snapshot &lt;span class=&quot;s1&quot;&gt;'2018-01-27-070017'&lt;/span&gt;
+Deleted &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;snapshot &lt;span class=&quot;s1&quot;&gt;'2018-01-27-092621'&lt;/span&gt;
+Deleted &lt;span class=&quot;nb&quot;&gt;local &lt;/span&gt;snapshot &lt;span class=&quot;s1&quot;&gt;'2018-01-27-223433'&lt;/span&gt;
+
+╔ ☕️ genebean:~
+╚ᐅ tmutil listLocalSnapShots /
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Credit for the steps above goes to https://www.imore.com/getting-apfs-resizing-errors-using-disk-utility-fix-may-help&lt;/p&gt;
+
+&lt;h5 id=&quot;partitioning&quot;&gt;Partitioning&lt;/h5&gt;
+
+&lt;p&gt;Next is to make the partitions that will be used during the installation process. I’m starting with a 500G drive and am going to use 150G of it for Mint. I’m going to carve that 150G up into two partitions:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;a 2G one for &lt;code class=&quot;highlighter-rouge&quot;&gt;/boot&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;a 148G one for an encrypted &lt;code class=&quot;highlighter-rouge&quot;&gt;/&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;macOS doesn’t know anything about ext4 or other Linux filesystems so I am going to tell diskutil that these are FAT32 partitions.&lt;/p&gt;
+
+&lt;p&gt;Step one is to find the disk that macOS is installed on. This can be done in the terminal via &lt;code class=&quot;highlighter-rouge&quot;&gt;diskutil apfs list&lt;/code&gt; but its way easier to just open Disk Utility, click on the drive where macOS is installed, and note the value next to &lt;code class=&quot;highlighter-rouge&quot;&gt;Device:&lt;/code&gt; in the lower right. That value is &lt;code class=&quot;highlighter-rouge&quot;&gt;disk1s1&lt;/code&gt; for me. In the next command we will use the &lt;code class=&quot;highlighter-rouge&quot;&gt;disk1&lt;/code&gt; portion of that value.&lt;/p&gt;
+
+&lt;p&gt;Now that we have the disk name lets shrink macOS and make our new partitions.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;╔ ☕️ genebean:~
+╚ᐅ &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;diskutil apfs resizeContainer disk1 350g FAT32 LINUXBOOT 2g FAT32 LINUXROOT 0b
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In the command above, &lt;code class=&quot;highlighter-rouge&quot;&gt;0b&lt;/code&gt; translates to “however much space is left.”&lt;/p&gt;
+
+&lt;h5 id=&quot;re-enable-automatic-backups&quot;&gt;Re-enable Automatic Backups&lt;/h5&gt;
+
+&lt;p&gt;Now that you have finished resizing your drive you can re-enable automatic updates with the following:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;╔ ☕️ genebean:~
+╚ᐅ &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;tmutil &lt;span class=&quot;nb&quot;&gt;enable&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;install-linux-mint&quot;&gt;Install Linux Mint&lt;/h4&gt;
+
+&lt;p&gt;Now that all the prep work is done we can finally do what we initially set out to do… install Linux. Insert your thumb drive, reboot, and hold the option key. You should see your internal hard drive along with one that says EFI Boot… boot to the latter. Next you’ll see a grub menu and then you’ll boot into a live desktop environment.&lt;/p&gt;
+
+&lt;p&gt;First things first, connect to a wireless network so that updates can be pulled in during the installation. Once connected, double click the installer. These are the choices I made during install:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Continue for English&lt;/li&gt;
+  &lt;li&gt;Marked box for installing third-party software, Contine&lt;/li&gt;
+  &lt;li&gt;Something else on Installation type, continue&lt;/li&gt;
+  &lt;li&gt;Selected the 2G fat32 partition I created when resizing macOS. For me, this was &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda3&lt;/code&gt;. Once selected:
+    &lt;ul&gt;
+      &lt;li&gt;I clicked “Change…”&lt;/li&gt;
+      &lt;li&gt;Changed “Use as:” to ext4&lt;/li&gt;
+      &lt;li&gt;Marked “Format the partition”&lt;/li&gt;
+      &lt;li&gt;Set the mount point to &lt;code class=&quot;highlighter-rouge&quot;&gt;/boot&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;Clicked OK (this may prompt you about having to write changes to disk… if so, agree)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Selected the 148G fat32 partition. For me, this was &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda4&lt;/code&gt;. Once selected:
+    &lt;ul&gt;
+      &lt;li&gt;I clicked “Change…”&lt;/li&gt;
+      &lt;li&gt;Changed “Use as:” to physical volume for encryption&lt;/li&gt;
+      &lt;li&gt;Entered a password to decrypt the disk with&lt;/li&gt;
+      &lt;li&gt;Clicked OK&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Waited a moment or two while this did some work in the background&lt;/li&gt;
+  &lt;li&gt;Selected the new &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/mapper/sda4_crypt&lt;/code&gt; entry nested under the top entry of the same name
+    &lt;ul&gt;
+      &lt;li&gt;I clicked “Change…”&lt;/li&gt;
+      &lt;li&gt;Changed “Use as:” to ext4&lt;/li&gt;
+      &lt;li&gt;Marked “Format the partition”&lt;/li&gt;
+      &lt;li&gt;Set the mount point to &lt;code class=&quot;highlighter-rouge&quot;&gt;/&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;Clicked OK&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Under “Device for boot loader installation” I chose my &lt;code class=&quot;highlighter-rouge&quot;&gt;/boot&lt;/code&gt; partition: &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda3&lt;/code&gt; (explanation below)&lt;/li&gt;
+  &lt;li&gt;Clicked “Install Now”&lt;/li&gt;
+  &lt;li&gt;Clicked “Continue” to ignore the swap warning. (we’ll come back to this later)&lt;/li&gt;
+  &lt;li&gt;Reviewed the changes to my disk and clicked Continue&lt;/li&gt;
+  &lt;li&gt;Selected my time zone and clicked Continue&lt;/li&gt;
+  &lt;li&gt;Changed my keyboard layout to “English (US) - English (Macintosh), clicked Continue&lt;/li&gt;
+  &lt;li&gt;Created my use account and set the name of the computer, clicked Continue&lt;/li&gt;
+  &lt;li&gt;Waited for the install to finish……………&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;You may be wondering why I chose to put grub on &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda3&lt;/code&gt; instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda&lt;/code&gt;. The answer is actually quite simple: I don’t want to use grub as my bootloader for macOS nor do I want to take a chance of it hanging around if I decide to remove Mint later. rEFInd understands the Apple boot options better than grub does and is nicer to look at in my opinion… especially once themed. Additionally, if you were to want to adapt this entire process to triple booting with either a second Linux distro or Windows you would not have to worry about grub playing nice with that environment. In the case of a second Linux, each distro could also maintain its own set of grub entries and its own look and feel.&lt;/p&gt;
+
+&lt;h5 id=&quot;rebooting&quot;&gt;Rebooting&lt;/h5&gt;
+
+&lt;p&gt;Once the install is complete you will be prompted to reboot or continue testing… the choice is yours. Once you do reboot you will be prompted to remove the thumb drive… do so but read the next section before hitting enter. If you have already hit enter you will likely have been booted into Mint… just read the next section then do the reboot like it talks about.&lt;/p&gt;
+
+&lt;h4 id=&quot;system-integrity-protection-and-refind&quot;&gt;System Integrity Protection and rEFInd&lt;/h4&gt;
+
+&lt;p&gt;System Integrity Protection, aka SIP, help protect important system files. Generally speaking, this is a very good thing. That said, when you want to do special things like install a boot manager, it means you have to take a couple of extra steps. I suggest that for this section you either open this article on a device other than the one you are working on or print it out as you’re going to need it while the target computer is out of commission.&lt;/p&gt;
+
+&lt;p&gt;The first step is to reboot into recovery by holding Command+R (⌘+R) while rebooting. Once booted, open Disk Utility, click on where macOS is installed, then click the mount button in the row of icons at the top of Disk Utility. This will prompt you for your password and unlock the drive.&lt;/p&gt;
+
+&lt;p&gt;To disable SIP close Disk Utility and open Terminal from the Utilities menu and enter:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;csrutil disable
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now you need to reboot so that SIP is fully disabled. Be sure to hold ⌘+R while rebooting so that you return to recovery mode.&lt;/p&gt;
+
+&lt;h5 id=&quot;refind-installation&quot;&gt;rEFInd Installation&lt;/h5&gt;
+
+&lt;p&gt;Once back in recovery mode its time to install rEFInd. First, repeat the steps above to mount and unlock your macOS drive. Once its unlocked return to Terminal. We now need to change into the folder created by downloading and unzipping rEFInd. First, run this command to list the drives we can cd into:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Your output my be different than mine...&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; /Volumes/
+Macintosh HD         OS X Base System
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;For me, macOS is installed on &lt;code class=&quot;highlighter-rouge&quot;&gt;Macintosh HD&lt;/code&gt;, my user account on that drive is &lt;code class=&quot;highlighter-rouge&quot;&gt;genebean&lt;/code&gt;, and I downloaded rEFInd 0.11.2. While building out the path to change into be sure to remember that tab completion is your friend… type a couple of letters, hit tab, and repeat until the path is complete. Enter this command substituting your values for the ones above and using tab completion:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /Volumes/Macintosh&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;HD/Users/genebean/Downloads/refind-bin-0.11.2/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The next steps are to run the installer, re-enable SIP, and reboot. Do this by entering these commands:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./refind-install
+csrutil &lt;span class=&quot;nb&quot;&gt;enable
+&lt;/span&gt;reboot
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If all goes well then you will soon see your new boot manager with both an Ubuntu icon and an OS X icon. Choose the latter to make sure macOS is still okay and that no restore is needed. Assuming everything comes up okay you can reboot and choose the Ubuntu icon that will take you into Linux Mint.&lt;/p&gt;
+
+&lt;h4 id=&quot;first-boot-of-mint&quot;&gt;First boot of Mint&lt;/h4&gt;
+
+&lt;h5 id=&quot;-microcode-dragons-ahead-&quot;&gt;🐲 Microcode (dragons ahead) 🐲&lt;/h5&gt;
+
+&lt;p&gt;If you’ve ever used Mint before or you just like to click things you may be tempted to go straight for the Driver Manager… this is fine, just &lt;strong&gt;do not&lt;/strong&gt; update the microcode… leave that task to macOS so as to not confuse updates for the hardware coming from Apple. Along those same lines, you should periodically boot to macOS and patch it so that any hardware updates get applied.&lt;/p&gt;
+
+&lt;h5 id=&quot;update-manager&quot;&gt;Update Manager&lt;/h5&gt;
+
+&lt;p&gt;The first (or next) thing I recommend doing is opening Update Manager either by clicking the shield near the clock or from the application menu. It should prompt you for which update policy to use… I recommend the default of “Let me review sensitive updates.” Once you pass that screen you will likely see a blue bar that asks if you want to switch to a local mirror… do that, let it sit a minute while it tests mirror speeds, and pick the one at the top of the list. Once you have your mirror picked out close that window then:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;refresh the list of updates&lt;/li&gt;
+  &lt;li&gt;install the new version of mint update&lt;/li&gt;
+  &lt;li&gt;refresh the list of updates&lt;/li&gt;
+  &lt;li&gt;review the resulting list, particularly the ones at the bottom that are unchecked&lt;/li&gt;
+  &lt;li&gt;click select all&lt;/li&gt;
+  &lt;li&gt;install updates&lt;/li&gt;
+  &lt;li&gt;reboot so the new kernel applies&lt;/li&gt;
+  &lt;li&gt;check one more time for updates (there shouldn’t be any)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;known-issues&quot;&gt;Known Issues&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Graphics need help… likely due to needing proprietary AMD drivers. Info to help install these &lt;a href=&quot;https://forums.linuxmint.com/viewtopic.php?t=229229&quot;&gt;here&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Brightness controls don’t work. Likely due to ^^&lt;/li&gt;
+  &lt;li&gt;Right click via the trackpad doesn’t work. &lt;a href=&quot;https://www.reddit.com/r/linuxmint/comments/4lqjxm/brightness_and_other_problems_on_macbook_pro/&quot;&gt;This&lt;/a&gt; reddit post says Cinnamon 3 fixes this… need to check that out.&lt;/li&gt;
+  &lt;li&gt;The same reddit post says to follow &lt;a href=&quot;https://www.pcsteps.com/858-kernel-upgrade-linux-mint-ubuntu/&quot;&gt;this&lt;/a&gt; guide to upgrade to a newer kernel.&lt;/li&gt;
+  &lt;li&gt;Getting keyboard shortcuts to act in Linux the same as in macOS is a real PITA…&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Gene Liverman</name></author><summary type="html">This is a step-by-step walkthrough for dual booting a MacBook Pro (Mid-2015 aka MacBookPro11,5) that already has macOS High Sierra on it with Linux Mint. The hard drive is formatted APFS and has File Vault turned on.</summary></entry><entry><title type="html">GitLab CI and Chocolatey Server</title><link href="http://localhost:4000/jekyll-beanbag/gitlab-ci-and-chocolatey-server/" rel="alternate" type="text/html" title="GitLab CI and Chocolatey Server" /><published>2017-08-09T13:15:20-04:00</published><updated>2017-08-09T13:15:20-04:00</updated><id>http://localhost:4000/jekyll-beanbag/gitlab-ci-and-chocolatey-server</id><content type="html" xml:base="http://localhost:4000/jekyll-beanbag/gitlab-ci-and-chocolatey-server/">&lt;p&gt;If you are not familiar with &lt;a href=&quot;https://chocolatey.org/&quot;&gt;chocolatey&lt;/a&gt;, its an awesome package manager, like &lt;code class=&quot;highlighter-rouge&quot;&gt;apt&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;yum&lt;/code&gt;, for Windows. You can also host your own &lt;a href=&quot;https://github.com/chocolatey/choco/wiki/How-To-Host-Feed&quot;&gt;internal chocolatey feed&lt;/a&gt; and there is even a &lt;a href=&quot;https://forge.puppet.com/chocolatey/chocolatey_server&quot;&gt;Puppet module&lt;/a&gt; to build it for you. This can be especially useful for machines that cannot reach out to the internet to perform the installations. Chocolatey even provides a &lt;a href=&quot;https://chocolatey.org/docs/how-to-recompile-packages&quot;&gt;step-by-step guide&lt;/a&gt; on how to internalize packages, this can be a lot of manual steps from building packages, to getting them up to the Chocolatey server, keeping history, and maintaining when there are package updates.&lt;/p&gt;
+
+&lt;p&gt;This is why I created a quick solution for maintaining your package history in Git and using GitLab CI to automate building and deploying packages to your internal Chocolatey server. This guide assumes you have an internal GitLab instance, an internal Chocolatey server, and a Windows based GitLab Runner with powershell execution. Documentation &lt;a href=&quot;https://docs.gitlab.com/runner/&quot;&gt;here&lt;/a&gt; on GitLab Runners&lt;/p&gt;
+
+&lt;h2 id=&quot;setup&quot;&gt;Setup&lt;/h2&gt;
+
+&lt;p&gt;Before getting started I must note that, due to limitations of the Chocolatey API, it is required to store a service account’s plain text credentials in the GitLab repo to fully automate this process. I will explain this limitation later. For this reason, create a user account on the Chocolatey server, just for this purpose, and assign least privilege. It is sufficient to add this user to the &lt;code class=&quot;highlighter-rouge&quot;&gt;Remote Management Users&lt;/code&gt; group and grant the user permissions to the top level installation directory, in my case it was &lt;code class=&quot;highlighter-rouge&quot;&gt;C:\tools&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;First, create a private internal GitLab repository, then for all packages you wish to host internally follow steps 1 - 8 of the &lt;a href=&quot;https://chocolatey.org/docs/how-to-recompile-packages&quot;&gt;recompile packages guide&lt;/a&gt; to internalize packages and drop them in your repository (without version number in the directory name) so your repo structure looks something like the following example:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+├── puppet-agent
+│   ├── puppet-agent.nuspec
+│   └── tools
+│       └── chocolateyinstall.ps1
+└── zabbix-agent
+    ├── tools
+    │   ├── chocolateyInstall.ps1
+    │   └── chocolateyUninstall.ps1
+    └── zabbix-agent.nuspec
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next, in your Gitlab repo create the file &lt;code class=&quot;highlighter-rouge&quot;&gt;.gitlab-ci.yml&lt;/code&gt; and add the following contents, modifying it  for your environment:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;before_script:
+  - &lt;span class=&quot;s1&quot;&gt;'$package_directories = get-childitem ${CI_PROJECT_DIR} -Directory'&lt;/span&gt;
+  - &lt;span class=&quot;s1&quot;&gt;'$password = ConvertTo-SecureString &quot;PASSWORD&quot; -AsPlainText -Force'&lt;/span&gt;
+  - &lt;span class=&quot;s1&quot;&gt;'$credentials = new-object -typename System.Management.Automation.PSCredential -argumentlist DOMAIN\USERNAME, $password'&lt;/span&gt;
+  - &lt;span class=&quot;s1&quot;&gt;'$choco_server = &quot;chocolatey.localdomain&quot;'&lt;/span&gt;
+
+choco_deploy:
+  script:
+    &lt;span class=&quot;c&quot;&gt;# Change to each directory in this repo and build the package.&lt;/span&gt;
+    - &lt;span class=&quot;s1&quot;&gt;'foreach ($directory in $package_directories) { $package_nuspec = get-childitem ${CI_PROJECT_DIR}/$directory *.nuspec -Name; cd ${CI_PROJECT_DIR}/$directory; choco pack ${CI_PROJECT_DIR}/$directory/$package_nuspec }'&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# List and delete all existing packages from the Chocolatey server via remote powershell.&lt;/span&gt;
+    - &lt;span class=&quot;s1&quot;&gt;'Invoke-Command -ComputerName $choco_server -ScriptBlock {get-childitem C:\tools\chocolatey.server\App_Data\Packages -include *.nupkg -recurse | foreach ($_) {write-host &quot;Removing package $_&quot;; remove-item $_.fullname -force} } -credential $credentials'&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# Push each package to the Chocolatey server via the API.&lt;/span&gt;
+    - &lt;span class=&quot;s1&quot;&gt;'foreach ($directory in $package_directories) { $package_nupkg = get-childitem ${CI_PROJECT_DIR}/$directory *.nupkg -Name; choco push ${CI_PROJECT_DIR}/$directory/$package_nupkg --source=&quot;http://chocolatey.localdomain/&quot; --api-key=&quot;CHOCOLATEYKEY&quot; --force}'&lt;/span&gt;
+  tags:
+    - powershell
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Lets break this down a little.&lt;/p&gt;
+
+&lt;h3 id=&quot;before_script&quot;&gt;before_script&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;$package_directories = get-childitem ${CI_PROJECT_DIR} -Directory&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This stores each directory name in your repo in a variable.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;$password = ConvertTo-SecureString &quot;PASSWORD&quot; -AsPlainText -Force&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This stores the service account password in a variable. I will note that though you &lt;em&gt;can&lt;/em&gt; convert the password from a secure string to an encrypted string using the &lt;code class=&quot;highlighter-rouge&quot;&gt;ConvertFrom-SecureString&lt;/code&gt; cmdlet, BUT since the encrypted string will not be used on the same machine under the same user account, then you would have to pass the &lt;code class=&quot;highlighter-rouge&quot;&gt;-key&lt;/code&gt; option, which in that case would simply give you a false sense of security by obfuscating the password and not really protecting it. Moving on.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;$credentials = new-object -typename System.Management.Automation.PSCredential -argumentlist DOMAIN\USERNAME, $password&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This creates a credential object and stores it in a variable.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;$choco_server = &quot;chocolatey.localdomain&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This stores your internal Chocolatey server in a variable.&lt;/p&gt;
+
+&lt;h3 id=&quot;choco_deploy&quot;&gt;choco_deploy&lt;/h3&gt;
+
+&lt;p&gt;This task performs 3 things to complete the deployment process. Build the package. Delete all current packages from the Chocolatey server. Push the newly built packages.&lt;/p&gt;
+
+&lt;p&gt;As far as I know the Chocolatey API does not allow for deleting or overwriting packages, so if you attempt to push a package/version that already exists, then the push will fail. The best solution I have found at the moment is to use remote powershell to delete all existing packages.&lt;/p&gt;
+
+&lt;h4 id=&quot;build-packages&quot;&gt;Build Packages&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;foreach ($directory in $package_directories)&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Loop through each package directory and do a thing.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;{ $package_nuspec = get-childitem ${CI_PROJECT_DIR}/$directory *.nuspec -Name;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;In the current package directory, find the thing that end in &lt;code class=&quot;highlighter-rouge&quot;&gt;.nuspec&lt;/code&gt; and store in a variable.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;cd ${CI_PROJECT_DIR}/$directory;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Change to the current package directory&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;choco pack ${CI_PROJECT_DIR}/$directory/$package_nuspec }&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Run &lt;code class=&quot;highlighter-rouge&quot;&gt;choco pack&lt;/code&gt; on the nuspec file to build the package.&lt;/p&gt;
+
+&lt;h4 id=&quot;delete-existing-packages&quot;&gt;Delete existing packages&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Invoke-Command -ComputerName $choco_server -ScriptBlock&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Run the following remote powershell command on your Chocolatey server.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;{get-childitem C:\tools\chocolatey.server\App_Data\Packages -include *.nupkg -recurse&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Find all existing packages on the Chocolatey server.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;| foreach ($_) {write-host &quot;Removing package $_&quot;; remove-item $_.fullname -force} } -credential $credentials&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Pipe the packages to a for each loop and print what packages are being deleted, then actually delete them with passes credentials.&lt;/p&gt;
+
+&lt;h4 id=&quot;push-packages&quot;&gt;Push Packages&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;foreach ($directory in $package_directories)&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Yet again, loop through each package directory and do a thing.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;{ $package_nupkg = get-childitem ${CI_PROJECT_DIR}/$directory *.nupkg -Name;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;In the current package directory, find the thing that end in &lt;code class=&quot;highlighter-rouge&quot;&gt;.nupkg&lt;/code&gt; and store in a variable.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;choco push ${CI_PROJECT_DIR}/$directory/$package_nupkg --source=&quot;http://chocolatey.localdomain/&quot; --api-key=&quot;CHOCOLATEYKEY&quot; --force}&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Finally, push each package to the Chocolatey server using the API key and add the force option if your are not using HTTPS.&lt;/p&gt;
+
+&lt;h3 id=&quot;final-product&quot;&gt;Final Product&lt;/h3&gt;
+
+&lt;p&gt;Long story short, now all your team must do to maintain internal packages is follow 5 simple steps:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Clone this repository to your computer.&lt;/li&gt;
+  &lt;li&gt;Create a new branch to make your changes.&lt;/li&gt;
+  &lt;li&gt;If the package does not yet exist in this repo, follow the &lt;a href=&quot;https://github.com/chocolatey/choco/wiki/How-To-Recompile-Packages#how-to-internalizerecompile-an-existing-package-manually&quot;&gt;recompiling guide&lt;/a&gt;, but skip steps 9 and 10, then copy the entire directory to the root of this repo. If the package already exists, then simply modify &lt;code class=&quot;highlighter-rouge&quot;&gt;chocolateyInstall.ps1&lt;/code&gt; as needed.&lt;/li&gt;
+  &lt;li&gt;Copy the MSI or relavent install files to &lt;code class=&quot;highlighter-rouge&quot;&gt;C:\tools\chocolatey.server\Installers\{PACKAGE_DIRECTORY}\{INSTALLER}&lt;/code&gt; on the Chocolatey server.&lt;/li&gt;
+  &lt;li&gt;Finally, either create a pull request or just merge into master and push.&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>Gene Liverman</name></author><category term="chocolatey" /><category term="gitlab-2" /><summary type="html">If you are not familiar with chocolatey, its an awesome package manager, like apt or yum, for Windows. You can also host your own internal chocolatey feed and there is even a Puppet module to build it for you. This can be especially useful for machines that cannot reach out to the internet to perform the installations. Chocolatey even provides a step-by-step guide on how to internalize packages, this can be a lot of manual steps from building packages, to getting them up to the Chocolatey server, keeping history, and maintaining when there are package updates.</summary></entry><entry><title type="html">The Road to Puppet 5</title><link href="http://localhost:4000/jekyll-beanbag/the-road-to-puppet-5/" rel="alternate" type="text/html" title="The Road to Puppet 5" /><published>2017-08-09T07:14:41-04:00</published><updated>2017-08-09T07:14:41-04:00</updated><id>http://localhost:4000/jekyll-beanbag/the-road-to-puppet-5</id><content type="html" xml:base="http://localhost:4000/jekyll-beanbag/the-road-to-puppet-5/">&lt;p&gt;Not long ago Puppet released version 5 to the open source world so, naturally, it was time to start updating all my projects to be compatible with it. The first stop along the way was at the house of Vagrant… only, there’s a catch: it’s been relocated. That’s right, my Vagrant boxes got a shiny new home at &lt;a href=&quot;https://app.vagrantup.com/genebean&quot;&gt;app.vagrantup.com/genebean&lt;/a&gt; as part of some restructuring done by HashiCorp. After getting my new door key (aka account) I went next door to visit my friend &lt;a href=&quot;https://packer.io&quot;&gt;Packer&lt;/a&gt;. I hung out in his workshop massaging &lt;a href=&quot;https://github.com/genebean/packer-templates&quot;&gt;my templates&lt;/a&gt; with the goal of updating and simplifying the boxes I build. The end result included combining all the versions of RVM into a single build and creating a new box for Puppet 5. Now, if you’ve ever hung around Mr. Packer for any length of time then you know he loves to create multiple versions of anything he helps assemble. Seeing as I want him to be happy I figured I should oblige and let him create some &lt;a href=&quot;https://hub.docker.com/u/genebean/&quot;&gt;Docker images&lt;/a&gt; too.&lt;/p&gt;
+
+&lt;p&gt;After all the (Vagrant) boxes were packed up and all the (Docker) containers shipped out I figured it was time to head on down the road. You see, I’ve heard about this miracle worker &lt;a href=&quot;https://rnelson0.com/2016/04/03/setting-up-modulesync-with-multiple-puppet-modules/amp/&quot;&gt;rnelson0&lt;/a&gt; who donated a &lt;a href=&quot;https://rubygems.org/gems/modulesync&quot;&gt;gem&lt;/a&gt; to the &lt;a href=&quot;https://github.com/voxpupuli/modulesync&quot;&gt;Vox Pupuli&lt;/a&gt; community. It sounded awesome and I just had to know more. So, with this new destination in mind, I set out down a winding road. My &lt;a href=&quot;https://github.com/voxpupuli/modulesync/blob/master/README.md&quot;&gt;GPS&lt;/a&gt; must have gotten switched to Apple Maps ‘cause it only got me part way to my destination. Going on the hope of actually finding my destination I decided to spend a weekend at a place right near two experienced travelers. Both were kind enough to let me rummage through their things (GitHub) and it tuned out if you inspect the foundations laid down by &lt;a href=&quot;https://github.com/puppetlabs/modulesync_configs&quot;&gt;Puppet&lt;/a&gt; and &lt;a href=&quot;https://github.com/voxpupuli/modulesync_config&quot;&gt;Vox Pupuli&lt;/a&gt; and then you do some careful planning it really is possible to find the X on the treasure map. Following that map over the next two or three days lead to the best reusable shortcut I’ve come across in many moons… my very own module foundation: &lt;a href=&quot;https://github.com/genebean/modulesync_configs&quot;&gt;genebean/modulesync_configs&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Having gained this new insight I figured it was time to go and tend to my own house a bit. After returning home tonight I finish pouring the new foundation for each of my &lt;a href=&quot;https://forge.puppet.com/genebean&quot;&gt;Puppet modules&lt;/a&gt; which means that now I can start the remodeling process. You see, these modules have served me and others well but they were built in the age of Puppet 3. A lots changed since then and many &lt;a href=&quot;https://docs.puppet.com/upgrade/#language&quot;&gt;modern convince&lt;/a&gt; have been added. Also, like with any remodel, it’s also a great time to deal with those nagging issues you’ve been putting off but know you should do.&lt;/p&gt;
+
+&lt;p&gt;That’s all for now but stay tuned. I have a sneaking suspension that &lt;a href=&quot;https://github.com/thespain&quot;&gt;Jake&lt;/a&gt; and I will be on the road again soon.&lt;/p&gt;</content><author><name>Gene Liverman</name></author><summary type="html">Not long ago Puppet released version 5 to the open source world so, naturally, it was time to start updating all my projects to be compatible with it. The first stop along the way was at the house of Vagrant… only, there’s a catch: it’s been relocated. That’s right, my Vagrant boxes got a shiny new home at app.vagrantup.com/genebean as part of some restructuring done by HashiCorp. After getting my new door key (aka account) I went next door to visit my friend Packer. I hung out in his workshop massaging my templates with the goal of updating and simplifying the boxes I build. The end result included combining all the versions of RVM into a single build and creating a new box for Puppet 5. Now, if you’ve ever hung around Mr. Packer for any length of time then you know he loves to create multiple versions of anything he helps assemble. Seeing as I want him to be happy I figured I should oblige and let him create some Docker images too.</summary></entry><entry><title type="html">Add Puppetfile Validation to Testing</title><link href="http://localhost:4000/jekyll-beanbag/add-puppetfile-validation-to-testing/" rel="alternate" type="text/html" title="Add Puppetfile Validation to Testing" /><published>2017-07-31T18:20:47-04:00</published><updated>2017-07-31T18:20:47-04:00</updated><id>http://localhost:4000/jekyll-beanbag/add-puppetfile-validation-to-testing</id><content type="html" xml:base="http://localhost:4000/jekyll-beanbag/add-puppetfile-validation-to-testing/">&lt;p&gt;This is a quick post about how to add validation of your &lt;code class=&quot;highlighter-rouge&quot;&gt;Puppetfile&lt;/code&gt;, primarily if you are using the &lt;a href=&quot;https://github.com/puppetlabs/control-repo&quot;&gt;control-repo&lt;/a&gt; and r10k for deploying Puppet environments. This came about because I found myself entering incorrect syntax into this file on more than a one occasion. Additionally, there are no indications of any problem, even when importing environments in Foreman, so the only way to find out is by manually running r10k from the command line on the Puppet Server.&lt;/p&gt;
+
+&lt;p&gt;This assumes you are familiar with and already have puppet-rspec testing setup. If not, please see &lt;a href=&quot;https://puppet.com/blog/unit-testing-rspec-puppet-for-beginners&quot;&gt;Unit testing with rspec-puppet — for beginners&lt;/a&gt; to get started.&lt;/p&gt;
+
+&lt;p&gt;Here are the steps to get the validation going:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Add &lt;code class=&quot;highlighter-rouge&quot;&gt;gem 'r10k', '&amp;gt;= 2.5.5'&lt;/code&gt; to your &lt;code class=&quot;highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;.
+    &lt;ul&gt;
+      &lt;li&gt;Note: I had to use version 2.5.5 or else I would encounter &lt;a href=&quot;https://github.com/puppetlabs/r10k/issues/659&quot;&gt;Issue #659&lt;/a&gt; when running the tests in Travis CI or GitLab CI, even though they would succeed locally.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Add &lt;code class=&quot;highlighter-rouge&quot;&gt;sh &quot;r10k puppetfile check Puppetfile&quot; if File.file?('Puppetfile')&lt;/code&gt; to a new or existing task in your &lt;code class=&quot;highlighter-rouge&quot;&gt;Rakefile&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I am only a beginner Ruby user, so by all means I am open to improvements. Happy testing!&lt;/p&gt;</content><author><name>Gene Liverman</name></author><summary type="html">This is a quick post about how to add validation of your Puppetfile, primarily if you are using the control-repo and r10k for deploying Puppet environments. This came about because I found myself entering incorrect syntax into this file on more than a one occasion. Additionally, there are no indications of any problem, even when importing environments in Foreman, so the only way to find out is by manually running r10k from the command line on the Puppet Server.</summary></entry><entry><title type="html">Python PIP Issues after Homebrew upgrade</title><link href="http://localhost:4000/jekyll-beanbag/python-pip-issues-after-homebrew-upgrade/" rel="alternate" type="text/html" title="Python PIP Issues after Homebrew upgrade" /><published>2017-07-24T05:00:17-04:00</published><updated>2017-07-24T05:00:17-04:00</updated><id>http://localhost:4000/jekyll-beanbag/python-pip-issues-after-homebrew-upgrade</id><content type="html" xml:base="http://localhost:4000/jekyll-beanbag/python-pip-issues-after-homebrew-upgrade/">&lt;p&gt;This is just a quick note for anyone else out there who recently ran &lt;code class=&quot;highlighter-rouge&quot;&gt;brew update &amp;amp;&amp;amp; brew upgrade&lt;/code&gt; and then found that Python no longer worked as expected. Here are the important points:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The issue is that Homebrew introduced a breaking change and did a crappy job of documenting it.&lt;/li&gt;
+  &lt;li&gt;The fix is to prefix your path with &lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/local/opt/python/libexec/bin&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;More details can be found at https://github.com/Homebrew/homebrew-core/issues/15746&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For me, the fix was to add this to my &lt;code class=&quot;highlighter-rouge&quot;&gt;.zshrc&lt;/code&gt; file:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;export PATH=&quot;/usr/local/opt/python/libexec/bin:$PATH&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Gene Liverman</name></author><summary type="html">This is just a quick note for anyone else out there who recently ran brew update &amp;amp;&amp;amp; brew upgrade and then found that Python no longer worked as expected. Here are the important points:</summary></entry><entry><title type="html">Upgrade to Puppet 5</title><link href="http://localhost:4000/jekyll-beanbag/upgrade-to-puppet-5/" rel="alternate" type="text/html" title="Upgrade to Puppet 5" /><published>2017-07-15T03:34:46-04:00</published><updated>2017-07-15T03:34:46-04:00</updated><id>http://localhost:4000/jekyll-beanbag/upgrade-to-puppet-5</id><content type="html" xml:base="http://localhost:4000/jekyll-beanbag/upgrade-to-puppet-5/">&lt;p&gt;Today I successfully upgraded our Puppet Master from Puppet 4.x (puppetserver 2.7.2) to Puppet 5 (puppetserver 5.0.0). It was wildly helpful to go through the entire upgrade process and perform LOTS of testing and troubleshooting with the &lt;a href=&quot;https://github.com/genebean/vagrant-puppet-environment&quot;&gt;Vagrant Puppet Environmet&lt;/a&gt;, which is basically an exact replica of my production environment. This is an all-in-one Open Source Puppet setup and, once the next release is out, I would highly recommend for testing!&lt;/p&gt;
+
+&lt;p&gt;The problems I had below were no fault of the Puppet upgrade itself, but actually by module(s) not yet adapted for 5.x. We use a combination of theforeman and puppetlabs modules to manage the installation of puppetserver, puppetdb, and the agent.&lt;/p&gt;
+
+&lt;p&gt;####Problem #1####
+My first issue was a classic case of &lt;strong&gt;RTFM&lt;/strong&gt;. As the &lt;a href=&quot;https://docs.puppet.com/puppetdb/5.0/&quot;&gt;doc&lt;/a&gt; clearly states Postgres 9.6 required. It turns out that 9.4 != 9.6. I received an error stating this fact in the PuppetDB log when attempting to start. So for those needing to upgrade a simple change to the postgres user and &lt;code class=&quot;highlighter-rouge&quot;&gt;pg_dumpall -f /tmp/pg_dumpall94&lt;/code&gt;, then upgrade Postgresql and &lt;code class=&quot;highlighter-rouge&quot;&gt;psql -f /tmp/pg_dumpall94&lt;/code&gt;. I performed incremental upgrades from 9.4 -&amp;gt; 9.5 -&amp;gt; 9.6 &lt;em&gt;just&lt;/em&gt; to be extra safe.&lt;/p&gt;
+
+&lt;p&gt;####Problem #2####
+The second problem was I got stumped on an error about the new metrics-webservice feature that was causing puppetserver not to start. I was pleasantly surprised when I submitted Puppet ticket &lt;a href=&quot;https://tickets.puppetlabs.com/browse/SERVER-1876&quot;&gt;SERVER-1876&lt;/a&gt; and someone replied within two hours on a Saturday. Which then fixed the issues, but also pointed me in the right direction and found that theforeman-puppet module decided to whack a line in &lt;code class=&quot;highlighter-rouge&quot;&gt;/etc/puppetlabs/puppetserver/conf.d/web-routes.conf&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I noticed they had already started working on the fixes on the master branches for these modules, so I ran the vagrant environment on that until they cut a release.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;NOTE&lt;/strong&gt;: Even though theforeman-puppet module 8.0.0 is now comatible, it looks like theforeman-installer itself will not be until version 1.16, so this will only present a problem when installing from scratch. See the Puppet ticket &lt;a href=&quot;https://tickets.puppetlabs.com/browse/SERVER-1876&quot;&gt;SERVER-1876&lt;/a&gt; to fix the issue yourself or just run the nightly release which has already been fixed.&lt;/p&gt;
+
+&lt;p&gt;####Problem #3####
+Once that was all behind me the only remaining issue was a failed puppet run on the node running PuppetDB, which was caused by an incompatibility between the puppetdb and postgresql modules. See &lt;a href=&quot;https://tickets.puppetlabs.com/browse/PDB-3587&quot;&gt;PDB-3587&lt;/a&gt; for details. Other than that it was functioning just fine.&lt;/p&gt;
+
+&lt;p&gt;####The Actual Upgrade####
+Once I updated to the newly released versions of theforeman-puppet 8.0.0, puppetlabs-puppetdb 6.0.0, and puppetlabs-postgresql 5.0.0, then a Puppet agent run on the master node and puppetdb node ran like a charm in test!&lt;/p&gt;
+
+&lt;p&gt;All that said and done, after updating the modules on production, upgrading basically as simple as &lt;code class=&quot;highlighter-rouge&quot;&gt;yum upgrade&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;puppet agent -t&lt;/code&gt;. Really. Im not kidding, that was it.
+&lt;img src=&quot;/content/images/2017/07/partyparrot-1.gif&quot; alt=&quot;partyparrot&quot; /&gt;&lt;/p&gt;</content><author><name>Gene Liverman</name></author><category term="puppet" /><summary type="html">Today I successfully upgraded our Puppet Master from Puppet 4.x (puppetserver 2.7.2) to Puppet 5 (puppetserver 5.0.0). It was wildly helpful to go through the entire upgrade process and perform LOTS of testing and troubleshooting with the Vagrant Puppet Environmet, which is basically an exact replica of my production environment. This is an all-in-one Open Source Puppet setup and, once the next release is out, I would highly recommend for testing!</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/jekyll-beanbag" /></entry><entry><title type="html">Automatically generate GoAccess stats</title><link href="http://localhost:4000/jekyll-beanbag/easy-automatic-generation-of-goaccess-stats/" rel="alternate" type="text/html" title="Automatically generate GoAccess stats" /><published>2017-06-16T05:15:53-04:00</published><updated>2017-06-16T05:15:53-04:00</updated><id>http://localhost:4000/jekyll-beanbag/easy-automatic-generation-of-goaccess-stats</id><content type="html" xml:base="http://localhost:4000/jekyll-beanbag/easy-automatic-generation-of-goaccess-stats/">&lt;p&gt;I’ve been using &lt;a href=&quot;https://goaccess.io&quot;&gt;GoAccess&lt;/a&gt; to look at my logs for a while now. The other day I decided I wanted be able to look at these stats for the different sites on my web server in a variety of ways including:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;all data from all sites combined&lt;/li&gt;
+  &lt;li&gt;all data on a per-site basis&lt;/li&gt;
+  &lt;li&gt;daily stats from each site kept for a week&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The thing with wanting daily stats is it helps if they are created in a way that only covers that day. That sounds simple, but the logrotate generally runs around around 3am. So what’s the solution? Cron. To be more exact, run logrotate from cron and generate stats while you’re at it.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Puppet Name: rotate nginx logs&lt;/span&gt;
+0 0 &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; /root/updatestats.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, if you are going to run logrotate from cron you’d better turn of the original one. Here’s how I did that:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /etc/logrotate.d/nginx
+&lt;span class=&quot;c&quot;&gt;# this is managed by a cron job.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# the script that would normally be here is at /root/nginx-logroate.conf&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You have to do something like this instead of just deleting the file because otherwise the next time there is an update to Nginx (or whatever web server you are running) it will just recreate the file. The reason this works is that installers generally don’t clobber existing files. Below is the referenced replacement:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /root/nginx-logroate.conf
+&lt;span class=&quot;c&quot;&gt;# use date as a suffix of the rotated file&lt;/span&gt;
+dateext
+
+/var/log/nginx/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;log &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    create 0644 nginx nginx
+    daily
+    rotate 10
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        /bin/kill &lt;span class=&quot;nt&quot;&gt;-USR1&lt;/span&gt; &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /run/nginx.pid 2&amp;gt;/dev/null&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt; 2&amp;gt;/dev/null &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
+    &lt;/span&gt;endscript
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;updatestatssh&quot;&gt;updatestats.sh&lt;/h4&gt;
+
+&lt;p&gt;This is the script where all the magic happens. Let’s break it down to see what’s going on. A copy of the full script will be at the end of this article in case you want to copy it.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;date &lt;span class=&quot;nt&quot;&gt;--date&lt;/span&gt; yesterday +&lt;span class=&quot;s2&quot;&gt;&quot;%A&quot;&lt;/span&gt; | tr &lt;span class=&quot;s1&quot;&gt;'[:upper:]'&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'[:lower:]'&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The script runs at midnight which is just barely into the day after the logs that we are going to process. For that reason we need to determine what the day was yesterday. For example, when I ran &lt;code class=&quot;highlighter-rouge&quot;&gt;$ date --date yesterday +&quot;%A&quot;&lt;/code&gt; it returned &lt;code class=&quot;highlighter-rouge&quot;&gt;Thursday&lt;/code&gt;. Seeing as I want everything to be lower case I piped the output through &lt;code class=&quot;highlighter-rouge&quot;&gt;tr&lt;/code&gt; to convert it. The end result is &lt;code class=&quot;highlighter-rouge&quot;&gt;thrusday&lt;/code&gt;. This will be used as part of the file name for the daily logs.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;date +&lt;span class=&quot;s2&quot;&gt;&quot;%Y%m%d&quot;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Next we get the current date in year month day format which results in something like &lt;code class=&quot;highlighter-rouge&quot;&gt;20170616&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;gitcmd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'git --git-dir=/storage/nginx/html/goaccess/.git/ --work-tree=/storage/nginx/html/goaccess/'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This one is a bit more interesting. When you run git from somewhere outside of the repository you have to tell it where to find its configuration (&lt;a href=&quot;https://git-scm.com/docs/git&quot;&gt;git-dir&lt;/a&gt;) and where the base of the repo is (&lt;a href=&quot;https://git-scm.com/docs/git&quot;&gt;work-tree&lt;/a&gt;). Adding in all that info makes for a long command so I’ve stashed it in a variable that I can refer to later.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Create a backup of the dbs&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-czvf&lt;/span&gt; /root/dbbackup-&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;date +&lt;span class=&quot;s2&quot;&gt;&quot;%Y%m%d-%H%M%S&quot;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;.tgz /storage/goaccess-dbs
+
+&lt;span class=&quot;c&quot;&gt;# keep only the 5 newest backups (to keep x, pass x+1 to tail)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-tp&lt;/span&gt; /root/dbbackup-&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; | tail &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; +6 | xargs &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'\n'&lt;/span&gt; rm &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Nest we take a backup of the databases GoAccess is using for the stats in case something goes haywire. Backup take a lot of space so after the new one is taken I prune out the old ones.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Rotate logs&lt;/span&gt;
+/sbin/logrotate &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; /var/lib/logrotate/logrotate.status /root/nginx-logroate.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Remember the disabled logrotate from earlier? Well, this is where I run its replacement.&lt;/p&gt;
+
+&lt;p&gt;Now, before we move on to the next part I need to provide some context. As a byproduct of the way I have configured Nginx my logs are named like this after being rotated:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;access.log-20170616.gz&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;beanbag.technicalissues.us.access.log-20170616.gz&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Keep this format in mind as you look through the next part and it will make more sense. Also remember the date variables from earlier.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Process each newly rotated log&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;log &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; /var/log/nginx/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;access.log-&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;.gz&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
+  &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;processing &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;...&quot;&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | rev | cut &lt;span class=&quot;nt&quot;&gt;-f1&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/'&lt;/span&gt; |rev | cut &lt;span class=&quot;nt&quot;&gt;-f1&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'.'&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I am going to pause right here and break down that &lt;code class=&quot;highlighter-rouge&quot;&gt;name=&lt;/code&gt; bit. Lets assume &lt;code class=&quot;highlighter-rouge&quot;&gt;${log}&lt;/code&gt; equals the &lt;code class=&quot;highlighter-rouge&quot;&gt;beanbag&lt;/code&gt; log from above. Going on that assumption here is what each part of that line does:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+/var/log/nginx/beanbag.technicalissues.us.access.log-20170616.gz
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; |rev
+zg.61607102-gol.ssecca.su.seussilacinhcet.gabnaeb/xnign/gol/rav/
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | rev | cut &lt;span class=&quot;nt&quot;&gt;-f1&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/'&lt;/span&gt;
+zg.61607102-gol.ssecca.su.seussilacinhcet.gabnaeb
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | rev | cut &lt;span class=&quot;nt&quot;&gt;-f1&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/'&lt;/span&gt; |rev
+beanbag.technicalissues.us.access.log-20170616.gz
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | rev | cut &lt;span class=&quot;nt&quot;&gt;-f1&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/'&lt;/span&gt; |rev | cut &lt;span class=&quot;nt&quot;&gt;-f1&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'.'&lt;/span&gt;
+beanbag
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see, that chain of commands produces just the first part of each log’s name which, in this case, is &lt;code class=&quot;highlighter-rouge&quot;&gt;beanbag&lt;/code&gt;. This word is something that is unique to each set of logs which lets me easily correlate them with the associated site or function. By function I mean &lt;code class=&quot;highlighter-rouge&quot;&gt;access&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;redirects&lt;/code&gt; which are special sets of logs I generate for non-site-specific functions within my &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx.conf&lt;/code&gt;. Now, lets get back to the script.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;''&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is kind of a storage bin… more on it in a moment.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/storage/goaccess-dbs/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; mkdir &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/storage/goaccess-dbs/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Here if the one-word name generated previously corresponds to a directory where all the GoAccess databases are kept I return true. If, on the other hand, it doesn’t exist then it gets created.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; zcat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | /usr/bin/goaccess &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /storage/nginx/html/goaccess/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;-&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;.html &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/storage/nginx/html/goaccess/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;.html &quot;&lt;/span&gt;
+
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; zcat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | /usr/bin/goaccess &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /storage/nginx/html/goaccess/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-overall&lt;/span&gt;.html &lt;span class=&quot;nt&quot;&gt;--load-from-disk&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--keep-db-files&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--db-path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/storage/goaccess-dbs/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/ &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/storage/nginx/html/goaccess/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-overall.html &quot;&lt;/span&gt;
+
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; zcat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | /usr/bin/goaccess &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /storage/nginx/html/goaccess/overall.html &lt;span class=&quot;nt&quot;&gt;--load-from-disk&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--keep-db-files&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--db-path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/storage/goaccess-dbs/overall/ &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/storage/nginx/html/goaccess/overall.html &quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we finally get to generate some stats. &lt;code class=&quot;highlighter-rouge&quot;&gt;[ -s ${log} ]&lt;/code&gt; verifies that the log file’s size is not zero. Each command is prefixed with this so that the script doesn’t error out as a result of an empty file. Here’s a breakdown of what the three chunks of code above do assuming there is a non-zero-sized log file:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;cat the gzipped log to &lt;code class=&quot;highlighter-rouge&quot;&gt;goaccess&lt;/code&gt;, output the results to a file that is named something like &lt;code class=&quot;highlighter-rouge&quot;&gt;beanbag-thrusday.html&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;add something like this to the end of the &lt;code class=&quot;highlighter-rouge&quot;&gt;processed_logs&lt;/code&gt; variable: “/storage/nginx/html/goaccess/beanbag-thrusday.html “ (note the space between the last character and the quote… that ensures each path ends up with a space between it and the next one.&lt;/li&gt;
+  &lt;li&gt;cat the gzipped log to &lt;code class=&quot;highlighter-rouge&quot;&gt;goaccess&lt;/code&gt;, output the results to a file that is named something like &lt;code class=&quot;highlighter-rouge&quot;&gt;beanbag-overall.html&lt;/code&gt;. The last bit of this line loads up the database that tracks all the previous traffic to the site associated with this log.&lt;/li&gt;
+  &lt;li&gt;add this new file’s path to &lt;code class=&quot;highlighter-rouge&quot;&gt;processed_logs&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;this is the same as #3 except its adding the stats to the database that includes all the sites. Those stats are stored in &lt;code class=&quot;highlighter-rouge&quot;&gt;overall.html&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;add this new file’s path to &lt;code class=&quot;highlighter-rouge&quot;&gt;processed_logs&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;gitcmd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; add &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Remember that storage bin called &lt;code class=&quot;highlighter-rouge&quot;&gt;processed_logs&lt;/code&gt;? Here’s why it exists. This line uses the really long git command stored in a variable at the top of the script to add all file paths in &lt;code class=&quot;highlighter-rouge&quot;&gt;processed_logs&lt;/code&gt; to the git repo whose base is the directory the stats files are output to.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;gitcmd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Updated stats from &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This line takes all the new and/or changed files and does a &lt;code class=&quot;highlighter-rouge&quot;&gt;git commit&lt;/code&gt; on them with a commit message that includes the site name of the stats that caused the update. Right after the git commit is the &lt;code class=&quot;highlighter-rouge&quot;&gt;done&lt;/code&gt; marker that signifies the end of the for loop that processes all of the day’s logs.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Push to BitBucket&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;gitcmd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; push &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; origin master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Since the part before this is happening inside a for loop there is generally one commit for each site, one for the access logs, and one for the redirect logs. This line takes all those new commits and pushes them to a private repository on BitBucket as a backup.&lt;/p&gt;
+
+&lt;p&gt;Remember I said that when running a commit from outside of the repository it could end up being a really long command? Well, here is an example of what the command for committing the files for the beanbag log would look like:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[ -s /var/log/nginx/beanbag.technicalissues.us.access.log-20170616.gz ] &amp;amp;&amp;amp; git --git-dir=/storage/nginx/html/goaccess/.git/ --work-tree=/storage/nginx/html/goaccess/ commit -m &quot;Updated stats from beanbag&quot; /storage/nginx/html/goaccess/beanbag-thrusday.html /storage/nginx/html/goaccess/beanbag-overall.html /storage/nginx/html/goaccess/overall.html
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s a little unweildy when all the variable are expanded and much harder to read in my opinion.&lt;/p&gt;
+
+&lt;h4 id=&quot;next-steps&quot;&gt;Next Steps:&lt;/h4&gt;
+
+&lt;p&gt;This setup has produced some really useful information but lacks a little polish when it comes to being able to review it. With that in mind I have a few tasks that I’d like to do in the coming months.&lt;/p&gt;
+
+&lt;p&gt;First, I’d like to prune parts of the dailies that aren’t useful. For example, there are sections of the generated web page that don’t have any useful data unless you are looking at multiple day’s logs.&lt;/p&gt;
+
+&lt;p&gt;Second, I want to look into alternate display methods for the data. GoAccess makes a perfectly nice html web page but maybe I could tell it to generate JSON data instead, throw that into &lt;a href=&quot;https://www.mongodb.com/&quot;&gt;MongoDB&lt;/a&gt;, and then display the data as part of a formatted, cohesive website instead of just having a bunch of standalone html pages.&lt;/p&gt;
+
+&lt;p&gt;Lastly, and honestly, this will probably happen first, I want to compare what I am getting from GoAccess to what &lt;a href=&quot;https://piwik.org/&quot;&gt;Piwik&lt;/a&gt; would give me.&lt;/p&gt;
+
+&lt;h4 id=&quot;the-entire-updatestatssh-script&quot;&gt;The Entire &lt;code class=&quot;highlighter-rouge&quot;&gt;updatestats.sh&lt;/code&gt; script&lt;/h4&gt;
+
+&lt;p&gt;As promised, here is the script in its entirety.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;date &lt;span class=&quot;nt&quot;&gt;--date&lt;/span&gt; yesterday +&lt;span class=&quot;s2&quot;&gt;&quot;%A&quot;&lt;/span&gt; | tr &lt;span class=&quot;s1&quot;&gt;'[:upper:]'&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'[:lower:]'&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;date +&lt;span class=&quot;s2&quot;&gt;&quot;%Y%m%d&quot;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;gitcmd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'git --git-dir=/storage/nginx/html/goaccess/.git/ --work-tree=/storage/nginx/html/goaccess/'&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Create a backup of the dbs&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-czvf&lt;/span&gt; /root/dbbackup-&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;date +&lt;span class=&quot;s2&quot;&gt;&quot;%Y%m%d-%H%M%S&quot;&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;.tgz /storage/goaccess-dbs
+
+&lt;span class=&quot;c&quot;&gt;# keep only the 5 newest backups (to keep x, pass x+1 to tail)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-tp&lt;/span&gt; /root/dbbackup-&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; | tail &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; +6 | xargs &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'\n'&lt;/span&gt; rm &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Rotate logs&lt;/span&gt;
+/sbin/logrotate &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; /var/lib/logrotate/logrotate.status /root/nginx-logroate.conf
+
+&lt;span class=&quot;c&quot;&gt;# Process each newly rotated log&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;log &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; /var/log/nginx/&lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;access.log-&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;.gz&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do
+  &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;processing &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;...&quot;&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | rev | cut &lt;span class=&quot;nt&quot;&gt;-f1&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'/'&lt;/span&gt; |rev | cut &lt;span class=&quot;nt&quot;&gt;-f1&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'.'&lt;/span&gt;&lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;''&lt;/span&gt;
+
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/storage/goaccess-dbs/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; mkdir &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/storage/goaccess-dbs/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; zcat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | /usr/bin/goaccess &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /storage/nginx/html/goaccess/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;-&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;.html &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/storage/nginx/html/goaccess/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;.html &quot;&lt;/span&gt;
+
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; zcat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | /usr/bin/goaccess &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /storage/nginx/html/goaccess/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-overall&lt;/span&gt;.html &lt;span class=&quot;nt&quot;&gt;--load-from-disk&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--keep-db-files&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--db-path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/storage/goaccess-dbs/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/ &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/storage/nginx/html/goaccess/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-overall.html &quot;&lt;/span&gt;
+
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; zcat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; | /usr/bin/goaccess &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /storage/nginx/html/goaccess/overall.html &lt;span class=&quot;nt&quot;&gt;--load-from-disk&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--keep-db-files&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--db-path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/storage/goaccess-dbs/overall/ &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/storage/nginx/html/goaccess/overall.html &quot;&lt;/span&gt;
+
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;gitcmd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; add &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;gitcmd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Updated stats from &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;processed_logs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Push to BitBucket&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;gitcmd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; push &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; origin master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Gene Liverman</name></author><summary type="html">I’ve been using GoAccess to look at my logs for a while now. The other day I decided I wanted be able to look at these stats for the different sites on my web server in a variety of ways including:</summary></entry><entry><title type="html">Node.js, CentOS7, and libhttp_parser.so.2</title><link href="http://localhost:4000/jekyll-beanbag/node-js-centos7-and-libhttp_parser-so-2/" rel="alternate" type="text/html" title="Node.js, CentOS7, and libhttp_parser.so.2" /><published>2017-06-07T04:05:18-04:00</published><updated>2017-06-07T04:05:18-04:00</updated><id>http://localhost:4000/jekyll-beanbag/node-js-centos7-and-libhttp_parser-so-2</id><content type="html" xml:base="http://localhost:4000/jekyll-beanbag/node-js-centos7-and-libhttp_parser-so-2/">&lt;p&gt;Don’t you just love it when package maintainers break you blog? Yeah, me too. Tonight I went to post an article (no, not this one) and found my site to be down. When I went to start it back up I got this:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ghost ~]&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;/usr/bin/npm start &lt;span class=&quot;nt&quot;&gt;--production&lt;/span&gt;
+node: error &lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;loading shared libraries: libhttp_parser.so.2: cannot open shared object file: No such file or directory
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As it turns out, the maintainer of the &lt;code class=&quot;highlighter-rouge&quot;&gt;nodejs-6.10.3-1.el7.x86_64&lt;/code&gt; package added this to their changelog:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;* Wed May 10 2017 Stephen Gallagher &amp;lt;sgallagh@redhat.com&amp;gt; - 1:6.10.3-1
+- Update to 6.10.3 (LTS)
+- https://nodejs.org/en/blog/release/v6.10.3/
+- Stop using the bundled http-parser now that there is an upstream
+  release with a new-enough version.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;What they didn’t do was update the their dependancies to pull in the &lt;code class=&quot;highlighter-rouge&quot;&gt;http-parser&lt;/code&gt; package. Thus, when the update ran and the service bounced my blog stopped working. Even though the fix was a simple &lt;code class=&quot;highlighter-rouge&quot;&gt;yum install http-parser&lt;/code&gt; this should have never happened as breaking changes like this are contrary to why people run CentOS and RHEL.&lt;/p&gt;
+
+&lt;p&gt;For anyone interested, I filed a ticket for this at https://bugs.centos.org/view.php?id=13380.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;update 24 Aug. 2017&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;It seems things have gotten worse if you are not yet on the code from CentOS 7.4 as &lt;code class=&quot;highlighter-rouge&quot;&gt;http-parser&lt;/code&gt; has been removed from EPEL per https://bugzilla.redhat.com/show_bug.cgi?id=1481470&lt;/p&gt;</content><author><name>Gene Liverman</name></author><summary type="html">Don’t you just love it when package maintainers break you blog? Yeah, me too. Tonight I went to post an article (no, not this one) and found my site to be down. When I went to start it back up I got this:</summary></entry></feed>

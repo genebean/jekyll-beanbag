@@ -1,0 +1,1 @@
+Sitemap: http://localhost:4000/jekyll-beanbag/sitemap.xml

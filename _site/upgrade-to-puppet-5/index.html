@@ -1,0 +1,541 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.16.2 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Upgrade to Puppet 5 - The Comfy Seat</title>
+<meta name="description" content="Today I successfully upgraded our Puppet Master from Puppet 4.x (puppetserver 2.7.2) to Puppet 5 (puppetserver 5.0.0). It was wildly helpful to go through the entire upgrade process and perform LOTS of testing and troubleshooting with the Vagrant Puppet Environmet, which is basically an exact replica of my production environment. This is an all-in-one Open Source Puppet setup and, once the next release is out, I would highly recommend for testing!">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="The Comfy Seat">
+<meta property="og:title" content="Upgrade to Puppet 5">
+<meta property="og:url" content="http://localhost:4000/jekyll-beanbag/upgrade-to-puppet-5/">
+
+
+  <meta property="og:description" content="Today I successfully upgraded our Puppet Master from Puppet 4.x (puppetserver 2.7.2) to Puppet 5 (puppetserver 5.0.0). It was wildly helpful to go through the entire upgrade process and perform LOTS of testing and troubleshooting with the Vagrant Puppet Environmet, which is basically an exact replica of my production environment. This is an all-in-one Open Source Puppet setup and, once the next release is out, I would highly recommend for testing!">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2017-07-15T03:34:46-04:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/jekyll-beanbag/upgrade-to-puppet-5/">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/jekyll-beanbag/feed.xml" type="application/atom+xml" rel="alternate" title="The Comfy Seat Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/jekyll-beanbag/assets/css/main.css">
+
+<!--[if IE ]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/jekyll-beanbag/"><img src="/jekyll-beanbag/assets/images/the-comfy-seat.png" alt=""></a>
+        
+        <a class="site-title" href="/jekyll-beanbag/">The Comfy Seat</a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/posts/" >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/categories/" >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/tags/" >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a href="/jekyll-beanbag/about/" >About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Gene Liverman</h3>
+    
+    
+      <p class="author__bio" itemprop="description">
+        My awesome biography constrained to a sentence or two goes here.
+      </p>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Georgia, USA</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://github.com/genebean" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/technicalissues" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+          
+        
+          
+            <li><a href="https://app.vagrantup.com/genebean" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> Vagrant Boxes</a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Upgrade to Puppet 5">
+    <meta itemprop="description" content="Today I successfully upgraded our Puppet Master from Puppet 4.x (puppetserver 2.7.2) to Puppet 5 (puppetserver 5.0.0). It was wildly helpful to go through the entire upgrade process and perform LOTS of testing and troubleshooting with the Vagrant Puppet Environmet, which is basically an exact replica of my production environment. This is an all-in-one Open Source Puppet setup and, once the next release is out, I would highly recommend for testing!">
+    <meta itemprop="datePublished" content="July 15, 2017">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Upgrade to Puppet 5
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  2 minute read
+</p>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Today I successfully upgraded our Puppet Master from Puppet 4.x (puppetserver 2.7.2) to Puppet 5 (puppetserver 5.0.0). It was wildly helpful to go through the entire upgrade process and perform LOTS of testing and troubleshooting with the <a href="https://github.com/genebean/vagrant-puppet-environment">Vagrant Puppet Environmet</a>, which is basically an exact replica of my production environment. This is an all-in-one Open Source Puppet setup and, once the next release is out, I would highly recommend for testing!</p>
+
+<p>The problems I had below were no fault of the Puppet upgrade itself, but actually by module(s) not yet adapted for 5.x. We use a combination of theforeman and puppetlabs modules to manage the installation of puppetserver, puppetdb, and the agent.</p>
+
+<p>####Problem #1####
+My first issue was a classic case of <strong>RTFM</strong>. As the <a href="https://docs.puppet.com/puppetdb/5.0/">doc</a> clearly states Postgres 9.6 required. It turns out that 9.4 != 9.6. I received an error stating this fact in the PuppetDB log when attempting to start. So for those needing to upgrade a simple change to the postgres user and <code class="highlighter-rouge">pg_dumpall -f /tmp/pg_dumpall94</code>, then upgrade Postgresql and <code class="highlighter-rouge">psql -f /tmp/pg_dumpall94</code>. I performed incremental upgrades from 9.4 -&gt; 9.5 -&gt; 9.6 <em>just</em> to be extra safe.</p>
+
+<p>####Problem #2####
+The second problem was I got stumped on an error about the new metrics-webservice feature that was causing puppetserver not to start. I was pleasantly surprised when I submitted Puppet ticket <a href="https://tickets.puppetlabs.com/browse/SERVER-1876">SERVER-1876</a> and someone replied within two hours on a Saturday. Which then fixed the issues, but also pointed me in the right direction and found that theforeman-puppet module decided to whack a line in <code class="highlighter-rouge">/etc/puppetlabs/puppetserver/conf.d/web-routes.conf</code>.</p>
+
+<p>I noticed they had already started working on the fixes on the master branches for these modules, so I ran the vagrant environment on that until they cut a release.</p>
+
+<p><strong>NOTE</strong>: Even though theforeman-puppet module 8.0.0 is now comatible, it looks like theforeman-installer itself will not be until version 1.16, so this will only present a problem when installing from scratch. See the Puppet ticket <a href="https://tickets.puppetlabs.com/browse/SERVER-1876">SERVER-1876</a> to fix the issue yourself or just run the nightly release which has already been fixed.</p>
+
+<p>####Problem #3####
+Once that was all behind me the only remaining issue was a failed puppet run on the node running PuppetDB, which was caused by an incompatibility between the puppetdb and postgresql modules. See <a href="https://tickets.puppetlabs.com/browse/PDB-3587">PDB-3587</a> for details. Other than that it was functioning just fine.</p>
+
+<p>####The Actual Upgrade####
+Once I updated to the newly released versions of theforeman-puppet 8.0.0, puppetlabs-puppetdb 6.0.0, and puppetlabs-postgresql 5.0.0, then a Puppet agent run on the master node and puppetdb node ran like a charm in test!</p>
+
+<p>All that said and done, after updating the modules on production, upgrading basically as simple as <code class="highlighter-rouge">yum upgrade</code> and <code class="highlighter-rouge">puppet agent -t</code>. Really. Im not kidding, that was it.
+<img src="/content/images/2017/07/partyparrot-1.gif" alt="partyparrot" /></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/jekyll-beanbag/tags/#puppet" class="page__taxonomy-item" rel="tag">puppet</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2017-07-15T03:34:46-04:00">July 15, 2017</time></p>
+        
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Upgrade+to+Puppet+5%20http%3A%2F%2Flocalhost%3A4000%2Fjekyll-beanbag%2Fupgrade-to-puppet-5%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fjekyll-beanbag%2Fupgrade-to-puppet-5%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fjekyll-beanbag%2Fupgrade-to-puppet-5%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/jekyll-beanbag/easy-automatic-generation-of-goaccess-stats/" class="pagination--pager" title="Automatically generate GoAccess stats
+">Previous</a>
+    
+    
+      <a href="/jekyll-beanbag/python-pip-issues-after-homebrew-upgrade/" class="pagination--pager" title="Python PIP Issues after Homebrew upgrade
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/breaking-up-a-large-pull-request/" rel="permalink">Breaking up a large pull request
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  3 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Ever finished up all the changes for a pull request on GitHub and realized it was just too big to review easily or to reason about what’s going on? I had jus...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/protecting-sensitive-data-in-puppet-code/" rel="permalink">My journey to securing sensitive data in Puppet code
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  13 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">Dealing with secrets and sensitive data in Puppet is daunting, right? Nope, not at all. Let me show you how to do it. I’ve wrapped my head around the options...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/dual-booting-macos-high-sierra-and-linux-mint/" rel="permalink">Dual Booting macOS High Sierra and Linux Mint
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  11 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">This is a step-by-step walkthrough for dual booting a MacBook Pro (Mid-2015 aka MacBookPro11,5) that already has macOS High Sierra on it with Linux Mint. The...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title" itemprop="headline">
+      
+        <a href="/jekyll-beanbag/gitlab-ci-and-chocolatey-server/" rel="permalink">GitLab CI and Chocolatey Server
+</a>
+      
+    </h2>
+    
+      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+
+
+
+
+  5 minute read
+</p>
+    
+    <p class="archive__item-excerpt" itemprop="description">If you are not familiar with chocolatey, its an awesome package manager, like apt or yum, for Windows. You can also host your own internal chocolatey feed an...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><input type="search" id="search" aria-placeholder="Enter your search term..." class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+    <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://github.com/genebean" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/technicalissues" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://app.vagrantup.com/genebean" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i> Vagrant Boxes</a></li>
+        
+      
+    
+
+    <li><a href="/jekyll-beanbag/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2019 The Comfy Seat. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/jekyll-beanbag/assets/js/main.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
+
+
+
+
+<script src="/jekyll-beanbag/assets/js/lunr/lunr.min.js"></script>
+<script src="/jekyll-beanbag/assets/js/lunr/lunr-store.js"></script>
+<script src="/jekyll-beanbag/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>
