@@ -63,7 +63,7 @@ plugins:
 author:
   name   : "Gene Liverman"
   #avatar : "/assets/images/bio-photo.jpg"
-  bio    : "My awesome biography constrained to a sentence or two goes here."
+  bio    : "I'm a bicycle riding Eagle Scout tech geek. I'm also a genealogy nut who drinks too much coffee."
   location: "Georgia, USA"
   links:
     - label: "GitHub"
