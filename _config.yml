@@ -27,6 +27,7 @@ search: true
 logo: "assets/images/the-comfy-seat.png"
 
 # Build settings
+show_drafts: false
 markdown: kramdown
 highlighter: rouge
 remote_theme: mmistakes/minimal-mistakes
