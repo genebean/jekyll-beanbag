@@ -1,0 +1,35 @@
+{% if post.header.teaser %}
+  {% capture teaser %}{{ post.header.teaser }}{% endcapture %}
+{% else %}
+  {% assign teaser = site.teaser %}
+{% endif %}
+
+{% if post.id %}
+  {% assign title = post.title | markdownify | remove: "<p>" | remove: "</p>" %}
+{% else %}
+  {% assign title = post.title %}
+{% endif %}
+
+<article class="post blog-list-item-article card-panel grey lighten-5">
+    <div class="section">
+        <h5 class="link-theme-active-to-black"><a href="{{ post.url | relative_url }}" rel="permalink"
+                class="link-theme-active-to-black">{{ title }}</a></h5>
+        {% if post.read_time %}
+        <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> {% include read-time.html %}</p>
+        {% endif %}
+        {% if post.excerpt %}
+        <p class="valign" itemprop="description">
+            {{ post.excerpt | markdownify | strip_html | truncate: 160 }}
+            <a class="link-theme-active-to-black" href="{{ post.url | relative_url }}" rel="permalink">&raquo; Read more</a>
+        </p>
+        {% endif %}
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+        <i class="mdi-social-person-outline right-align"></i>&nbsp;<strong><a
+                class="link-theme-active-to-black valign left-align" href="/author/{{ post.author | default: site.author.name }}/"
+                title="{{ post.author | default: site.author.name }}">{{ post.author | default: site.author.name }}</a></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <i class="tiny mdi-device-access-alarms valign right-align"></i>&nbsp;<time
+            class="valign right-align" datetime="2018-10-16">16 October 2018</time>
+    </div>
+</article>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!--[if IE 8]>          <html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>          <html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->
+<html>
+<!--<![endif]-->
+
+{% include head.html %}
+
+<body class="home-template grey lighten-2">
+    <!-- Pre-loader -->
+    <div class="loader preloader-wrapper small" role="loader">
+        <div class="spinner-layer spinner-red-only">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+                <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+    </div>
+    <!-- /Pre-loader -->
+    <!-- Back to top link -->
+    <a href="#" class="btn-floating btn-small waves-effect waves-light deep-orange back-to-top" title="Back to top"><i
+            class="mdi-hardware-keyboard-capslock small"></i></a>
+    <!-- /Back to top link -->
+
+    <!-- Header -->
+    {% include header.html %}
+    <!-- /Header -->
+
+    <main>
+        <div class="row">
+           {{ content }}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    {% include footer.html %}
+    <!-- /Footer -->
+
+    <!-- You can safely delete this line if your theme does not require jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <!-- Load: jQuery from Google CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!-- Load: CSS3 media queries - CSS3 media query support for older version of IE < 9 -->
+    <!-- [if lt IE 9]>
+<script src="https://cdn.jsdelivr.net/css3-mediaqueries/0.1/css3-mediaqueries.min.js"></script>
+<![endif]-->
+
+    <!-- Load: FitVids - making videos responsive -->
+    <script src="https://cdn.jsdelivr.net/fitvids/1.1.0/jquery.fitvids.js"></script>
+
+    <!-- Load: Highlight - formatting for code snippets -->
+    <script src="https://cdn.jsdelivr.net/highlight.js/8.4/highlight.min.js"></script>
+
+    <!-- Load: Fancybox - preview images on blog article and pages -->
+    <script src="https://cdn.jsdelivr.net/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+    <!-- Load: Materialize minified javascript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.96.1/js/materialize.min.js"></script>
+
+    <!-- Load: Main - site wide script -->
+    <script type="text/javascript" src={{ "/assets/js/theme.js?v=3774fbbd02" | relative_url }}></script>
+
+    <!-- Initialize: code formatter - Highlight -->
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.8.1/js/all.js" integrity="sha384-g5uSoOSBd7KkhAMlnQILrecXvzst9TdC09/VM+pjDTCM+1il8RHz5fKANTFFb+gQ" crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,36 +1,25 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely edit after that. If you find
-# yourself editing this file very often, consider using Jekyll's data files
-# feature for the data you need to update frequently.
-#
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
-
-# Site settings
-# These are used to personalize your new site. If you look in the HTML files,
-# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
-# You can create any custom variable you would like, and they will be accessible
-# in the templates via {{ site.myvariable }}.
 title: The Comfy Seat
 email: gene@technicalissues.us
 description: >- # this means to ignore newlines until "baseurl:"
-  My online seat to geek out and share my thoughts
+  The chair I sit in to geek out
 baseurl: /jekyll-beanbag
 url: https://genebean.github.io
 repository: "genebean/jekyll-beanbag"
 twitter_username: technicalissues
 github_username: genebean
-minimal_mistakes_skin: dirt
 search: true
-logo: "assets/images/the-comfy-seat.png"
+logo: "/assets/images/Front-Row.png"
 
 # Build settings
 show_drafts: false
 markdown: kramdown
 highlighter: rouge
-remote_theme: mmistakes/minimal-mistakes
+kramdown:
+  input: GFM
+sass:
+  sass_dir: _sass
+  # style: compressed
+
 # Outputting
 permalink: /:categories/:title/
 paginate: 5 # amount of posts to show
@@ -63,7 +52,7 @@ plugins:
 
 author:
   name   : "Gene Liverman"
-  #avatar : "/assets/images/bio-photo.jpg"
+  avatar : "/assets/images/headshot-gene.png"
   bio    : "I'm a bicycle riding Eagle Scout tech geek. I'm also a genealogy nut who drinks too much coffee."
   location: "Georgia, USA"
   links:
@@ -77,17 +66,30 @@ author:
       icon: "fas fa-fw fa-link"
       url: "https://app.vagrantup.com/genebean"
 
+header:
+  links:
+    - label: "GitHub"
+      url: "https://github.com/genebean"
+    - label: "Vagrant Boxes"
+      url: "https://app.vagrantup.com/genebean"
+
 footer:
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/genebean"
+      username: "genebean"
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
       url: "https://twitter.com/technicalissues"
+      username: "technicalissues"
     - label: "Vagrant Boxes"
       icon: "fas fa-fw fa-link"
       url: "https://app.vagrantup.com/genebean"
+  tagline:
+    pre-link: 'resides at'
+    label: 'Linode'
+    url: 'https://www.linode.com/?r=bf96f91b25091ab6d46a6433160cdd112fe5f73c'
 
 defaults:
   # _posts
@@ -112,6 +114,7 @@ defaults:
 category_archive:
   type: liquid
   path: /categories/
+
 tag_archive:
   type: liquid
   path: /tags/

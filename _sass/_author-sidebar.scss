@@ -1,0 +1,29 @@
+/*
+  Original file:
+  https://github.com/mmistakes/minimal-mistakes/blob/master/_sass/minimal-mistakes/_sidebar.scss
+
+  Content adapted for use with this theme
+*/
+
+.author__avatar {
+    display: table-cell;
+    vertical-align: top;
+    width: 36px;
+    height: 36px;
+
+    img {
+      max-width: 110px;
+      border-radius: 50%;
+  }
+}
+  
+.author__urls-wrapper {
+    a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+  }
+}

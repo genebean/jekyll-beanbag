@@ -1,0 +1,37 @@
+<header>
+    <nav class="grey darken-3">
+        <div class="nav-wrapper">
+            <a href="{{ site.url | relative_url }}" title="{{ site.title }}" class="link-white-to-theme-active brand-logo">
+                <div class="blog-title"><img class="z-depth-3 blog-logo circle valign"
+                        src="{{ site.logo | relative_url }}" /><span class="blog-title-text valign">{{ site.title }}</span></div>
+            </a>
+            <a href="#" data-activates="device-hamburger-menu" class="button-collapse device-menu-link">
+                <i class="mdi-navigation-menu"></i>
+            </a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li role="presentation"><a class="link-white-to-theme-active" href="{{ site.url | relative_url }}/">Home</a></li>
+                {% if site.header.links %}
+                    {% for link in site.header.links %}
+                        {% if link.label and link.url %}
+                        <li role="presentation"><a class="link-white-to-theme-active"
+                            href="{{ link.url }}">{{ link.label }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </ul>
+            <ul class="side-nav" id="device-hamburger-menu">
+                <li role="presentation" class="active"><a class="link-white-to-theme-active"
+                        href="{{ site.url | relative_url }}/">Home</a></li>
+                {% if site.header.links %}
+                    {% for link in site.header.links %}
+                        {% if link.label and link.url %}
+                        <li role="presentation"><a class="link-white-to-theme-active"
+                            href="{{ link.url }}">{{ link.label }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </ul>
+
+        </div>
+    </nav>
+</header>
