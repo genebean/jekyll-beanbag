@@ -1,5 +1,6 @@
 ---
 title: GitLab CI and Chocolatey Server
+author: Jake Spain
 date: '2017-08-09 13:15:20'
 tags:
 - chocolatey

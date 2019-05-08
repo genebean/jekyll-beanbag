@@ -2,6 +2,7 @@
 title: Upgrade to Puppet 5
 image: ''
 date: '2017-07-15 03:34:46'
+author: Jake Spain
 tags:
 - puppet
 ---

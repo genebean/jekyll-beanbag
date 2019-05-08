@@ -1,5 +1,6 @@
 ---
 title: Add Puppetfile Validation to Testing
+author: Jake Spain
 date: '2017-07-31 18:20:47'
 ---
 
