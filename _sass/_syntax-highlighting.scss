@@ -5,6 +5,8 @@
   Extrcted needed variables
    - Syntax highlighting (base16) colors
    - font family
+
+  Also adjusted borders and inline code coloring.
 */
 
 /* ==========================================================================
@@ -45,8 +47,8 @@ $monospace-font-family: Menlo, Consolas, Monaco, "Courier New", Courier, monospa
 code.highlighter-rouge {
   margin: 0;
   padding: 0.2em 0.4em;
-  color: $base05;
-  background-color: $base00;
+  color: $base00;
+  background-color: $base01;
   font-size: 85%;
   border-radius: 3px;
 }
@@ -61,6 +63,8 @@ figure.highlight {
   color: $base05;
   font-family: $monospace-font-family;
   line-height: 1.8;
+  border-style: solid;
+  border-width: thin;
 
   > pre,
   pre.highlight {
