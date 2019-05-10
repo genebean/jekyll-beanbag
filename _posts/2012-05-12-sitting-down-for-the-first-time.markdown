@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Sitting down for the first time…
-date: '2012-05-12 22:33:01'
 ---
 
 

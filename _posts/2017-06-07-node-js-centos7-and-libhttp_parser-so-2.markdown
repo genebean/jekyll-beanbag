@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Node.js, CentOS7, and libhttp_parser.so.2
-date: '2017-06-07 04:05:18'
 ---
 
 Don't you just love it when package maintainers break you blog? Yeah, me too. Tonight I went to post an article (no, not this one) and found my site to be down. When I went to start it back up I got this:

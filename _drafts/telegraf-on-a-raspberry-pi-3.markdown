@@ -1,4 +1,5 @@
 ---
+author: gene
 title: Telegraf on a Raspberry Pi 3
 ---
 

@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Solving a WordPress 'http error'
-date: '2017-03-25 02:47:53'
 ---
 
 Tonight we were trying to make the first post on my wife's blog and ran smack into a "Http error" message. When I looked in the console of my web browser I found an error 413 (Request Entity Too Large) message. After a bit of Googling it turns out that Nginx was the culprit. Apparently the default value of [`client_max_body_size`][cmbs] is 1 meg. As I am sure you can imagine, most images grabbed with a camera phone are larger than that now.

@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Vagrant, Veewee, & Me (part 1)
-date: '2013-05-21 21:32:12'
 tags:
 - centos
 - linux

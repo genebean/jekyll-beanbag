@@ -1,6 +1,6 @@
 ---
+author: gene
 title: 'Configuration Management Part 1: The Restart'
-date: '2014-04-22 23:30:00'
 tags:
 - configuration-management
 - git

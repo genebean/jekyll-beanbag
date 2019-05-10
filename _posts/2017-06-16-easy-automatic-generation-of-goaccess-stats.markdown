@@ -1,6 +1,6 @@
 ---
-title: Automatically generate GoAccess stats
-date: '2017-06-16 05:15:53'
+author: gene
+title: Automatically Generate GoAccess stats
 ---
 
 I've been using [GoAccess](https://goaccess.io) to look at my logs for a while now. The other day I decided I wanted be able to look at these stats for the different sites on my web server in a variety of ways including:

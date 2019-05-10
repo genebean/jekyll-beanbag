@@ -1,6 +1,5 @@
 ---
-title: Automatically Starting and Stopping Oracle Fusion Middleware on Red Hat 5
-date: '2013-09-28 17:58:34'
+author: gene
 tags:
 - opensource
 - oracle

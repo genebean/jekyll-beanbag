@@ -1,6 +1,5 @@
 ---
-title: Dual Booting macOS High Sierra and Linux Mint
-date: '2018-02-06 05:43:11'
+author: gene
 ---
 
 This is a step-by-step walkthrough for dual booting a MacBook Pro (Mid-2015 aka MacBookPro11,5) that already has macOS High Sierra on it with Linux Mint. The hard drive is formatted APFS and has File Vault turned on. 

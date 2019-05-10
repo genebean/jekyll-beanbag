@@ -1,6 +1,6 @@
 ---
+author: gene
 title: 'Configuration Management Part 3: Vagrant & Packer'
-date: '2014-04-27 23:24:32'
 tags:
 - apache
 - configuration-management

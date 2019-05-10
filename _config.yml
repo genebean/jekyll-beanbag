@@ -1,14 +1,14 @@
 title: The Comfy Seat
 email: gene@technicalissues.us
-description: >- # this means to ignore newlines until "baseurl:"
+description: >- # this means to ignore newlines until 'baseurl:'
   The chair I sit in to geek out
 baseurl: /jekyll-beanbag
 url: https://genebean.github.io
-repository: "genebean/jekyll-beanbag"
+repository: 'genebean/jekyll-beanbag'
 twitter_username: technicalissues
 github_username: genebean
 search: true
-logo: "/assets/images/Front-Row.png"
+logo: '/assets/images/Front-Row.png'
 
 # Build settings
 show_drafts: false
@@ -50,54 +50,48 @@ plugins:
   - jemoji
   - jekyll-include-cache
 
-author:
-  name   : "Gene Liverman"
-  avatar : "/assets/images/headshot-gene.png"
-  bio    : "I'm a bicycle riding Eagle Scout tech geek. I'm also a genealogy nut who drinks too much coffee."
-  location: "Georgia, USA"
-  links:
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/genebean"
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/technicalissues"
-    - label: "Vagrant Boxes"
-      icon: "fas fa-fw fa-link"
-      url: "https://app.vagrantup.com/genebean"
-
 header:
   links:
-    - label: "GitHub"
-      url: "https://github.com/genebean"
-    - label: "Vagrant Boxes"
-      url: "https://app.vagrantup.com/genebean"
+    - label: 'GitHub'
+      url: 'https://github.com/genebean'
+    - label: 'Vagrant Boxes'
+      url: 'https://app.vagrantup.com/genebean'
 
 footer:
   links:
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/genebean"
-      username: "genebean"
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/technicalissues"
-      username: "technicalissues"
-    - label: "Vagrant Boxes"
-      icon: "fas fa-fw fa-link"
-      url: "https://app.vagrantup.com/genebean"
+    - label: 'GitHub'
+      icon: 'fab fa-fw fa-github'
+      url: 'https://github.com/genebean'
+      username: 'genebean'
+    - label: 'Twitter'
+      icon: 'fab fa-fw fa-twitter-square'
+      url: 'https://twitter.com/technicalissues'
+      username: 'technicalissues'
+    - label: 'Vagrant Boxes'
+      icon: 'fas fa-fw fa-link'
+      url: 'https://app.vagrantup.com/genebean'
   tagline:
     pre-link: 'resides at'
     label: 'Linode'
     url: 'https://www.linode.com/?r=bf96f91b25091ab6d46a6433160cdd112fe5f73c'
 
+collections:
+  authors:
+    output: true
+
 defaults:
+  - scope:
+      path: ""
+      type: "authors"
+    values:
+      layout: "author"
   # _posts
   - scope:
       path: ""
-      type: posts
+      type: "posts"
     values:
-      layout: single
+      layout: "single"
+      short_name: "gene"
       author_profile: true
       read_time: true
       comments: true
@@ -106,9 +100,10 @@ defaults:
   # _pages
   - scope:
       path: "_pages"
-      type: pages
+      type: "pages"
     values:
-      layout: single
+      layout: "single"
+      author: "gene"
       author_profile: true
 
 category_archive:

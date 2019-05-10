@@ -26,10 +26,13 @@
   </div>
   <div class="divider"></div>
   <div class="section">
-    <i class="mdi-social-person-outline right-align"></i>&nbsp;<strong><a
-        class="link-theme-active-to-black valign left-align"
-        href="/author/{{ post.author | default: site.author.name }}/"
-        title="{{ post.author | default: site.author.name }}">{{ post.author | default: site.author.name }}</a></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <i class="mdi-social-person-outline right-align"></i>&nbsp;<strong>
+      {% assign author = site.authors | where: 'short_name', post.author | first %}
+      {% if author %}
+      <a class="link-theme-active-to-black valign left-align" href="{{ author.url | relative_url }}"
+        title="{{ author.name }}">{{ author.name }}</a>
+      {% endif %}
+    </strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <i class="far fa-calendar-alt"></i>&nbsp;<time class="valign right-align"
       datetime="{{ post.date | date: "%Y-%m-%d" }}">{{ post.date | date: "%b. %d, %Y" }}</time>
   </div>

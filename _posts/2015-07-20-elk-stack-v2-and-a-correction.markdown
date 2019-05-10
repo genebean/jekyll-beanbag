@@ -1,6 +1,6 @@
 ---
+author: gene
 title: ELK Stack v2 (and a correction)
-date: '2015-07-20 23:31:12'
 tags:
 - elasticsearch
 - logging

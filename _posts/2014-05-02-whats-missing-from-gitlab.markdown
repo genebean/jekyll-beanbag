@@ -1,6 +1,6 @@
 ---
-title: What's missing from GitLab?
-date: '2014-05-02 00:09:53'
+author: gene
+title: What's Missing from GitLab?
 tags:
 - gitlab
 - opensource

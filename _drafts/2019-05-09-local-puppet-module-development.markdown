@@ -1,5 +1,5 @@
 ---
-title: Local Puppet Module Development
+author: gene
 ---
 
 This post aims to show the methodology that I use to develop Puppet modules on my laptop. Its broken up into three main sections:

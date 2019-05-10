@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Putting this site to use...
-date: '2012-07-17 19:55:28'
 ---
 
 

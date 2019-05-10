@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Puppet, Factor, Dashboard, MCollective, Hiera, Foreman... Where does it end?
-date: '2013-10-27 22:52:40'
 tags:
 - configuration-management
 - devops

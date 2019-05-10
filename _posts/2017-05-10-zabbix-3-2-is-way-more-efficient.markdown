@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Zabbix 3.2 is WAY more efficient!
-date: '2017-05-10 15:06:18'
 ---
 
 Recently our Oracle DBA hit me up and said that all of a sudden some of his servers were showing a load average of `0.00, 0.00, 0.00`. To diagnose this I started looking at our Zabbix dashboard to see when the load dropped off. I noticed it was on March the 3rd so I checked a second host and found that it also dropped off on the same day... *interesting*. 

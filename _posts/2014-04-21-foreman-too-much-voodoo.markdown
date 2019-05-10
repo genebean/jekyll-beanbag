@@ -1,6 +1,6 @@
 ---
-title: 'Foreman: too much voodoo'
-date: '2014-04-21 21:55:25'
+author: gene
+title: 'Foreman: Too Much Voodoo'
 tags:
 - configuration-management
 - git

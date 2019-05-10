@@ -1,6 +1,5 @@
 ---
-title: Updating to Puppet 4, part 2
-date: '2017-01-28 19:36:56'
+author: gene
 ---
 
 #### **_Four repos become one..._**

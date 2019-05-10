@@ -1,6 +1,6 @@
 ---
+author: gene
 title: 'Configuration Management Part 2: puppetlabs-apache & puppet-lint'
-date: '2014-04-23 22:54:34'
 tags:
 - apache
 - configuration-management
