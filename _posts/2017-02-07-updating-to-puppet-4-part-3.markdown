@@ -1,6 +1,5 @@
 ---
-title: Updating to Puppet 4, part 3
-date: '2017-02-07 02:22:43'
+author: gene
 ---
 
 ##### *Hooked and Proxied*

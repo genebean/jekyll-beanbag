@@ -1,6 +1,5 @@
 ---
-title: The Ghost Lives
-date: '2017-01-16 23:34:58'
+author: gene
 ---
 
 I decided it was time to stop procrastinating and actually update the live version of my blog to the one I have been working on for a while. So, here it is: *The Comfy Seat*: Ghost edition.

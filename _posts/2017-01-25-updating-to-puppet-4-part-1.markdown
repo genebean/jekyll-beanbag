@@ -1,6 +1,5 @@
 ---
-title: Updating to Puppet 4, part 1
-date: '2017-01-25 05:29:43'
+author: gene
 ---
 
 Better than two years ago I created a multi-node Vagrant setup based around a three node Puppet environment with boxes for:

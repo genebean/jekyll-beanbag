@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Windows 7 x64 and Underscore-CLI
-date: '2014-11-23 22:57:51'
 tags:
 - node-js
 - windows-7

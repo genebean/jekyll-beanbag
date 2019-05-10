@@ -1,6 +1,5 @@
 ---
-title: Using Oracle Wallet with Wildcard Certificates
-date: '2013-02-05 14:55:56'
+author: gene
 tags:
 - oracle
 - ssl

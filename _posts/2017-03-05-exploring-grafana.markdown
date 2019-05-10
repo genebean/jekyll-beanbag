@@ -1,6 +1,5 @@
 ---
-title: Exploring Grafana
-date: '2017-03-05 18:30:46'
+author: gene
 ---
 
 This weekend I decided to check out [Grafana][grafana]. My first test for it was setting up the [Zabbix backend][zb]. This went much better than I had expected so I started looking at what other data I could pull in. It turns out that Grafana may well be a great tool for centralizing data and metrics from disparate sources. The consensus on the interwebs, as best as I can tell, is that InfluxDB is the backend I should store my metrics in so I'm going try that next. Once InfluxDB is setup my plan is to try out some one-off inputs to it such as:

@@ -1,6 +1,5 @@
 ---
-title: Breaking up a large pull request
-date: '2018-10-17 01:32:22'
+author: gene
 ---
 
 Ever finished up all the changes for a pull request on GitHub and realized it was just too big to review easily or to reason about what's going on? I had just this issue recently. The solution: create multiple patches that each contain a subset of the changes and use them to generate more manageable pull requests.

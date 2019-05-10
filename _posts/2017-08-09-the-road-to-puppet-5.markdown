@@ -1,6 +1,5 @@
 ---
-title: The Road to Puppet 5
-date: '2017-08-09 07:14:41'
+author: gene
 ---
 
 Not long ago Puppet released version 5 to the open source world so, naturally, it was time to start updating all my projects to be compatible with it. The first stop along the way was at the house of Vagrant... only, there's a catch: it's been relocated. That's right, my Vagrant boxes got a shiny new home at [app.vagrantup.com/genebean](https://app.vagrantup.com/genebean) as part of some restructuring done by HashiCorp. After getting my new door key (aka account) I went next door to visit my friend [Packer](https://packer.io). I hung out in his workshop massaging [my templates](https://github.com/genebean/packer-templates) with the goal of updating and simplifying the boxes I build. The end result included combining all the versions of RVM into a single build and creating a new box for Puppet 5. Now, if you've ever hung around Mr. Packer for any length of time then you know he loves to create multiple versions of anything he helps assemble. Seeing as I want him to be happy I figured I should oblige and let him create some [Docker images](https://hub.docker.com/u/genebean/) too. 

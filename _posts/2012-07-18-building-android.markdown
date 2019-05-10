@@ -1,5 +1,5 @@
 ---
-title: Building Android
+author: gene
 date: '2012-07-18 20:45:45'
 ---
 

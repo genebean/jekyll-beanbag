@@ -1,6 +1,6 @@
 ---
+author: gene
 title: ELK Stack Design
-date: '2015-06-19 23:56:48'
 tags:
 - elasticsearch
 - logging

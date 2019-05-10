@@ -1,6 +1,6 @@
 ---
+author: gene
 title: More Monitoring... NOW!
-date: '2013-04-01 01:20:19'
 tags:
 - clearos
 - gentoo

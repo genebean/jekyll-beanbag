@@ -1,7 +1,5 @@
 ---
-title: Add Puppetfile Validation to Testing
-author: Jake Spain
-date: '2017-07-31 18:20:47'
+author: jake
 ---
 
 This is a quick post about how to add validation of your `Puppetfile`, primarily if you are using the [control-repo](https://github.com/puppetlabs/control-repo) and r10k for deploying Puppet environments. This came about because I found myself entering incorrect syntax into this file on more than a one occasion. Additionally, there are no indications of any problem, even when importing environments in Foreman, so the only way to find out is by manually running r10k from the command line on the Puppet Server.

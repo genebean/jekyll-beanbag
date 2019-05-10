@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Vagrant, Fusion, & DHCP Oddities
-date: '2014-05-11 00:20:13'
 tags:
 - vagrant
 ---

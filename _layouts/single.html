@@ -22,15 +22,17 @@ layout: two-column-author
       {% endif %}
       {% if page.last_modified %}
       <p>Updated
-        <time class=""
-          datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%b. %d, %Y" }}</time></p>
+        <time class="" datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%b. %d, %Y" }}</time></p>
       {% endif %}
     </div>
-    <div class="section">
-      <i class="mdi-social-person-outline right-align"></i>&nbsp;<strong><a
-          class="link-theme-active-to-black valign left-align"
-          href="/author/{{ page.author | default: site.author.name }}/"
-          title="{{ page.author | default: site.author.name }}">{{ page.author | default: site.author.name }}</a></strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <div class="`section">
+      <i class="mdi-social-person-outline right-align"></i>&nbsp;<strong>
+        {% assign author = site.authors | where: 'short_name', page.author | first %}
+        {% if author %}
+        <a class="link-theme-active-to-black valign left-align" href="{{ author.url | relative_url }}"
+          title="{{ author.name }}">{{ author.name }}</a>
+        {% endif %}
+      </strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <i class="far fa-calendar-alt"></i>&nbsp;<time class="valign right-align"
         datetime="{{ page.date | date: "%Y-%m-%d" }}">{{ page.date | date: "%b. %d, %Y" }}</time>
       <div class="divider"></div>

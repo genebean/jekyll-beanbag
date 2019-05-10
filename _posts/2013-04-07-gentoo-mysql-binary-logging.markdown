@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Gentoo & MySQL Binary Logging
-date: '2013-04-07 23:23:27'
 tags:
 - gentoo
 - mysql

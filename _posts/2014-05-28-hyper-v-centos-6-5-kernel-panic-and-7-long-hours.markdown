@@ -1,6 +1,6 @@
 ---
+author: gene
 title: Hyper-V, CentOS 6.5 kernel panic, and 7 long hours
-date: '2014-05-28 22:41:32'
 tags:
 - centos
 - hyper-v
