@@ -1,17 +1,12 @@
 <div class="col l3 hide-on-med-and-down center-align">
     <div class="sidebar">
-        <!-- SIDEBAR CARD - BEGINS -->
+        {% if page.author_profile %}
         <div class="card-panel grey lighten-5 left-align">
             {% include author-profile.html %}
         </div>
-        <!-- SIDEBAR CARD - ENDS -->
-        <div class="card-panel grey lighten-5">
-            <!-- SIDEBAR CARD WITH ROWS EXAMPLE 1 - BEGINS -->
-            <div class="row jngt-sidebar-space-top jngt-sidebar-space-bottom">
-                <div class="col-md-12">
-                    {% include twitter-timeline.html %}
-                </div>
-            </div>
+        {% endif %}
+        <div class="card-panel grey lighten-5 left-align">
+            {% include twitter-timeline.html %}
         </div>
     </div>
 </div>

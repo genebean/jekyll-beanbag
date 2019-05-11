@@ -1,0 +1,56 @@
+# see https://yaml-multiline.info for help with longer chunks of text
+gene:
+  name: Gene Liverman
+  short_name: gene
+  avatar : '/assets/images/headshot-gene.png'
+  location: 'Georgia, USA'
+  github: 'genebean'
+  twitter: 'technicalissues'
+  linkedin: 'geneliverman'
+  links:
+    - label: 'Vagrant Boxes'
+      icon: 'fas fa-fw fa-link'
+      url: 'https://app.vagrantup.com/genebean'
+
+jake:
+  name   : Jake Spain
+  short_name: jake
+  avatar : '/assets/images/thespain-avatar.png'
+  location: 'Georgia, USA'
+  github: 'thespain'
+  twitter: 'thejspain'
+  linkedin: 'jake-spain-3907449b'
+
+# jdoe:
+#   name: John Doe
+#   short_name: jdoe
+#   avatar : '/assets/images/headshot-jdoe.png'
+#   location: 'Somewhere, USA'
+#   uri: 'https://me.example.com'
+#   email:
+#   keybase:
+#   twitter:
+#   facebook:
+#   linkedin:
+#   xing:
+#   instagram:
+#   tumblr:
+#   bitbucket:
+#   github:
+#   gitlab:
+#   stackoverflow:
+#   lastfm:
+#   dribbble:
+#   pinterest:
+#   foursquare:
+#   steam:
+#   youtube:
+#   soundcloud:
+#   weibo:
+#   flickr:
+#   codepen:
+#   vine:
+#   links:
+#     - label: 'Some Aweseome Site'
+#       icon: 'fas fa-fw fa-link'
+#       url: 'https://foo.example.com'

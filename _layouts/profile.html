@@ -1,20 +1,23 @@
 ---
-layout: two-column-twitter
+layout: two-column-author
 ---
+{% assign author = site.data.authors[page.short_name ] %}
+
 <article class="post card-panel grey lighten-5" itemscope itemtype="https://schema.org/CreativeWork">
-  <div class="section post-title">
-    <h1 id="page-title" class="page__title" itemprop="headline">{{ page.name }}</h1>
+  <div class="author__content">
+    <h1 class="author__name" itemprop="name">{{ author.name }}</h1>
   </div>
   <div class="post-content">
     {{ content }}
   </div>
+  <div class="divider"></div>
   <div class="section">
     <div class="post-content">
       <h2>Posts</h2>
     </div>
     <div class="post-content">
       <ul>
-        {% assign filtered_posts = site.posts | where: 'author', page.short_name %}
+        {% assign filtered_posts = site.posts | where: 'author', author.short_name %}
         {% for post in filtered_posts %}
         <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
         {% endfor %}

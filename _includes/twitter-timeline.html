@@ -1,3 +1,13 @@
-<a class="twitter-timeline" data-height="1000" data-theme="light" href="https://twitter.com/technicalissues?ref_src=twsrc%5Etfw">Tweets by
-    technicalissues</a>
+{% if page.authors %}
+  {% assign page_author = page.authors[0] %}
+{% else %}
+  {% assign page_author = page.author | default: site.author %}
+{% endif %}
+
+{% assign author = site.data.authors[page_author] %}
+
+{% assign twitter_account = author.twitter | default: site.twitter.username %}
+
+<a class="twitter-timeline" data-height="1000" data-theme="light" href="https://twitter.com/{{ twitter_account }}?ref_src=twsrc%5Etfw">Tweets by
+    {{ twitter_account }}</a>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
