@@ -1,5 +1,7 @@
 ---
 author: gene
+title: My journey to securing sensitive data in Puppet code
+canonical_url: 'https://puppet.com/blog/my-journey-securing-sensitive-data-puppet-code'
 ---
 
 Dealing with secrets and sensitive data in Puppet is daunting, right? Nope, not at all. Let me show you how to do it. I've wrapped my head around the options available and want to share my journey in hopes of saving you from a few trials and tribulations. Just interested in the end result? Feel free to scroll down to the last section fittingly entitled [_The final product_](#finalproduct).
