@@ -12,8 +12,6 @@ lang: en_US
 # other info
 email: gene@technicalissues.us
 repository: 'genebean/jekyll-beanbag'
-twitter_username: technicalissues
-github_username: genebean
 search: true
 
 # Build settings
@@ -83,22 +81,23 @@ footer:
     url: 'https://www.linode.com/?r=bf96f91b25091ab6d46a6433160cdd112fe5f73c'
 
 collections:
-  authors:
+  profiles:
     output: true
 
 defaults:
+  # _profiles
   - scope:
       path: ""
-      type: "authors"
+      type: "profiles"
     values:
-      layout: "author"
+      layout: "profile"
   # _posts
   - scope:
       path: ""
       type: "posts"
     values:
       layout: "single"
-      short_name: "gene"
+      author: "gene"
       author_profile: true
       read_time: true
       comments: true
