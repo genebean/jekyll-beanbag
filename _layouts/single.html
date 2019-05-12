@@ -2,9 +2,9 @@
 layout: two-column-author
 ---
 {% if page.authors %}
-  {% assign page_author = page.authors[0] %}
+{% assign page_author = page.authors[0] %}
 {% else %}
-  {% assign page_author = page.author | default: site.author %}
+{% assign page_author = page.author | default: site.author %}
 {% endif %}
 
 {% assign author = site.data.authors[page_author] %}
@@ -35,7 +35,7 @@ layout: two-column-author
       {% endif %}
     </div>
     <div class="`section">
-      <i class="mdi-social-person-outline right-align"></i>&nbsp;<strong>
+        <i class="far fa-user"></i>&nbsp;<strong>
         <a class="link-theme-active-to-black valign left-align" href="{{ profile.url | relative_url }}"
           title="{{ author.name }}">{{ author.name }}</a>
       </strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
