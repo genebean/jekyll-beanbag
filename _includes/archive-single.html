@@ -11,9 +11,9 @@
 {% endif %}
 
 {% if post.authors %}
-  {% assign post_author = post.authors[0] %}
+{% assign post_author = post.authors[0] %}
 {% else %}
-  {% assign post_author = post.author | default: site.author %}
+{% assign post_author = post.author | default: site.author %}
 {% endif %}
 
 {% assign author = site.data.authors[post_author] %}
@@ -36,7 +36,7 @@
   </div>
   <div class="divider"></div>
   <div class="section">
-    <i class="mdi-social-person-outline right-align"></i>&nbsp;<strong>
+      <i class="far fa-user"></i>&nbsp;<strong>
       <a class="link-theme-active-to-black valign left-align" href="{{ profile.url | relative_url }}"
         title="{{ author.name }}">{{ author.name }}</a>
     </strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
