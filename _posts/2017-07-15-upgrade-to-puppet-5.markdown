@@ -25,4 +25,4 @@ Once that was all behind me the only remaining issue was a failed puppet run on 
 Once I updated to the newly released versions of theforeman-puppet 8.0.0, puppetlabs-puppetdb 6.0.0, and puppetlabs-postgresql 5.0.0, then a Puppet agent run on the master node and puppetdb node ran like a charm in test!
 
 All that said and done, after updating the modules on production, upgrading basically as simple as `yum upgrade` and `puppet agent -t`. Really. Im not kidding, that was it.
-![partyparrot](/content/images/2017/07/partyparrot-1.gif)
+![partyparrot]({{ '/assets/images/posts//partyparrot-1.gif'  | relative_url }})
