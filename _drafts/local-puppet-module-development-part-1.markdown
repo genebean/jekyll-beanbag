@@ -388,7 +388,7 @@ As you start to use vim with this new configuration you find that it has many he
 
 ##### VS Code
 
-![VS Code screenshot of nxlog::config]({{ 'assets/images/posts/vscode-of-nxlog-config.png' | relative_url }})
+![VS Code screenshot of nxlog::config]({{ '/assets/images/posts/vscode-of-nxlog-config.png' | relative_url }})
 
 Aside from being a really nice editor all the way around, there is an official extension for the Puppet language authored by [James Pogran](https://www.linkedin.com/in/jamespogran/). It is actively developed by several Puppet employees as part of their job. The [VS Code Puppet plugin page](https://marketplace.visualstudio.com/items?itemName=jpogran.puppet-vscode) has a wealth of information about what it can do.
 
