@@ -1,23 +1,37 @@
-# Jekyll site
-# Package your Jekyll site using the jekyll/builder Docker container image.
-# Add steps that build, test, save build artifacts, deploy, and more:
-# https://aka.ms/yaml
-
 #trigger:
-#- master
+- master
+- develop
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: Docker@0
-  displayName: 'Run Jekyll'
+- task: UseRubyVersion@0
   inputs:
-    containerRegistryType: 'Container Registry'
-    action: 'Run an image'
-    imageName: 'jekyll/builder:latest'
-    volumes: |
-      $(build.sourcesDirectory):/srv/jekyll
-      $(build.binariesDirectory):/srv/jekyll/_site
-    containerCommand: 'jekyll build --future'
-    detached: false
+    versionSpec: '>= 2.5'
+- task: Bash@3
+  displayName: Prep
+  inputs:
+    targetType: 'inline'
+    script: |
+      gem install --no-document bundler
+      bundle install --jobs=3 --path vendor/bundle
+- task: Bash@3
+  displayName: Build
+  inputs:
+    targetType: 'inline'
+    script: |
+      bundle exec jekyll build   
+- task: Bash@3
+  displayName: Test
+  inputs:
+    targetType: 'inline'
+    script: |
+      bundle exec htmlproofer --assume-extension --check-favicon \
+        --check-opengraph --report-invalid-tags --url_swap "\/jekyll-beanbag:" \
+        --url-ignore "#" --disable_external --empty_alt_ignore ./_site
+    failOnStderr: true
+- task: PublishPipelineArtifact@0
+  inputs:
+    artifactName: "site-$(Build.SourceBranchName)"
+    targetPath: '_site'
