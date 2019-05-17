@@ -36,6 +36,7 @@ Covering all this information is going to take some space. The links below shoul
       - [Setting up labels for the changelog generator](#setting-up-labels-for-the-changelog-generator)
     - [Puppet Strings](#puppet-strings)
     - [Araxis Merge](#araxis-merge)
+- [Ready to dive in?](#ready-to-dive-in)
 
 ## My development environment
 
@@ -447,3 +448,7 @@ I wrote a gem a while back that I find very helpful when testing a module in a V
 The last tool I want to mention is far and away the best visual diff tool I have seen: [Araxis Merge](https://www.araxis.com/merge). You don't need to grab it right now unless you want to but I do suggest taking a look at it. They offer it for free to anyone who contributes to an open source project such as a Puppet module. Learn more about this option at [https://www.araxis.com/buy/open-source](https://www.araxis.com/buy/open-source).
 
 If you do get it I suggest reading their guide for integrating with Git [here](https://www.araxis.com/merge/documentation-os-x/integrating-with-other-applications.en#Git). You'll want to be sure to expand the section entitled "To use Araxis Merge for file comparison and file merging" and add the recommended settings to `~/.gitconfig`.
+
+## Ready to dive in?
+
+This post covered a multitude of tools. Just to reiterate, you don't _need_ all of them to get started writing Puppet code. My setup includes several things that I think make me more efficient and/or make things easier. Wanna see how I put all this to use? Check out the next post in this series.
