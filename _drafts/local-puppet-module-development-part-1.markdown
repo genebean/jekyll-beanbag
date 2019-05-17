@@ -388,6 +388,8 @@ As you start to use vim with this new configuration you find that it has many he
 
 ##### VS Code
 
+![VS Code screenshot of nxlog::config]({{ 'assets/images/posts/vscode-of-nxlog-config.png' | relative_url }})
+
 Aside from being a really nice editor all the way around, there is an official extension for the Puppet language authored by [James Pogran](https://www.linkedin.com/in/jamespogran/). It is actively developed by several Puppet employees as part of their job. The [VS Code Puppet plugin page](https://marketplace.visualstudio.com/items?itemName=jpogran.puppet-vscode) has a wealth of information about what it can do.
 
 VS Code can be installed by following the directions at [https://code.visualstudio.com/docs/setup/mac](https://code.visualstudio.com/docs/setup/mac). Once installed be sure to follow the part of the guide entitled "Launching from the command line" as it will make life easier for you.
@@ -396,12 +398,12 @@ The next step is to install the Puppet extension. To do so, click the square on 
 
 I recommend doing the same for these extensions:
 
-- Better Align by WWM
-- Markdown All in One by Yu Zhang
-- Markdown Navigation by AlanWalk
-- markdownlint by David Anson
-- Ruby by Peng Lv
-- Spell Right by Bartosz Antosik
+- [Better Align by WWM](https://marketplace.visualstudio.com/items?itemName=wwm.better-align)
+- [Markdown All in One by Yu Zhang](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
+- [Markdown Navigation by AlanWalk](https://marketplace.visualstudio.com/items?itemName=AlanWalk.markdown-navigation)
+- [markdownlint by David Anson](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)
+- [Ruby by Peng Lv](https://marketplace.visualstudio.com/items?itemName=rebornix.Ruby)
+- [Spell Right by Bartosz Antosik](https://marketplace.visualstudio.com/items?itemName=ban.spellright)
 
 Next, navigate to Code > Preferences > Settings, make sure "User Settings" is the selected tab, type pdk in the search box, scroll down a little and change "Puppet: Install Type" to pdk.
 
