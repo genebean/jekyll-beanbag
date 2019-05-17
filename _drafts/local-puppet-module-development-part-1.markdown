@@ -1,20 +1,13 @@
 ---
 author: gene
+title: Local Puppet Module Development, Part 1
 ---
 
-This post aims to show the methodology that I use to develop Puppet modules on my laptop. Its broken up into three main sections:
+This post is the first in a series that aims to show the methodology that I use to develop Puppet modules on my laptop. The series is broken up into:
 
-In the first section I will cover how I setup my development environment along with:
-
-- the tools I use and how the relate to each other
-- shell setup
-- tools setup
-  - editors (cli and gui)
-  - test environment
-
-In the second section I'll dive into the how I put the things from the first section to use to create or update a module.
-
-The third section will walk you through creating a module and then updating it.
+- Part 1: How I setup my development environment
+- Part 2: How I put the things from this post to use to create or update a module
+- Part 3: Reworking an existing module to use the methodologies from Part 2.
 
 Covering all this information is going to take some space. The links below should make getting to what you want read next a little easier.
 
@@ -37,16 +30,12 @@ Covering all this information is going to take some space. The links below shoul
         - [End Result](#end-result)
       - [VS Code](#vs-code)
     - [Vagrant & VirtualBox](#vagrant--virtualbox)
+      - [Vagrant boxes](#vagrant-boxes)
     - [puppet-moddeps](#puppet-moddeps)
     - [GitHub Changelog Generator](#github-changelog-generator)
       - [Setting up labels for the changelog generator](#setting-up-labels-for-the-changelog-generator)
     - [Puppet Strings](#puppet-strings)
     - [Araxis Merge](#araxis-merge)
-- [Diving in](#diving-in)
-  - [Creating a new module](#creating-a-new-module)
-  - [Patching or enhancing someone else's module](#patching-or-enhancing-someone-elses-module)
-  - [roles and profiles and the like](#roles-and-profiles-and-the-like)
-- [Creating a module](#creating-a-module)
 
 ## My development environment
 
@@ -64,7 +53,7 @@ Here's a quick overview of the tools I use and how they relate to each other.
 
 - iTerm2
 - Homebrew
-- a command line interface
+- a customized shell
 - git for versioning my changes
 - GitHub for hosting my code
 - hub to make interacting with GitHub easier
@@ -102,10 +91,10 @@ Once that completes open iTerm's preferences and navigate to `Profiles` and sele
 1. I like the way it looks.
 2. it plays nice with [Powerline](https://powerline.readthedocs.io/en/latest/) which I use in both vim and tmux. More on this in the section about vim.
 
-To round thins out I do the following additional changes:
+To round things out I do the following additional changes:
 
 - go to the `Color` heading, click on "Color Presets...", and select "Pastel (Dark Background)"
-- go to the `Window` heading and adjust the transparency slider so that roughly between the q and u of Opaque. I find that this looks nice without letting so much show through that it's distracting.
+- go to the `Window` heading and adjust the transparency slider so that it's roughly between the q and u of Opaque. I find that this looks nice without letting so much show through that it's distracting.
 - go to the `Terminal` heading and verify that "Unlimited scorllback" and "Silence bell" are checked.
 - go to `Appearance` (next to `Profiles`) and make sure that
   - the tab bar location is set to top
@@ -145,14 +134,18 @@ After doing what's above, and before starting a new shell that uses zsh, I pull 
 ```bash
 curl -sSo ~/.zshrc https://raw.githubusercontent.com/genebean/dots/master/link/nix/zshrc
 
-# comment out starting the gpg agent you are not using it
-sed -i 's/^gpg-connect-agent/#gpg-connect-agent/' ~/.zshrc
-
-# If on Linux you don't need the brew plugin
-sed -i "s/brew\sbundler/bundler/" /home/vagrant/.zshrc
-
 # the custom config looks for .private-env so let's make it
 touch ~/.private-env
+```
+
+On some systems I also need a couple of more changes:
+
+```bash
+# comment out starting the gpg agent if you are not using it
+sed -i 's/^gpg-connect-agent/#gpg-connect-agent/' ~/.zshrc
+
+# if on Linux you don't need the brew plugin
+sed -i "s/brew\sbundler/bundler/" /home/vagrant/.zshrc
 ```
 
 `.private-env` is excluded from my dotfiles' git repository and is where I store things like authentication tokes or aliases that are unique to a particular machine. For example, the one on my work computer contains a GitHub token that is used by a couple of tools and also contains these two aliases that make working on our Puppet control repository much simpler:
@@ -183,11 +176,11 @@ $ rm -rf ~/.oh-my-zsh/custom/themes
 $ git clone https://github.com/genebean/my-oh-zsh-themes.git ~/.oh-my-zsh/custom/themes
 ```
 
-There are a couple of aspects of this shell setup in the way of usefulness as it relates to doing module development. The first of these is the easy case-insensitive tab completion when changing directories or opening files within a module. The second centers around shell aliases and functions that simplify repetitive tasks. Oh My ZSH comes with pre-made aliases for many Git related tasks. Additionally, I have added both functions and shortcut aliases to the .zshrc that was downloaded earlier. I will talk more about this in the second section of this post as it'll make more sense when shown in-context.
+There are a couple of aspects of this shell setup in the way of usefulness as it relates to doing module development. The first of these is the easy case-insensitive tab completion when changing directories or opening files within a module. The second centers around shell aliases and functions that simplify repetitive tasks. Oh My ZSH comes with pre-made aliases for many Git related tasks. Additionally, I have added both functions and shortcut aliases to the .zshrc that was downloaded earlier. I will talk more about this in part two of this series as it'll make more sense when shown in-context.
 
 ##### Start using ZSH
 
-Now that we have installed all the needed components its a good time to close your current terminal and open a new one so that you can enjoy the fruits of your labor. Completely quit your terminal program (iTerm or Terminal) and then restart it. When you do you should be greeted with a prompt very similar to this:
+Now that you have installed all the needed components its a good time to close your current terminal and open a new one so that you can enjoy the fruits of your labor. Completely quit your terminal program (iTerm or Terminal) and then restart it. When you do you should be greeted with a prompt very similar to this:
 
 ```zsh
 ╔ ☕️  gene:~
@@ -198,7 +191,7 @@ Now that we have installed all the needed components its a good time to close yo
 
 All my Puppet modules live on GitHub. I know this isn't a tool in the same sense as all the other things mentioned here but its so key to the process that I felt it deserved a mention.
 
-GitHub is the second most common place for people to go looking for your work: the first is the [Puppet Forge](https://forge.puppet.com). It is also pretty common for people to navigate to your GitHub (or whereever you host your source code) so that they can take a peek under the hood of your module. More on this in the second and third sections of the post.
+GitHub is the second most common place for people to go looking for your work: the first is the [Puppet Forge](https://forge.puppet.com). It is also pretty common for people to navigate to your GitHub (or whereever you host your source code) so that they can take a peek under the hood of your module. More on this in part two of the series.
 
 #### hub: A GitHub CLI
 
@@ -214,7 +207,7 @@ Installation instruction for various platforms can be found at [here](https://pu
 brew cask install puppetlabs/puppet/pdk
 ```
 
-Once installed, we need to reload our shell's environment so that the PDK is in our path. You _could_ close your shell and re-open it OR you can use one of the aliases from my .zshrc: `sz`. `sz` simply stands for "source zshrc" as shown below.
+Once installed, we need to reload our shell's environment so that the PDK is in our path. You _could_ close your shell and re-open it OR you can use one of the aliases from my .zshrc: `sz` (which simply stands for "source zshrc"):
 
 ```zsh
 ╔ ☕️  gene:~
@@ -226,7 +219,7 @@ The PDK is your friend and, like any good friend, you are going to get to know i
 
 #### Editor
 
-CLI or GUI? It's your choice but you don't actually have to choose. I have found that there are actually time where each makes sense. That said, I would encourage you to fully embrace VS Code because it will make your development experience much easier and more productive. Lastly, if you are a vim aficionado please resist the temptation to install a vim mode plugin for VS Code as you'll loose out on some of the editor's best features.
+CLI or GUI? It's your choice but you don't actually have to choose. I have found that there are actually times where each makes sense. That said, I would encourage you to fully embrace VS Code because it will make your development experience much easier and more productive. Lastly, if you are a vim aficionado please resist the temptation to install a vim mode plugin for VS Code as you'll loose out on some of the editor's best features.
 
 ##### vim
 
@@ -394,9 +387,9 @@ As you start to use vim with this new configuration you find that it has many he
 
 ##### VS Code
 
-Aside from be a really nice editor all the way around, there is an official extension for the Puppet language authored by [James Pogran](https://www.linkedin.com/in/jamespogran/). It is actively developed by several Puppet employees as part of their job. The [VS Code Puppet plugin page](https://marketplace.visualstudio.com/items?itemName=jpogran.puppet-vscode) has a wealth of information about what it can do.
+Aside from being a really nice editor all the way around, there is an official extension for the Puppet language authored by [James Pogran](https://www.linkedin.com/in/jamespogran/). It is actively developed by several Puppet employees as part of their job. The [VS Code Puppet plugin page](https://marketplace.visualstudio.com/items?itemName=jpogran.puppet-vscode) has a wealth of information about what it can do.
 
-VS Code can be installed by following the direction at [https://code.visualstudio.com/docs/setup/mac](https://code.visualstudio.com/docs/setup/mac). Once installed be sure to follow the part of the guide entitled "Launching from the command line" as it will make life easier for you.
+VS Code can be installed by following the directions at [https://code.visualstudio.com/docs/setup/mac](https://code.visualstudio.com/docs/setup/mac). Once installed be sure to follow the part of the guide entitled "Launching from the command line" as it will make life easier for you.
 
 The next step is to install the Puppet extension. To do so, click the square on the left edge that says "Extension (⇧⌘X)" when you mouse over it. Type "Puppet" in the top box and select the one by James Pogran and then select "Install" button on the page that opens to the right.
 
@@ -413,13 +406,25 @@ Next, navigate to Code > Preferences > Settings, make sure "User Settings" is th
 
 #### Vagrant & VirtualBox
 
-I use [Vagrant](https://www.vagrantup.com) to test out puppet code in a sanboxed environment. Under the hood it utilizes [Virtualbox](https://www.virtualbox.org/). Go to each of their sites and follow their installation instructions.
+I use [Vagrant](https://www.vagrantup.com) to test out puppet code in a sandboxed environment. Under the hood it utilizes [Virtualbox](https://www.virtualbox.org/). Go to each of their sites and follow their installation instructions.
 
-For some time now I have been publishing my own Vagrant boxes to use when developing or playing around with new software. You can see them all at [https://app.vagrantup.com/genebean](https://app.vagrantup.com/genebean). I strongly suggestion you grab a copy of my box used for module testing by opening up a separate terminal window after getting Vagrant installed and running this command:
+##### Vagrant boxes
+
+For some time now I have been publishing my own Vagrant boxes to use when developing or playing around with new software. You can see them all at [https://app.vagrantup.com/genebean](https://app.vagrantup.com/genebean). My centos-7-puppet-latest box is of particular relevance here as it gives you a recent version of CentOS 7 with a fairly up-to-date version of Puppet pre-installed (currently CentOS 7 18.10 + patches and Puppet 6.4.2). I strongly suggest you grab a copy of it for module testing by opening up a separate terminal window after getting Vagrant installed and running this command:
 
 ```zsh
 vagrant box add genebean/centos-7-puppet-latest
 ```
+
+Want a newer version of Puppet or want to add the PDK or Bolt? Just add one or more of these lines to your Vagrantfile:
+
+```ruby
+config.vm.provision 'shell', inline: 'yum -y upgrade puppet'
+config.vm.provision 'shell', inline: 'yum -y install pdk'
+config.vm.provision 'shell', inline: 'yum -y install puppet-bolt'
+```
+
+> _Note:_ This box is setup to track the rolling release repository which means that it will pull down a new major version if available. I also maintain boxes for the other supported version(s) of Puppet if that more closely matches your needs. An example of this is my centos-7-puppet5 box.
 
 #### puppet-moddeps
 
@@ -435,105 +440,10 @@ I wrote a gem a while back that I find very helpful when testing a module in a V
 
 #### Puppet Strings
 
-[Puppet Stings](https://puppet.com/docs/puppet/latest/puppet_strings.html) is another tool that we will install via the PDK on each module. It's used for generating the REFERENCE.md file that is now the standard place to have documentation about your modules classes and types.
+[Puppet Stings](https://puppet.com/docs/puppet/latest/puppet_strings.html) is another tool that we will install via the PDK on each module. It's used for generating the REFERENCE.md file that is now the standard place to have documentation about your module's classes and types.
 
 #### Araxis Merge
 
 The last tool I want to mention is far and away the best visual diff tool I have seen: [Araxis Merge](https://www.araxis.com/merge). You don't need to grab it right now unless you want to but I do suggest taking a look at it. They offer it for free to anyone who contributes to an open source project such as a Puppet module. Learn more about this option at [https://www.araxis.com/buy/open-source](https://www.araxis.com/buy/open-source).
 
 If you do get it I suggest reading their guide for integrating with Git [here](https://www.araxis.com/merge/documentation-os-x/integrating-with-other-applications.en#Git). You'll want to be sure to expand the section entitled "To use Araxis Merge for file comparison and file merging" and add the recommended settings to `~/.gitconfig`.
-
-## Diving in
-
-In the first section I covered a multitude of tools. Just to reiterate, you don't _need_ all of the tools I talk about here to get started writing Puppet code. My setup includes several things that I think make me more efficient and/or make things easier. Much of this comes down to personal preference. With that said, lets' dive into how I put all this stuff to use.
-
-### Creating a new module
-
-My basic workflow for creating a new module looks like this:
-
-1. decide on what to write
-2. make sure my tools are up to date
-3. create a skeleton via the PDK
-4. do an initial git commit
-5. use hub to create a repository on GitHub
-6. push the initial code to GitHub
-7. standardize the issue labels on the repository
-8. enable Travis CI on the new repo <-- from here up is in iTerm
-9. edit initial files to include my common settings and content <-- from here down is mostly in VS Code
-10. stub out an initial `it { is_expected.to compile.with_all_deps }` spec test
-11. add some boiler plate to my readme
-12. add a LICENSE file
-13. validate things with the PDK
-14. Push these changes to GitHub to verify Travis is working
-15. start actual development by looping through
-    1. write/edit puppet code
-    2. validate with PDK
-    3. write tests
-    4. see if expected tests pass locally
-    5. Push to GitHub and pay attention to Travis CI results
-    6. repeat it code complete
-16. test on actual machine
-17. validate and update docs
-18. push to GitHub
-19. apply settings in GitHub's web interface
-20. release to Puppet Forge
-
-First and foremost is deciding what to write. Part of that for me is looking at what already exists on the Puppet Forge and then making a determination about creating something new vs extending something existing. This section is going to assume the former was my decision.
-
-After spending the needed time in my browser and deciding to write something new is when I dive into my terminal. As this is the start of a new project I like to make sure I am not working with outdated tools, thus I do the following:
-
-```zsh
-$ brew update
-$ brew outdated
-# look for things related to the task at hand
-# here I am going to assume that vim was in the outdated list
-$ brew upgrade vim
-$ brew cask outdated
-# here I am mainly looking to see if my copy of the PDK is up to date
-$ brew cask upgrade pdk # this can take an eternity 😕
-```
-
-> **NOTE:** any commands not explained in this section will be demonstrated in the third section. Don't fret if you are not 100% sure what something mentioned here does.
-
-With that out of the way its time to step through the questions provided by `pdk new module`. This creates a directory that doesn't match how you normally see modules listed on GitHub so the next thing I do is rename the newly created directory from `my_module` to `forge_user_name-my_module`. The generated code is all boiler plate at this stage but I still want to have it as a point in the module's history so I initialize my repository and commit everything. Next up is using hub to create the remote repository, pushing my code, and running a ruby script to standardize my issue labels to match what Puppet, Inc uses and what the GitHub Changelog Generator expects. The last part of this prep work is using Travis CI's gem to enable CI for my new module.
-
-This is usually where I jump over to VS Code. When I first open it up I will generally double check the lower left corner and make sure there are not pending updates for the loaded extensions. After that I go about adding in my personal boilerplate content to the module's `metadata.json`, `.sync.yml`, and `README.md` followed by adding a `LICENSE` file and a basic spec test. After doing this I run `pdk update` to pickup the changes to `.sync.yml` and then I like to go ahead and run through `pdk validate` and `pdk test unit` just to make sure I have not done something dumb. Once the validation is complete I commit my changes and push them. At this stage there still isn't anything particularly interesting about the module but there is enough there that I can verify Travis CI is going to get triggered correctly... if it doesn't then I will troubleshoot why it didn't run and then re-push to see if it is happy.
-
-At this point we have what I feel is the starting point from which we can do development:
-
-- a properly named and filled in module skeleton
-- a local git repo
-- a local unit testing setup
-- a remote git repo
-- CI for the remote repo
-
-Here I start to loop through the iterative process of code, validate, write tests, run tests. 
-
-> I have never been able to wrap my head around TDD but, if that's in your wheel house, just rearrange these events as needed.
-
-Once I get to a point where I have something that _should_ work and is passing unit tests I will generally try it out inside a Vagrant box. Once things work in Vagrant as expected I will go back and verify that the in-code documentation is complete and accurate. I will also populate the `README.md`, make sure that `REFERENCE.md` is up-to-date, and generate the initial `CHANGELOG.md`. Next I do any squashing that's needed on my git history and then do a final push to GitHub. This will kick off another Travis CI run that I will want to ensure is passing before doing a release. While I wait for CI is when I go in and make some extra settings changes to my repository such as requiring PR's and preventing force pushes to master.
-
-Last, but not least, I publish the module on the Puppet Forge.
-
-### Patching or enhancing someone else's module
-
-My workflow for patching another module is pretty simple:
-
-1. fork it
-2. clone it
-3. add the original as an upstream remote
-4. create a branch for my change
-5. code my fix / improvement
-6. test
-7. push
-8. submit a PR
-
-The details of that are totally up to the individual project owner. If they are using the PDK then I use it too... if not, then I don't try and force it on them.
-
-### roles and profiles and the like
-
-Just a quick note to mention that the process is a bit different when working with things embedded in a control repository or when you are dealing with code that stays locked behind a firewall. I am not going to get into that in this post but many of the same concepts can be applied if you find them useful.
-
-## Creating a module
-
-The third section will walk you through creating a module and then updating it.
