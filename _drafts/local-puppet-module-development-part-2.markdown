@@ -3,7 +3,7 @@ author: gene
 title: Local Puppet Module Development, Part 2
 ---
 
-This post is the second in a series on how I go about doing Puppet module development. The previous post covered how I setup my development environment. This one will cover how I put the things from Part 1 to use to create or update a module. It will also walk through creating a module and then updating it. Part 3 will expand on this post by reworking an existing module to use the methodologies from here.
+This post is the second in a three-part series on how I go about doing Puppet module development. The previous post covered how I setup my development environment. This one will cover how I put the things from the first post to use to create or update a module. It will also walk through creating a module and then updating it. Part three will expand on this post by reworking an existing module to use the methodologies from here.
 
 ## Diving in
 
