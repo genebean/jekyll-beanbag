@@ -1,8 +1,8 @@
 # SEO tag info
 title: The Comfy Seat
 description: The chair I sit in to geek out
-url: https://genebean.github.io
-baseurl: /jekyll-beanbag
+url: https://beanbag.technicalissues.us
+#baseurl: 
 twitter:
   username: technicalissues
   card: summary
