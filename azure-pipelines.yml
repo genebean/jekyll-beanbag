@@ -28,8 +28,8 @@ steps:
     targetType: 'inline'
     script: |
       bundle exec htmlproofer --assume-extension --check-favicon \
-        --check-opengraph --report-invalid-tags --url_swap "\/jekyll-beanbag:" \
-        --url-ignore "#" --disable_external --empty_alt_ignore ./_site
+        --check-opengraph --report-invalid-tags --url-ignore "#"  \
+        --disable_external --empty_alt_ignore ./_site
     failOnStderr: true
 - task: PublishPipelineArtifact@0
   inputs:
