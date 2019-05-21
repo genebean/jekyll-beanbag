@@ -22,8 +22,8 @@ steps:
     targetType: 'inline'
     script: |
       if [ "$(Build.SourceBranchName)" == "master" ]; then
-        echo "This build is for master so setting to Jekyll to production"
-        JEKYLL_ENV=production bundle exec jekyll build
+        echo "This build is for master so skipping drafts"
+        bundle exec jekyll build
       else
         echo "This build is for $(Build.SourceBranchName) so building drafts too"
         bundle exec jekyll build --drafts
