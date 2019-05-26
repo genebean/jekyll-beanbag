@@ -9,7 +9,6 @@ end
 
 # If you have any plugins, put them here!
 group :jekyll_plugins do
-  gem 'github-pages'
   gem 'jekyll-algolia'
   gem 'jekyll-compose'
   gem 'jekyll-feed'
@@ -18,5 +17,4 @@ group :jekyll_plugins do
   gem 'jekyll-paginate'
   gem 'jekyll-seo-tag'
   gem 'jekyll-sitemap'
-  gem 'jemoji'
 end
