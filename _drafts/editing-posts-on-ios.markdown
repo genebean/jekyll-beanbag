@@ -1,0 +1,6 @@
+---
+author: gene
+title: Editing Posts on iOS
+---
+
+As it so happens, I'm not always around a computer when I want to edit a blog post or the documentation for a project I'm working on. Oddly, it's actually incredibly difficult to find anything that talks about how to actually do this.
