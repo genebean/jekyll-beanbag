@@ -43,7 +43,7 @@ The main things I was looking for when I starred down the rabbit hole of investi
 
 No single app seems to exist that meets my needs. The solution? Use two apps, one editor and one git client, that each integrate with Apple’s Files app. Doing this results in a workflow that looks like this:
 
-1. Clone repository to your phone or tablet
+1. Clone a repository to your phone or tablet
 2. Open or create a document in the repository
 3. Save the document
 4. Review the observed changes
