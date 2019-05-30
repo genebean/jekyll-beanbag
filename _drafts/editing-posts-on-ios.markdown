@@ -42,7 +42,7 @@ The main things I was looking for when I starred down the rabbit hole of investi
 
 ##  It takes two...
 
-No single app seems to exist that meets my needs. The solution? Use two apps, one editor and one git client, that each integrate with Apple’s Files app. Doing this results in a workflow that looks like this:
+No single app seems to exist that meets my needs. The solution? Use two apps, one editor and one git client, that each integrate with Apple’s Files app. Doing this results in a workflow that is very similar to working on my laptop:
 
 1. Clone a repository to your phone or tablet
 2. Open or create a document in the repository
@@ -60,4 +60,17 @@ iA Writer does all the required tasks but had a couple of shortcomings:
 
 ## Working Copy + Byword = Success
 
-Working Copy works well. 
+The combination of Working Copy as my git client and Byword as my editor is surprisingly pleasant. Working Copy makes it easy to interact with repositories on both an iPhone and an iPad. Within a couple of minutes I had connected it to GitHub, created an ssh key, uploaded said key, cloned the repository this post resides in, created a branch, tried out its editor, created a signing key, uploaded the key, enabled the 10 day trial, switched to the dark theme, made a commit on the new branch, and pushed the code back to GitHub. After trying out the editor in Working Copy I knew I wanted something a little nicer so I tried out a few different options before settling on Byword. It can easily open any file that shows up in the Files app which, conveniently, includes the files managed by Working Copy. Byword is fairly simple but does its job well. One thing that significantly contributed to winning me over though is the bar it adds above the keyboard with markdown shortcuts. These shortcuts add simplicity and efficiency to my writing experience. When you utilize any of markdown’s formatting marks they are instantly rendered in the editor. This means you can easily see that `**foo**` produces **foo** whereas `*foo*` produces *foo*. This is so much nicer than having to remember exactly which symbol combination does what. On an aesthetic note, Byword’s dark theme is nice enough and the font isn’t bad either... it’s actually much better than several apps I tried. The only real shortcomings I’ve found with Byword are:
+
+* It’s not intuitive that you must swipe down to hide the keyboard to get out of a document or to save it. 
+* The screen where initial navigation is is not where favorites show up... they are on a subsequent screen. 
+* There doesn’t seem to be anything like the tags used in Bear for categorizing documents. 
+* There’s not much in the way of themes or fonts. For someone who’s used Bear this is quite disappointing. 
+
+All that said, it still works well and covers the needs of my use case. 
+
+> *Note:* I did find one thing that is broken: the image picker doesn’t seem to work at all. I also have not gotten images stored locally to render via their relative links. I have emailed the developer and am awaiting a response. 
+
+##  The Proof
+
+I wanted to validate my theories about this being a practical setup for working on a blog post so I’ve actually written this post by going back and forth between my iPhone Xs and iPad Mini (5th generation). I’m quite happy with the results. 
