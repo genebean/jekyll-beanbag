@@ -30,6 +30,7 @@ The main things I was looking for when I starred down the rabbit hole of investi
 	* seems to meet all editor requirements but no git integration
 * **Markdown Pro:**
 	* Free or one time $4.99 upgrade to unlock features
+	* Has a side-by-side view but not a view where markdown is automatically rendered. 
 	* seemed okay but didn’t appear to support Medium or WordPress. Also doesn’t seem to have any git integration.
 * **TIG:**
 	* Free
