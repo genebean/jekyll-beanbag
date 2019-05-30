@@ -69,7 +69,13 @@ The combination of Working Copy as my git client and Byword as my editor is surp
 
 All that said, it still works well and covers the needs of my use case. 
 
-> *Note:* I did find one thing that is broken: the image picker doesn’t seem to work at all. I also have not gotten images stored locally to render via their relative links. I have emailed the developer and am awaiting a response. 
+### Problems with images
+
+I did find one thing that is broken: the image picker doesn’t seem to work at all. I also have not gotten images stored locally to render via their relative links. I have emailed the developer and am awaiting a response. 
+
+### Workaround for images
+
+Just because Byword’s support for images is totally busted doesn’t mean you are out of luck: Working Copy shows image previews just fine.
 
 ##  The Proof
 
