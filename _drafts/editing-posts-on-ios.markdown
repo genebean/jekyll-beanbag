@@ -11,11 +11,14 @@ The main things I was looking for when I starred down the rabbit hole of investi
 
 ##  The Contenders
 
+* **1Writer:**
+	* $4.99
+	* Seemed okay but image previews don’t work in either edit or preview mode. The extra menu above the keyboard has lots of options but doesn’t present them on a single screen. 
 * **Bear:**
 	* Free or subscription to unlock features
 	* $1.49 / month or $14.99 / year
-	* has an app for macOS
-	* supports markdown but is a walled garden - no ability to access to files stored outside of it and no external synchronization.
+	* Has an app for macOS
+	* Supports markdown but is a walled garden - no ability to access to files stored outside of it and no external synchronization.
 * **Byword:**
 	* $5.99 one time cost
 	* has an app for macOS
@@ -23,22 +26,22 @@ The main things I was looking for when I starred down the rabbit hole of investi
 * **Drafts:**
 	* Free or subscription to unlock features
 	* $1.99 / month or $19.99 / year
-	* has an app for macOS
-	* doesn’t seem to support external files
+	* Has an app for macOS
+	* Doesn’t seem to support external files
 * **iA Writer:**
 	* $8.99 one time cost
-	* seems to meet all editor requirements but no git integration
+	* Seems to meet all editor requirements but no git integration
 * **Markdown Pro:**
 	* Free or one time $4.99 upgrade to unlock features
 	* Has a side-by-side view but not a view where markdown is automatically rendered. 
-	* seemed okay but didn’t appear to support Medium or WordPress. Also doesn’t seem to have any git integration.
+	* Seemed okay but didn’t appear to support Medium or WordPress. Also doesn’t seem to have any git integration.
 * **TIG:**
 	* Free
-	* does almost all the git stuff, has an editor, and is free. The editor is lacking a bit, there isn’t a way to sign a commit, and interacting with repositories over ssh is broken.
+	* Does almost all the git stuff, has an editor, and is free. The editor is lacking a bit, there isn’t a way to sign a commit, and interacting with repositories over ssh is broken.
 * **Working Copy:**
 	* Free limited version
 	* $15.99 one time cost to enable pushing changes and additional features. A 10 day free trial of the upgrade is available (this is unique and a great feature in my opinion)
-	* does all the git stuff and has an editor. The editor doesn’t directly support Medium or WordPress and is generally lacking vs Byword
+	* Does all the git stuff and has an editor. The editor doesn’t directly support Medium or WordPress and is generally lacking vs Byword
 
 ##  It takes two...
 
