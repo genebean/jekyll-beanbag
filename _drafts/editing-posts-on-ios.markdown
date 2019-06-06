@@ -21,7 +21,7 @@ The main things I was looking for when I starred down the rabbit hole of investi
 	* Supports markdown but is a walled garden - no ability to access to files stored outside of it and no external synchronization.
 * **Byword:**
 	* $5.99 one time cost
-	* has an app for macOS
+	* has an app for macOS (separate purchase)
 	* seems to meet all editor requirements but no git integration
 * **Drafts:**
 	* Free or subscription to unlock features
