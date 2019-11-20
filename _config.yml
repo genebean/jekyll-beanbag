@@ -35,8 +35,6 @@ include:
 
 exclude:
   - azure-pipelines.yml
-  - Gemfile
-  - Gemfile.lock
   - LICENSE
   - node_modules
   - README.md
