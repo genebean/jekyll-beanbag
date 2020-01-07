@@ -12,7 +12,7 @@ gem 'jekyll', '~> 4.0'
 # If you have any plugins, put them here!
 group :jekyll_plugins do
   gem 'jekyll-algolia', '~> 1.6'
-  gem 'jekyll-compose', '~> 0.11.0'
+  gem 'jekyll-compose', '~> 0.12.0'
   gem 'jekyll-feed', '~> 0.13.0'
   gem 'jekyll-gist', '~> 1.5'
   gem 'jekyll-include-cache', '~> 0.2.0'
