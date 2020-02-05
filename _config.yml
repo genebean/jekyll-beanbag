@@ -34,6 +34,7 @@ include:
   - _pages
 
 exclude:
+  - .dependabot/
   - azure-pipelines.yml
   - LICENSE
   - node_modules
