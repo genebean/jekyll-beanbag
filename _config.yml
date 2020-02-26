@@ -34,9 +34,8 @@ include:
   - _pages
 
 exclude:
+  - .dependabot/
   - azure-pipelines.yml
-  - Gemfile
-  - Gemfile.lock
   - LICENSE
   - node_modules
   - README.md
