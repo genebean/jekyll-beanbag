@@ -1,0 +1,25 @@
+[build]
+publish = "_site"
+command = "jekyll build"
+
+[context.production.environment]
+JEKYLL_ENV = "production"
+
+[context.split1]
+command = "jekyll build"
+
+[context.split1.environment]
+JEKYLL_ENV = "production"
+
+[context.deploy-preview]
+command = "jekyll build  --drafts --baseurl $DEPLOY_PRIME_URL"
+
+[context.branch-deploy]
+command = "jekyll build --baseurl $DEPLOY_PRIME_URL"
+
+[[headers]]
+  for = "/*"
+
+  [headers.values]
+   Strict-Transport-Security = "max-age=16070400; includeSubDomains; preload"
+   X-Frame-Options = "DENY"
