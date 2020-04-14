@@ -150,7 +150,7 @@ The huge expectations that come with Holy Week combined with a very new process 
 
 ### When Phones Act Up
 
-I spent a ton of time Saturday going back and forth with our pastor trying to figure out why I wasn't getting the videos he was sending. He said he was following the same process that had worked previously but nothing we tired seemed to work. We tried some more early on Sunday but around lunch time I threw in the towel and asked if he'd just drop his phone by so I could grab the videos myself and, maybe, figure out what was going on at the same time. He agreed and I was able to get everything sent over, though I never did figure out why thing were being so challenging.
+I spent a ton of time Saturday going back and forth with our pastor trying to figure out why I wasn't getting the videos he was sending. He said he was following the same process that had worked previously but nothing we tried seemed to work. We tried some more early on Sunday but around lunch time I threw in the towel and asked if he'd just drop his phone by so I could grab the videos myself and, maybe, figure out what was going on at the same time. He agreed and I was able to get everything sent over, though I never did figure out why thing were being so challenging.
 
 ### Introducing Trello
 
@@ -158,7 +158,7 @@ Seeing all the moving pieces from Palm Sunday and what was on deck for Maundy Th
 
 > Hi friends! This week was proof that there are a LOT of moving parts to getting a service out the door. It also proved we need something better than a hope and a prayer to do this while not wanting to throw things out the window. To that end, I have made a little project tracking board that I'd like at least Lauren and I to use but would really love if all five of us participated in. The idea is simply to make sure no balls get dropped. If you are game to try this, please go to the link below and join the board. Assuming you all are game, we can all jump on a Zoom to talk about using it if y'all want.
 
-The "little project tracking board" was a board I'd made on Trello. It contained three columns: to do, doing, and done. I added a card for what had gone into Palm Sunday to the done column and crated a new one for Maundy Thursday and Easter with what I knew so far. To my surprise everyone seemed pretty happy to give it a go.
+The "little project tracking board" was a board I'd made on Trello. It contained three columns: to do, doing, and done. I added a card for what had gone into Palm Sunday to the done column and created a new one for Maundy Thursday and Easter with what I knew so far. To my surprise everyone seemed pretty happy to give it a go.
 
 ### Finalizing Maundy Thursday
 
