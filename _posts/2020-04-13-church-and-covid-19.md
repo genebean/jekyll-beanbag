@@ -113,7 +113,7 @@ The service went off without a hitch. I did learn that a simulated live broadcas
 
 ## Stepping It Up a Notch
 
-The 29th proved we could do this fully-remote thing but left a lot of stuff out when compared to one of our normal services. Now that we'd all had time to wrap our heads around our current reality, the staff decided to aim for something a little closer to normal. Aside from just wanting to make it feel more like a normal service, the April 5th was the start of Holy Week, aka Palm Sunday. The plan for Palm Sunday included using multiple self-recored videos, a couple of clips from a previous service, getting our bulletin up on the website, and at least one Sunday School class getting into lessons via video
+The 29th proved we could do this fully-remote thing but left a lot of stuff out when compared to one of our normal services. Now that we'd all had time to wrap our heads around our current reality, the staff decided to aim for something a little closer to normal. Aside from just wanting to make it feel more like a normal service, the April 5th was the start of Holy Week, aka Palm Sunday. The plan for Palm Sunday included using multiple self-recorded videos, a couple of clips from a previous service, getting our bulletin up on the website, and at least one Sunday School class getting into lessons via video
 
 ## Sunday School Videos
 
