@@ -124,7 +124,7 @@ I had never imagined that some of our classes would be interested in publishing 
 3. upload it to StreamSpot, and finally
 4. post a link to the video in the Sunday School's group within Realm.
 
-To facilitate this, I setup a Zoom session with her and a couple of other people to go over the process of getting a recording from some over to her and then up onto StreamSpot. Everyone took to the process right away.
+To facilitate this, I setup a Zoom session with her and a couple of other people to go over the process of getting a recording from someone over to her and then up onto StreamSpot. Everyone took to the process right away.
 
 ## Clips from Church Members and Staff
 
