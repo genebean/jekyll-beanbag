@@ -31,7 +31,7 @@ With Sawyer getting syslog data and JSON from NXLog (or other sources) into Redi
 
 Since one node wasn’t cutting it I decided it was time to scale the entire system out based on some recommendations from some very helpful people at [Elastic](https://www.elastic.co "Elastic website"). Below is a diagram of the setup I am currently implementing:
 
-![Infrastructure Diagram](http://res.cloudinary.com/genebean/image/upload/v1438140565/ELK-Stack_s3pc7v.png)
+![Infrastructure Diagram](https://res.cloudinary.com/genebean/image/upload/v1438140565/ELK-Stack_s3pc7v.png)
 
 Click for a much larger version.
 
