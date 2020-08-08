@@ -27,7 +27,12 @@
     {% if post.read_time %}
     <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> {% include read-time.html %}</p>
     {% endif %}
-    {% if post.excerpt %}
+    {% if post.description %}
+    <p class="valign" itemprop="description">
+      {{ post.description | markdownify | strip_html }}
+      <a class="link-theme-active-to-black" href="{{ post.url | relative_url }}" rel="permalink">&raquo; Read more</a>
+    </p>
+    {% elsif post.excerpt %}
     <p class="valign" itemprop="description">
       {{ post.excerpt | markdownify | strip_html | truncate: 160 }}
       <a class="link-theme-active-to-black" href="{{ post.url | relative_url }}" rel="permalink">&raquo; Read more</a>
