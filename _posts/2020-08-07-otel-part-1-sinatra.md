@@ -2,10 +2,10 @@
 title: 'OpenTelemetry Part 1: Sinatra'
 date: 2020-08-07 18:27 -0400
 description: >-
-  OpenTelemetry (aka OTel) is becoming the standard for distributed tracing. This is the first in a multi-part series where I will document my trials, tribulations, and successes along the road of using OTel to instrument multiple applications. The first few are all ruby applications and some that I hope to be able to do later are written in Java. My goal is to instrument the applications using one or more standards-compliant libraries and then send the spans to an OTel collector. The OpenTelemetry collector will then send them on to one or more backends such as Jaeger, Lightstep, and/or Datadog.
+  OpenTelemetry (aka OTel) is becoming the standard for distributed tracing. This is the first in a multi-part series where I will document my trials, tribulations, and successes along the road of using OTel to instrument multiple applications. The first few are all ruby applications and some that I hope to be able to do later are written in Java. My goal is to instrument the applications using one or more standards-compliant libraries and then send the spans to an OTel collector. The OTel collector will then send them on to one or more backends such as Jaeger, Lightstep, and/or Datadog.
 ---
 
-[OpenTelemetry](https://opentelemetry.io/) (aka OTel) is becoming the standard for distributed tracing. This is the first in a multi-part series where I will document my trials, tribulations, and successes along the road of using OTel to instrument multiple applications. The first few are all ruby applications and some that I hope to be able to do later are written in Java. My goal is to instrument the applications using one or more standards-compliant libraries and then send the spans to an OTel collector. The OpenTelemetry collector will then send them on to one or more backends such as [Jaeger](https://www.jaegertracing.io/), [Lightstep](https://lightstep.com/), and/or [Datadog](https://www.datadoghq.com/).
+[OpenTelemetry](https://opentelemetry.io/) (aka OTel) is becoming the standard for distributed tracing. This is the first in a multi-part series where I will document my trials, tribulations, and successes along the road of using OTel to instrument multiple applications. The first few are all ruby applications and some that I hope to be able to do later are written in Java. My goal is to instrument the applications using one or more standards-compliant libraries and then send the spans to an OTel collector. The OTel collector will then send them on to one or more backends such as [Jaeger](https://www.jaegertracing.io/), [Lightstep](https://lightstep.com/), and/or [Datadog](https://www.datadoghq.com/).
 
 ## The applications
 
@@ -18,16 +18,16 @@ I figure all of this will make more sense with a touch of context, so here goes.
 
 CITH has a [React](https://reactjs.org/) frontend and a ruby [Sinatra](http://sinatrarb.com/) backend. It doesn't interact with the other three at all, which is what makes it a good starting point. It also sits parallel to the CI pipeline instead of within it. This makes it safer to experiment with.
 
-The other three communicate with each other constantly so they will have much more interesting data to look at but it also takes more work to get them deployed as they are critical components with our CI pipeline. There are two data paths:
+The other three communicate with each other constantly so they will have much more interesting data to look at but it also takes more work to get them deployed as they are critical components within our CI pipeline. There are two data paths for these applications:
 
 1. Jenkins > ABS > (VMPooler, NSPooler, and/or AWS)
-2. Developer via ([vmfloaty](https://github.com/puppetlabs/vmfloaty) or [Beaker](https://github.com/voxpupuli/beaker)) > ABS > (VMPooler, NSPooler, and/or AWS)
+2. Developer via ([vmfloaty](https://github.com/puppetlabs/vmfloaty), [Beaker](https://github.com/voxpupuli/beaker), or [Litmus](https://github.com/puppetlabs/puppet_litmus)) > ABS > (VMPooler, NSPooler, and/or AWS)
 
-The applications I hope to get to after these are some of the one [Puppet](https://puppet.com/) produces, both open and closed source.
+The applications I hope to get to after these are some of the ones [Puppet](https://puppet.com/) produces, both open and closed source.
 
 ## Instrumenting Sinatra
 
-The first application to instrument is CITH. As mentioned above, it sits outside our CI pipeline so it's an easier one to mess with. React is outside my wheelhouse enough that I decided to focus on the backend alone for now. It's written in ruby using the Sinatra framework and the [Puma](https://github.com/puma/puma) web server. With this in mind I started looking at how to get the job done and found that there are a number of libraries that can automate a lot of the work of tracing a Sinatra applications. With that being the case let's take a look at the contenders before moving on:
+The first application to instrument is CITH. As mentioned above, it sits outside our CI pipeline so it's an easier one to mess with. React is outside my wheelhouse enough that I decided to focus on the backend alone for now. It's written in ruby using the Sinatra framework and the [Puma](https://github.com/puma/puma) web server. With this in mind, I started looking at how to get the job done and found that there are a number of libraries that can automate a lot of the work of tracing a Sinatra applications. With that being the case let's take a look at the contenders before moving on:
 
 ### jaeger-client
 
@@ -43,7 +43,7 @@ The first application to instrument is CITH. As mentioned above, it sits outside
 
 ### signalfx-tracing
 
-[signalfs-tracing](https://github.com/signalfx/signalfx-ruby-tracing) is a gem I found via some lucky [DuckDuckGo](https://duckduckgo.com/) searching that seems to do the automated instrumentation of ddtrace but emits data in a Jaeger-compatible format. I briefly tried this out but found that it wasn't quite as automated as I'd hoped and have a heck of a time getting it to actually send the data the way it's supposed to.
+[signalfx-tracing](https://github.com/signalfx/signalfx-ruby-tracing) is a gem I found via some lucky [DuckDuckGo](https://duckduckgo.com/) searching that seems to do the automated instrumentation like ddtrace but emits data in a Jaeger-compatible format. I briefly tried this out but found that it wasn't quite as automated as I'd hoped and had a heck of a time getting it to actually send the data the way it's supposed to.
 
 ### opentelemetry-instrumentation-sinatra
 
@@ -68,15 +68,15 @@ Naturally, I wasn't thrilled about part two. Unfortunately that's just the way i
 
 ## Step 1: sinatra-otel-demo
 
-To validate the things I was reading about with regards to the libraries above I created a simple Sinatra application to test with: [sinatra-otel-demo](https://github.com/genebean/sinatra-otel-demo). After several iterations I now have a Docker container that responds to any requested page with "Hello world!" followed by how many seconds it slept for before rendering the page. The idea here is to cause it to respond randomly on each request so that different span information will be generated. The resulting container is published as [genebean/sinatra-otel-demo](https://hub.docker.com/r/genebean/sinatra-otel-demo) on Docker Hub.
+To validate the things I was reading about with regards to the libraries above, I created a simple Sinatra application to test with: [sinatra-otel-demo](https://github.com/genebean/sinatra-otel-demo). After several iterations I now have a Docker container that responds to any requested page with "Hello world!" followed by how many seconds it slept for before rendering the page. The idea here is to cause it to respond randomly on each request so that different span information will be generated. The resulting container is published as [genebean/sinatra-otel-demo](https://hub.docker.com/r/genebean/sinatra-otel-demo) on Docker Hub.
 
-The source repository also contains a docker-compose.yaml that sets up a Jaeger instance to collect it's spans while running locally. Once I FINALLY got spans showing up in this local instance of Jaeger I was time to move on to working in Kubernetes.
+The source repository also contains a docker-compose.yaml that sets up a Jaeger instance to collect it's spans while running locally. Once I FINALLY got spans showing up in this local instance of Jaeger it was time to move on to working in Kubernetes.
 
 ### k8s time
 
 #### sinatra-otel-demo
 
-The first step was to deploy [genebean/sinatra-otel-demo](https://hub.docker.com/r/genebean/sinatra-otel-demo) to Kubernetes and send its spans to test instance of Jaeger that was already running there. The first challenge I had to overcome here was that the output from my application was directed at UDP port 6831 instead of one of the TCP ports that Jaeger's ingress was listening on. Fortunately, during my research I learned that Jaeger's documentation contained this lovely piece of information: [Manually Defining Jaeger Agent Sidecars](https://www.jaegertracing.io/docs/1.18/operator/#manually-defining-jaeger-agent-sidecars). With that in mind I started crafting a [Helm](https://helm.sh/) chart to manage my deployment and came up with this:
+The first step was to deploy [genebean/sinatra-otel-demo](https://hub.docker.com/r/genebean/sinatra-otel-demo) to Kubernetes and send its spans to the test instance of Jaeger that was already running there. The first challenge I had to overcome here was that the output from my application was directed at UDP port 6831 instead of one of the TCP ports that Jaeger's ingress was listening on. Fortunately, during my research I learned that Jaeger's documentation contained this lovely piece of information: [Manually Defining Jaeger Agent Sidecars](https://www.jaegertracing.io/docs/1.18/operator/#manually-defining-jaeger-agent-sidecars). With that in mind I started crafting a [Helm](https://helm.sh/) chart to manage my deployment and came up with this:
 
 {% raw %}
 
@@ -130,7 +130,7 @@ spec:
 
 {% endraw %}
 
-The deployment above places both `genebean/sinatra-otel-demo` and `jaegertracing/jaeger-agent` in the same pod. This allows the agent to listen for the traces emitted over UDP, collect them, and then send them back out in "model.proto" format via gRPC to Jaeger.
+The deployment above places both `genebean/sinatra-otel-demo` and `jaegertracing/jaeger-agent` in the same pod. This allows the agent to listen for the traces emitted over UDP, collect them, and then send them back out in "model.proto" format via gRPC to the Jaeger server.
 
 I got that running in my cluster and was able to see traces in Jaeger, which I was stupid excited about considering how long of a road it had been to get to this point.
 
@@ -150,4 +150,4 @@ With things working as intended for step 1 I spent some time polishing up my Hel
 
 ## Next steps
 
-My next step is to start on step 2 from above by redoing the instrumentation on CITH. To do that I have one key question outstanding that I still need to make sure I have an answers for: is there a way to set tags using the OTel libraries? That is key because there are some pieces of information, such as version number, that should be passed as a tag from CITH. If I can't do that with the instrumentation from OTel then I will have to do like sinatra-otel-demo is currently doing via its deployment and set those tags somehow with a Jaeger sidecar. Hopefully that won't end up being the case though.
+My next step is to start on step 2 from above by redoing the instrumentation on CITH. To do that I first have one key question outstanding that I still need to make sure I have an answers for: is there a way to set tags using the OTel libraries? That is key because there are some pieces of information, such as version number, that should be passed as a tag from CITH. If I can't do that with the instrumentation from OTel then I will have to do like sinatra-otel-demo is currently doing via its deployment and set those tags somehow with a Jaeger sidecar. Hopefully that won't end up being the case though.
