@@ -13,7 +13,7 @@ gem 'jekyll', '~> 4.0'
 group :jekyll_plugins do
   gem 'jekyll-algolia', '~> 1.6'
   gem 'jekyll-compose', '~> 0.12.0'
-  gem 'jekyll-feed', '~> 0.14.0'
+  gem 'jekyll-feed', '~> 0.15.0'
   gem 'jekyll-gist', '~> 1.5'
   gem 'jekyll-include-cache', '~> 0.2.0'
   gem 'jekyll-paginate', '~> 1.1'
