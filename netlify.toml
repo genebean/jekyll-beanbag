@@ -12,10 +12,10 @@ command = "jekyll build"
 JEKYLL_ENV = "production"
 
 [context.deploy-preview]
-command = "jekyll build  --drafts --baseurl $DEPLOY_PRIME_URL"
+command = "jekyll build  --drafts"
 
 [context.branch-deploy]
-command = "jekyll build --baseurl $DEPLOY_PRIME_URL"
+command = "jekyll build"
 
 [[headers]]
   for = "/*"
