@@ -9,7 +9,7 @@ For the last four years, macOS has been my primary laptop operating system. I re
 
 I’ve used Linux desktop environments in my personal life since 2004, though seldom as my only or primary setup. Professionally, I’ve tried to do it several times and I’ve made it work for a while here and there. Though I have been quite successful at using it on a secondary machine all along, this story is going to focus on my daily drivers (aka my primary machines). 
 
-![My Fluxbox desktop in October 2007](fluxbox-desktop-2007-10-24.jpeg “My Fluxbox desktop in October 2007”)
+![My Fluxbox desktop in October 2007](./fluxbox-desktop-2007-10-24.jpeg “My Fluxbox desktop in October 2007”)
 
 One of the few times I made it work was back in 2007 when my main machine was still a desktop. Back then I was blissfully rocking the [Fluxbox](https://en.wikipedia.org/wiki/Fluxbox) window manager, [root-tail](https://linux.die.net/man/1/root-tail), and [conky](https://github.com/brndnmtthws/conky) on [Gentoo](https://www.gentoo.org). I loved that setup but it was a pain to get working just right, especially since I had multiple monitors. 
 
@@ -24,3 +24,5 @@ Another issue I’ve run into is a need,or strong desire, for apps that simply w
 ## Hello 2021: the year of the Linux desktop (for me)
 
 Fast forward to now and so much has changed. 
+
+> Notes: monitors just work, app selection, btrfs, targeting Ubuntu lts. 
