@@ -23,6 +23,21 @@ Another issue I’ve run into is a need,or strong desire, for apps that simply w
 
 ## Hello 2021: the year of the Linux desktop (for me)
 
-Fast forward to now and so much has changed. 
+Fast forward to now and so much has changed. I just started using a Lenovo X1 Carbon (Gen9) with Intel Iris graphics. It came preinstalled with Ubuntu so I wasn’t worried about hardware compatibility at all. 
+
+### Ubuntu 20.04 (preinstalled version)
+
+Im not much of a fan of the desktop setup used by stock Ubuntu but I figured I should give the stock setup a spin before trying something else so that I’d have a baseline to compare to. I installed the official driver from DisplayLink, crossed my fingers, and plugged in my dual monitor adapter from StarTech.com…
+
+![Ubuntu 20.04 with DisplayLink adapter](ubuntu-stock-displaylink.jpeg “Ubuntu 20.04 with DisplayLink adapter”)
+
+Holy cow… it worked!
+
+Next, I tried switching to a straight DisplayPort adapter: the Sabrent TH-3DP2.
+
+![Ubuntu 20.04 with DisplayPort adapter](ubuntu-stock-displayport.jpeg “Ubuntu 20.04 with DisplayPort adapter”)
+
+Wow… it worked too! This was a super big deal because it didn’t require any special drivers. No drivers meant every distro should be usable. 
+
 
 > Notes: monitors just work, app selection, btrfs, targeting Ubuntu lts. 
