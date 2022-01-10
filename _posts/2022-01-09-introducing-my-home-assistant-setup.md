@@ -9,7 +9,7 @@ excerpt: >-
 
 A year ago today (January 9th, 2021) I deployed what I consider my first production-grade instance of [Home Assistant](https://www.home-assistant.io) and couldn't be happier. It is an amazingly powerful tool that is 100% free and open source. One of Home Assistant's key features is the fact that it takes a local first approach to everything. By that I mean that every aspect of the project makes a concerted effort to not rely on the internet or cloud services unless they are absolutely required, such as when integrating with a vendor who does not have a local api (or won't provide access to it to the community). This means that if the internet is out I can still control the vast majority of the devices connected to Home Assistant using either the web interface or the app on my phone... and push notifications from Home Assistant to my phone will continue to work too.
 
-This post is describes what my setup looks like today in hopes that it will inspire and/or help others automate things around their home. I cannot recommend Home Assistant enough, and that's not just for techies like myself. It can provide significant benefits for the non-technically inclined too.
+This post describes what my setup looks like today in hopes that it will inspire and/or help others automate things around their home. I cannot recommend Home Assistant enough, and that's not just for techies like myself. It can provide significant benefits for the non-technically inclined too.
 
 ## Home Assistant Itself
 
@@ -49,7 +49,7 @@ Before switching out my coordinator at home, I had actually bought a second ConB
 
 I also ended up replacing deCONZ there too, though it was a good bit after I'd switched to ZHA at home. I ended up running [Zigbee2MQTT (z2m)](https://www.zigbee2mqtt.io/) instead both for ease of use and because z2m has a web interface that I could use locally from anything with a browser. Though I have been perfectly satisfied by ZHA, I'd probably use z2m if I was starting over simply because it has a better user experience. The only reason I am not using it now is that migration is tedious and time consuming.
 
-## ZigBee and Wi-Fi Coexistence
+## Zigbee and Wi-Fi Coexistence
 
 Before moving on, I want to call out explicitly that Zigbee and Wi-Fi utilize the same frequencies. This means that to avoid having problems with both you need to plan accordingly. I found the article "[ZigBee and Wi-Fi Coexistence](https://www.metageek.com/training/resources/zigbee-wifi-coexistence/)" on metageek to be supremely helpful. For me, this translated to telling my Wi-Fi gear to only use channels 1 and 6 and telling my Zigbee coordinator (by way of ZHA) to use channel 25. The image below was taken from that article and shows how this setup keeps each system from fighting with the other (I picked 25 even though 24 is shown in the image).
 
@@ -61,18 +61,18 @@ With all that background out of the way, let's get into my philosophies around a
 
 ### Baseline Philosophy On Automation
 
-If you research the topic of home automation any at all you quickly find that there are people who want their house to basically be autonomous... that's not me. I firmly believe that automation should make things easier, not get in the way of ANYONE in your house... visitors included. For example, lights should still have physical switches and you shouldn't have to alter the way your automations run just because someone is staying over.
+If you research the topic of home automation any at all, you quickly find that there are people who want their house to basically be autonomous... that's not me. I firmly believe that automation should make things easier, not get in the way of ANYONE in your house... visitors included. For example, lights should still have physical switches and you shouldn't have to alter the way your automations run just because someone is staying over.
 
 #### Switches vs Smart Bulbs
 
 Along those same lines, I tend to prefer smart switches over smart bulbs, where practical. Switches have two distinct advantages:
 
 1. Switches basically don't wear out or need replacing as time goes on. They are a once-and-done upgrade. Anything can fail but, unlike bulbs, they are not designed to wear out.
-2. One switch can control any number of lights. If you have a room with a traditional switch controlling 3 lights you can continue controlling all 3 by swapping out the traditional one for a smart one. Alternatively, you could replace all three bulbs and control them independently. The down sides to this are that bulbs wear out and you no longer have a physical switch to control the bulbs. The first costs more over the long haul and the second poses challenges for anyone visiting and any time your network isn't working perfectly. Switches still work even when the network is down.
+2. One switch can control any number of lights. If you have a room with a traditional switch controlling three lights you can continue controlling all three by swapping out the traditional one for a smart one. Alternatively, you could replace all three bulbs with smart ones and control them independently. The down sides to this are that bulbs wear out and you no longer have a physical switch to control the bulbs. The first costs more over the long haul and the second poses challenges for anyone visiting and any time your network isn't working perfectly. Switches still work even when the network is down.
 
 ### Smartified Things
 
-There a few categories of I've made smart:
+There a few categories of things I've made smart:
 
 - light switches
 - light bulbs
@@ -99,6 +99,16 @@ Lamp shade](https://www.ikea.com/us/en/p/nymoe-lamp-shade-black-brass-color-0037
 The lights over the couch were, and still are, really nice because we can have smaller amounts of light in more focused locations instead of one set of central, really bright lights on the ceiling. My wife and I both find this to be much easier on our eyes and significantly more effective when reading.
 
 The light in the nursery was an inspired decision and likely one that we have gained the most benefit from since having a kid. Having this light and connecting it to an Amazon Echo gave us an effective night light, a way to do late night feedings without bright lights like from an overhead, and hands-free operation of the light and its brightness. When set at 1% it is dim enough to not interfere with sleep while still being bright enough that we were able to easy check on our kid without squinting. To further simplify things, and add a touch of automation, we added a Hue Dimmer that is mounted to the wall just inside the door. Having the dimmer, though not as nice as a wired one, allowed for easily brightening or dimming the light without saying a word.
+
+#### Thermostats And Temperature Sensors
+
+I have a Nest thermostat and temerature sensors in almost every room. The sensors are a combination of [Aqara Temperature and Humidity Sensors](https://amazon.com/dp/B07D37FKGY) and custom built ones. Building a sensor that is compact and nice looking turned out to be beyond my skill level so most of the ones I have are the Aqara ones. By having these sensors everywhere and having the data from them pulled into Home Assistant I can quickly see the temperature in the occupied part of the house and adjust the Nest accordingly.
+
+One thing that I want to call out here is that Home Assistant is wht makes this possible. The Aqara sensors are Zigbee, my custom ones are Wi-Fi, and the Nest is read via a remote API. Home Assistant takes these three different systems and pulls them into a single place where I can work with them as if they were all from the same vendor.
+
+#### TV Remote
+
+I've got a [Logitech Harmony Companion All in One Remote Control](https://www.amazon.com/Logitech-Harmony-Companion-Control-Entertainment/dp/B00N3RFC4G) that controls my living room Roku TV and all the things connected to it. This allows me to control my the TV as part of automations that I'll discuss later.
 
 ## Automations In Home Assistant
 
