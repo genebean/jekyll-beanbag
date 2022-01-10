@@ -1,7 +1,7 @@
 ---
 title: Introducing My Home Assistant Setup
 date: 2022-01-09 23:00 -0500
-excerpt: >-
+description: >-
   A year ago today (January 9th, 2021) I deployed what I consider my first production-grade instance of Home Assistant and couldn't be happier.
 ---
 
@@ -108,7 +108,7 @@ One thing that I want to call out here is that Home Assistant is wht makes this 
 
 #### TV Remote
 
-I've got a [Logitech Harmony Companion All in One Remote Control](https://www.amazon.com/Logitech-Harmony-Companion-Control-Entertainment/dp/B00N3RFC4G) that controls my living room Roku TV and all the things connected to it. This allows me to control my the TV as part of automations that I'll discuss later.
+I've got a [Logitech Harmony Companion All in One Remote Control](https://www.amazon.com/Logitech-Harmony-Companion-Control-Entertainment/dp/B00N3RFC4G) that controls my living room Roku TV and all the things connected to it. This allows me to control my TV as part of automations that I'll discuss later.
 
 ## Automations In Home Assistant
 
