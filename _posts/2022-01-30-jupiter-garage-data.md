@@ -4,9 +4,9 @@ title: Temperature sensing for Jupiter Garage
 date: 2022-01-30 22:34 -0500
 ---
 
-The other day I was litening to [Linux Unplugged 441](https://linuxunplugged.com/441) and heard Chris mention how he wished he had a way to track the temperature in the garage where the server is.
+The other day I was listening to [Linux Unplugged 441](https://linuxunplugged.com/441) and heard Chris mention how he wished he had a way to track the temperature in the garage where the server is.
 
-I decieded that this was something I could help with, so I hit him up on Twitter:
+I decided that this was something I could help with, so I hit him up on Twitter:
 
 > Hey [@ChrisLAS](https://twitter.com/ChrisLAS) - I was listening to LUP today and heard you might need to monitor temperatures in your garage… DM me if you want a cloudless WiFi monitor based on ESPHome.
 >
@@ -24,7 +24,7 @@ It's modeled after one I have in my own garage with a couple of small modificati
 * a 3 port spring terminal block
 * a Dallas 1-wire temperature sensor in a waterproof housing with a cable attached
 
-The idea is that [Chris](https://twitter.com/ChrisLAS) will be able to mount this on, or near, the new server cabinet with the microcontroller at the top so that the heat it generates rises above the onboard sensor. The onboard sensor (the purple part) will allow him to monitor the temperature, barametric pressure, and humidity in the garage while the corded sensor will allow for monitoring the temperature inside the server rack.
+The idea is that [Chris](https://twitter.com/ChrisLAS) will be able to mount this on, or near, the new server cabinet with the microcontroller at the top so that the heat it generates rises above the onboard sensor. The onboard sensor (the purple part) will allow him to monitor the temperature, barometric pressure, and humidity in the garage while the corded sensor will allow for monitoring the temperature inside the server rack.
 
 ## Accessing the data directly
 
