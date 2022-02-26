@@ -8,10 +8,12 @@ group :testing do
 end
 
 gem 'jekyll', '~> 4.2', '>= 4.2.1'
+gem 'minimal-mistakes-jekyll'
 
 # If you have any plugins, put them here!
 group :jekyll_plugins do
   gem 'jekyll-algolia', '~> 1.6'
+  gem 'jekyll-archives'
   gem 'jekyll-compose', '~> 0.12.0'
   gem 'jekyll-feed', '~> 0.16.0'
   gem 'jekyll-gist', '~> 1.5'

@@ -1,25 +1,44 @@
 # see https://yaml-multiline.info for help with longer chunks of text
 gene:
-  name: Gene Liverman
-  short_name: gene
+  name: 'Gene Liverman'
   avatar : '/assets/images/headshot-gene-2021.png'
+  bio: >-
+    I'm a bicycle riding Eagle Scout tech geek.
+    I'm also a genealogy nut who drinks too much coffee.
   location: 'Georgia, USA'
-  github: 'genebean'
-  twitter: 'technicalissues'
-  linkedin: 'geneliverman'
   links:
+    - label: 'GitHub'
+      icon: 'fa-brands fa-github'
+      url: 'https://github.com/genebean'
+    - label: 'LinkedIn'
+      icon: 'fa-brands fa-linkedin'
+      url: 'https://www.linkedin.com/in/geneliverman/'
+    - label: 'Mastodon'
+      icon: 'fa-brands fa-mastodon'
+      url: 'https://fosstodon.org/@technicalissues'
+    - label: 'Twitter'
+      icon: 'fa-brands fa-twitter'
+      url: 'https://twitter.com/technicalissues'
     - label: 'Vagrant Boxes'
       icon: 'fas fa-fw fa-link'
       url: 'https://app.vagrantup.com/genebean'
+
 
 jake:
   name   : Jake Spain
   short_name: jake
   avatar : '/assets/images/thespain-avatar.png'
   location: 'Georgia, USA'
-  github: 'thespain'
-  twitter: 'thejspain'
-  linkedin: 'jake-spain-3907449b'
+  links:
+    - label: 'GitHub'
+      icon: 'fa-brands fa-github'
+      url: 'https://github.com/yachub'
+    - label: 'Twitter'
+      icon: 'fa-brands fa-twitter'
+      url: 'https://twitter.com/thejspain'
+    - label: 'LinkedIn'
+      icon: 'fa-brands fa-linkedin'
+      url: 'https://www.linkedin.com/in/jake-spain-3907449b'
 
 # jdoe:
 #   name: John Doe
