@@ -1,6 +1,7 @@
 ---
 author: gene
 title: Starting Over with Home Assistant - Prep Time
+date: 2022-03-06 18:00 -05:00
 ---
 
 The other day I [posted this question](https://www.reddit.com/r/homeassistant/comments/t5rsg4/starting_over_maybe/) to Redit:
