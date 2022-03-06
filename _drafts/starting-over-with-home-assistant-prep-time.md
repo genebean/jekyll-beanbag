@@ -36,10 +36,16 @@ After doing all the backups, my plan is to wipe everything and reinstall Home As
 
 Once Home Assistant is reinstalled I’ll start adding devices and automations back slowly and methodically. This methodical process may well result in wanting to reset things an additional couple of times, and that’s okay. I’d much rather have a little extra down time now than be unhappy after everything has been added back in.
 
-### Changing Zigbee Software
+###  A couple of extra changes
+
+#### Changing Zigbee Software
 
 One planned change in particular might be the cause of some redos: I’m going to be switching from [ZHA (Zigbee Home Automation)](https://www.home-assistant.io/integrations/zha/) to [Zigbee2MQTT (z2m)](https://www.zigbee2mqtt.io/). Though I’ve used both before, I didn’t discover z2m until after I’d set everything up at home. I like it a lot more and think I’ll put it to use as part of the redo.
 
-### Adding Z-Wave
+#### Adding Z-Wave
 
 We’ve also been planning to start using a couple of Z-Wave devices and I think now is the time to finally do so. As part of this, I’m thinking I’ll use the [Z-Wave JS to MQTT add-on](https://github.com/hassio-addons/addon-zwavejs2mqtt). It won’t surprise me any at all if I need to try a few different times to get things just right. 
+
+## Timing 
+
+I’m planning to do all the prep in the next few days and the actually kick off the redo. I’m strangely looking forward to this.
