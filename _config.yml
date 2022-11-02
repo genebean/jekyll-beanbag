@@ -15,7 +15,7 @@ repository: 'genebean/jekyll-beanbag'
 search: true
 
 # Mastodon
-mastodon: https://fosstodon.org/@technicalissues
+mastodon: https://fosstodon.org/@genebean
 
 # Build settings
 show_drafts: false
