@@ -1,7 +1,6 @@
 ---
 author: gene
 title: De-forking a Puppet Module
-canonical_url: https://puppet.com/blog/de-forking-a-puppet-module
 date: 2020-02-26 13:39 -0500
 ---
 A couple of years ago, the team I’m on forked a Puppet module called "mrepo" that is used for creating and managing RPM-based repository mirrors. We recently had an issue arise with using the module, and I happened to notice that the upstream of our fork is now Vox Pupuli and that they had made several improvements that we could benefit from. Those changes, combined with knowing the quality work Vox Pupuli does on all of their modules, made me wonder what it would take to get off our fork and back on to the upstream version.
