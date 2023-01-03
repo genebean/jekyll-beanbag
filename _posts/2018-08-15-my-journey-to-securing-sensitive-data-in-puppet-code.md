@@ -1,7 +1,6 @@
 ---
 author: gene
 title: My journey to securing sensitive data in Puppet code
-canonical_url: 'https://puppet.com/blog/my-journey-securing-sensitive-data-puppet-code'
 ---
 
 Dealing with secrets and sensitive data in Puppet is daunting, right? Nope, not at all. Let me show you how to do it. I've wrapped my head around the options available and want to share my journey in hopes of saving you from a few trials and tribulations. Just interested in the end result? Feel free to scroll down to the last section fittingly entitled [_The final product_](#finalproduct).
@@ -428,8 +427,6 @@ class profile::jenkins::agent::fog (
 ## What's next?
 
 This is all great stuff... if it's used. Next up is ensuring our Confluence page on deploying secrets is updated to help others utilize the Sensitive data type and the options provided by `node_encrypt`. After that it’s all about communication. Many of the people who work with secrets have been doing so long enough they probably don't need to look at the directions anymore so I need to ensure they know that the process has been enhanced.
-
-_This article was originally posted at [https://puppet.com/blog/my-journey-securing-sensitive-data-puppet-code](https://puppet.com/blog/my-journey-securing-sensitive-data-puppet-code)._
 
 *I am a senior site reliability engineer at Puppet.*
 

@@ -1,7 +1,6 @@
 ---
 author: gene
 title: 'Puppet Camping in place: East meets West'
-canonical_url: https://puppet.com/blog/puppet-camping-in-place-east-meets-west/
 date: '2020-04-28'
 excerpt: A recap of the first virtual Puppet Camp by an experienced camper.
 ---
