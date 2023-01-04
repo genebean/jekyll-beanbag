@@ -20,6 +20,9 @@ jake:
   github: 'thespain'
   twitter: 'thejspain'
   linkedin: 'jake-spain-3907449b'
+  mastodon:
+    instance: fosstodon.org
+    username: yachub
 
 # jdoe:
 #   name: John Doe
