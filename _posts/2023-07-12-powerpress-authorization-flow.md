@@ -41,6 +41,8 @@ Given that to operate PowerPress a user must already know how to log into WordPr
 * the insertion of the provided token in the `<podcast:txt>` tag
 * the sending of the success or failure response to the requesting service 
 
-Every other aspect of this flow already exists in PowerPress or WordPress itself. If PowerPress adds this functionality, the user gains the ability prove they own a podcast by doing nothing more than having an up-to-date PowerPress plugin installed, logging into WordPress, confirming they want to proceed, and waiting for the updated feed to be seen by the service. 
+Every other aspect of this flow already exists in PowerPress or WordPress itself. 
+
+If PowerPress adds this functionality, the user gains the ability to prove they own a podcast by doing nothing more than having an up-to-date PowerPress plugin installed, logging into WordPress, confirming they want to proceed, and waiting for the updated feed to be seen by the service. 
 
 I don’t think it can get much easier than that.
