@@ -90,6 +90,14 @@
         </li>
       {% endif %}
 
+      {% if author.mastodon %}
+        <li>
+          <a href="https://{{ author.mastodon.instance }}/@{{ author.mastodon.username }}" itemprop="sameAs" target="_blank" rel="nofollow noopener noreferrer">
+            <i class="fab fa-fw fa-mastodon" aria-hidden="true"></i> Mastodon
+          </a>
+        </li>
+      {% endif %}
+
       {% if author.twitter %}
         <li>
           <a href="https://twitter.com/{{ author.twitter }}" itemprop="sameAs" target="_blank" rel="nofollow noopener noreferrer">
