@@ -19,7 +19,7 @@ There’s a proposal in the podcast namespace for an authorization tag and I thi
 3. Service calls authorization url with token & rss feed as parameters
 4. Website hosting authorization url verifies it’s the home / host of the feed
 5. Website has user log in
-6. Website presents user a confirmation page that
+6. Website presents user a confirmation page
 7. If user confirms, website inserts the token into the `<podcast:txt>` tag
 8. Website publishes updated rss feed 
 9. If website supports it, it sends a podping to notify watchers of the updated feed
