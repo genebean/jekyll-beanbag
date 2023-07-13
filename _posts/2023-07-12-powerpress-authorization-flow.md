@@ -3,7 +3,7 @@ author: gene
 title: 'PowerPress Authorization Flow'
 date: 2023-07-12 21:45 -04:00
 description: >-
-  My proposal for how PowerPress couple implement the <podcast:authorization> tag's authorization flow
+  My proposal for how PowerPress could implement the <podcast:authorization> tag's authorization flow
 image:
   path: '/assets/images/posts/forest-trail-2x1.jpg'
 tags:
