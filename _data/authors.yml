@@ -5,12 +5,15 @@ gene:
   avatar : '/assets/images/headshot-gene-2021.png'
   location: 'Georgia, USA'
   github: 'genebean'
-  twitter: 'technicalissues'
+  # twitter: 'technicalissues'
   linkedin: 'geneliverman'
-  links:
-    - label: 'Vagrant Boxes'
-      icon: 'fas fa-fw fa-link'
-      url: 'https://app.vagrantup.com/genebean'
+  mastodon:
+    instance: fosstodon.org
+    username: genebean
+  # links:
+  #   - label: 'Vagrant Boxes'
+  #     icon: 'fas fa-fw fa-link'
+  #     url: 'https://app.vagrantup.com/genebean'
 
 jake:
   name   : Jake Spain
