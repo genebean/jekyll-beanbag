@@ -1,7 +1,7 @@
 ---
 author: gene
 title: 'Multitrack Podcast Transcripts'
-date: 2023-07-12 21:45 -04:00
+date: 2023-07-27 16:50 -04:00
 description: >-
   Podcast transcription is inaccurate by design today... but it doesn't have to be.
 image:
