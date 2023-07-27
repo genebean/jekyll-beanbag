@@ -6,7 +6,8 @@ description: >-
   Podcast transcription is inaccurate by design today... but it doesn't have to be.
 image:
   path: '/assets/images/posts/multitrack-podcast-transcripts-2x1.png'
-teaser_image: '/assets/images/posts/multitrack-podcast-transcripts-2x1.png'
+teaser_image:
+  img_path: '/assets/images/posts/multitrack-podcast-transcripts-2x1.png'
 tags:
   - podcasting
   - transcripts
