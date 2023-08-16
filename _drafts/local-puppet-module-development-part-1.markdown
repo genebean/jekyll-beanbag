@@ -116,13 +116,23 @@ These settings are all represented in the screenshots of my terminal you will se
 
 The second thing I do is install Homebrew per the instruction on [https://brew.sh](https://brew.sh). This tool is a package manager for macOS, allowing me to stay sane while installing additional tools and keeping them up-to-date.
 
-#### Shell setup
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+```
+
+Homebrew's permissions on `/usr/local/share/zsh` and `/usr/local/share/zsh/site-functions` are little too permissive for ZSH to be happy. Fortunately, there is a quick fix:
+
+```bash
+compaudit | xargs chmod g-w,o-w
+```
+
+#### Switching to ZSH
 
 For many years I used Bash as my shell... and then I was introduced to the awesomeness of the Z shell and Oh My ZSH. I was hooked almost immediately. Below is my setup and why I prefer it over Bash.
 
 ![zsh tab completion screenshot](https://res.cloudinary.com/genebean/image/upload/v1556932722/zsh-tab-completion_cv7cd4.png)
 
-I have set zsh as my default shell via the following process:
+Prior to macOS Catalina I had to opt into using ZSH but apparently Apple has also seen the light and ZSH is the default now. If you are running something older than macOS 10.15 you can set zsh as your default shell via the following process:
 
 ```bash
 # done in default bash shell
@@ -138,30 +148,65 @@ $ dscl . -read /Users/$USER UserShell
 UserShell: /usr/local/bin/zsh
 ```
 
-After doing what's above, and before starting a new shell that uses zsh, I pull down my `.zshrc` file and create `.private-env` like so:
+#### Git
+
+I like to have the latest version of git since so much of what I do relies on it and, because I use a [Yubikey](https://www.yubico.com), I have frequently needed a version way newer than what ships with macOS. I tend to update it right away so let's do that now before putting it to use:
 
 ```bash
-curl -sSo ~/.zshrc https://raw.githubusercontent.com/genebean/dots/master/link/nix/zshrc
+brew install git
+```
+
+Along those same lines, I like to use the shortcuts provided by [Hub](https://hub.github.com/)
+
+```bash
+brew install hub
+```
+
+#### Ruby
+
+Similarly, I tend to want the current version of Ruby so I let Homebrew keep it updated for me:
+
+```bash
+brew install ruby
+```
+
+#### GPG Suite
+
+My Yubikey also requires the GPG Suite of utilities so I install them via Homebrew too:
+
+```bash
+brew cask install gpg-suite
+```
+
+#### Shell setup
+
+Next I set up Oh My ZSH per the instructions on [https://ohmyz.sh](https://ohmyz.sh) so that things are both pretty and way more useful:
+
+```bash
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+The next thing I do is grab my custom theme:
+
+```bash
+mkdir ~/repos/customized-oh-my-zsh
+git clone https://github.com/genebean/my-oh-zsh-themes.git ~/repos/customized-oh-my-zsh/themes
+```
+
+After getting the theme in place, I grab my `.zshrc` file and create `.private-env` like so:
+
+```bash
+curl -sS https://raw.githubusercontent.com/genebean/dots/master/link/nix/zshrc > ~/.zshrc
 
 # the custom config looks for .private-env so let's make it
 touch ~/.private-env
-```
-
-On some systems I also need a couple of more changes:
-
-```bash
-# comment out starting the gpg agent if you are not using it
-sed -i 's/^gpg-connect-agent/#gpg-connect-agent/' ~/.zshrc
-
-# if on Linux you don't need the brew plugin
-sed -i "s/ brew / /" /home/vagrant/.zshrc
 ```
 
 `.private-env` is excluded from my dotfiles' git repository and is where I store things like authentication tokes or aliases that are unique to a particular machine. For example, the one on my work computer contains a GitHub token that is used by a couple of tools and also contains these two aliases that make working on our Puppet control repository much simpler:
 
 ```zsh
 alias plm='cd ~/repos/puppetlabs-modules'
-alias plmpr='git push -u origin $(git_current_branch); hub pull-request -b production; hub browse'
+alias plmpr='hub pull-request --push --browse'
 ```
 
 Thanks to these two aliases I am able to:
@@ -169,21 +214,6 @@ Thanks to these two aliases I am able to:
 - jump directly to my copy of our control repo from anywhere
 - push all committed changes in our my local copy of the control repo to the feature branch I am working on, create a pull request for the changes, and then open my web browser to the pull request by simply typing `plmpr`. `plmpr` is short for 'Puppet Labs Modules Pull Request'.
 
-Git needs to be installed for the next step and, because I use a [Yubikey](https://www.yubico.com), I need a version way newer than what ships with macOS. Homebrew rides to the rescue here as it so often does.
-
-```bash
-brew install git
-```
-
-Next I set up Oh My ZSH per the instructions on [https://ohmyz.sh](https://ohmyz.sh) so that things are both pretty and way more useful. It will use the files from above straight away. You'll also need to grab my theme for the .zshrc downloaded earlier to work correctly:
-
-```bash
-# Remove the default custom theme folder...
-# there is nothing there that's needed.
-$ rm -rf ~/.oh-my-zsh/custom/themes
-
-$ git clone https://github.com/genebean/my-oh-zsh-themes.git ~/.oh-my-zsh/custom/themes
-```
 
 There are several ways this shell setup is useful for doing module development. The first of these is the easy case-insensitive tab completion when changing directories or opening files within a module. The second centers around shell aliases and functions that simplify repetitive tasks. Oh My ZSH comes with pre-made aliases for many Git related tasks. Additionally, I have added both functions and shortcut aliases to the .zshrc that was downloaded earlier. I will talk more about this in part two of this series as it'll make more sense when shown in-context.
 
@@ -374,20 +404,26 @@ set rtp+='/usr/share/vim/addons/plugin/powerline.vim'
 As you can see from the .vimrc_os_specific files above, I use [powerline](https://powerline.readthedocs.io/en/latest/). I'll be pointing this tool out in a screenshot in the next section. You need Python 3 as a prerequisite for powerline on macOS. Homebrew has some caveats around how it handles Python because it's a preinstalled application on macOS. I suggest reading about them at https://docs.brew.sh/Homebrew-and-Python to save confusion later. Do the following to install current versions of Python 3 and Python 2:
 
 ```zsh
-$ brew install python python@2
+$ brew install python
 $ sz
-$ which python
-/usr/local/bin/python
+$ which python3
+/usr/local/bin/python3
 # if you get something else, please quit iTerm and reopen it.
 ```
 
 Next, install powerline and a utility it uses called psutil:
 
 ```zsh
-$ pip install psutil powerline-status
+$ pip3 install psutil powerline-status
 ```
 
 > _Note:_ Powerline can do much more than just work within vim. If you would like to use it in additional applications, be sure to have a look at their docs [here](https://powerline.readthedocs.io/en/master/usage.html).
+
+Next, install all the plugins with Vundle (press ENTER to ignore the error):
+
+```bash
+vim +PluginInstall +qall
+```
 
 ###### End Result
 
