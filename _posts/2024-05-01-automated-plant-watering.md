@@ -73,13 +73,13 @@ I got one for my parents and it is quite nice and really affordable. If you are 
 
 ### Step 1: Weather Station & Soil Sensor
 
-For me, step 1 happended back when I got the [Ecowitt GW2001 Wittboy Weather Station](https://amzn.to/49ZbHhA) as a gift. I have it connected via the [Ecowitt integration](https://www.home-assistant.io/integrations/ecowitt/). I do not use Ecowitt's cloud at all. Under "Weather Services" in the Ecowitt's configuration interface, I use the "Customized" to send data to Home Assistant. I also choose to send my station's data to Wunderground, which I was able to configure on the same page.
+For me, step 1 happened back when I got the [Ecowitt GW2001 Wittboy Weather Station](https://amzn.to/49ZbHhA) as a gift. I have it connected via the [Ecowitt integration](https://www.home-assistant.io/integrations/ecowitt/). I do not use Ecowitt's cloud at all. Under "Weather Services" in the Ecowitt's configuration interface, I use the "Customized" to send data to Home Assistant. I also choose to send my station's data to Wunderground, which I was able to configure on the same page.
 
 When I got the [Ecowitt WH51 Soil Moisture Sensor](https://amzn.to/4aWRJoV), I put a battery in each one and it connected right up to my station. For my own sanity, I went into both Echowitt's interface and Home Assistant's and renamed the sensor immediately after connecting before adding the second one.
 
 ### Step 2: A Zigbee Network
 
-Step 2's prerequisite was me already having the [Zigbee Home Automation integration](https://www.home-assistant.io/integrations/zha/) setup. Personally, I use a PoE Zigbee cooridnator from https://tubeszb.com/ - I am on my second one (I messed up the first one, no fault of the device) and have recommended them to everyone I know. They are really really good and provide a much more reliable setup than any of the USB based coordinators.
+Step 2's prerequisite was me already having the [Zigbee Home Automation integration](https://www.home-assistant.io/integrations/zha/) setup. Personally, I use a PoE Zigbee coordinator from https://tubeszb.com/ - I am on my second one (I messed up the first one, no fault of the device) and have recommended them to everyone I know. They are really really good and provide a much more reliable setup than any of the USB based coordinators.
 
 I also use [Sengled Smart Plugs](https://amzn.to/3JJhj4S) to ensure I have a very reliable Zigbee network all around my house. I have two such plugs on the side of the house that has the spigot on the outside.
 
@@ -170,5 +170,4 @@ The code for all of this is too much to include in a blog post, so I've posted i
 
 ## Closing
 
-This has been exciting to setup! I am really looking forwad to seeing how it works this year, and maybe expanding the setup to cover a few more areas. One idea I have for the future is to use one of these timers on a rain barrel for some plants that are a little farther from my house... if that happens I'll try to remember to post about it too.
-
+This has been exciting to setup! I am really looking forward to seeing how it works this year, and maybe expanding the setup to cover a few more areas. One idea I have for the future is to use one of these timers on a rain barrel for some plants that are a little farther from my house... if that happens I'll try to remember to post about it too.
