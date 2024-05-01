@@ -29,11 +29,11 @@ What I came up with was a zigbee-based water valve with a built in timer and a s
 
 The picture below shows the irrigation kit and the soil sensor. The larger tubing snaking through the middle is 1/2" diameter. The smaller tubes are 1/4" and connect to the sprinkler heads (the blue-topped things). Each sprinkler has a little spike under it to keep it in place and is adjustable so that you get just the right amount of water out of each one. The bright green thing with a white disk in the center of it is the top of the soil sensor.
 
-![](/assets/images/posts/2024-05-01-sprinklers-off.jpg)
+![Photo of flower bed with sprinklers off](/assets/images/posts/2024-05-01-sprinklers-off.jpg)
 
 Here is what it looks like with the sprinklers on:
 
-![](/assets/images/posts/2024-05-01-sprinklers-on.jpg)
+![Photo of flower bed with sprinklers on](/assets/images/posts/2024-05-01-sprinklers-on.jpg)
 
 A couple of things to note in the picture above are that the sprinklers each water right near the base of a plant and that the soil sensor gets watered as well.
 
