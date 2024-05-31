@@ -1,7 +1,7 @@
 ---
 author: gene
 title: 'Custom Weather Entity'
-date: 2024-04-30 1500 -04:00
+date: 2024-04-30 15:00 -04:00
 description: >-
   How I created a custom weather entity that pulls current conditions from the weather station in my back yard and forecast data from the Tomorrow.io integration.
 image:
