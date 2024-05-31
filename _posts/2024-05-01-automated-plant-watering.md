@@ -1,7 +1,7 @@
 ---
 author: gene
 title: 'Automated Plant Watering'
-date: 2024-05-01 1500 -04:00
+date: 2024-05-01 15:00 -04:00
 description: >-
   How we're going to make sure our plants stay properly watered all season long
 image:
