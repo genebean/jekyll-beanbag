@@ -34,3 +34,5 @@ listening on net1, link-type EN10MB (Ethernet), capture size 262144 bytes
 This made me realize that Amazon uses the `.1` address as the gateway in each subnet! With this new-found knowledge, I deleted the routes I had previously added and replaced them with these: `ip route add 10.5.2.0/24 via 10.4.2.1` on Instance 1 & `ip route add 10.4.2.0 via 10.5.2.1` on Instance 2. Put another way, `ip route add <subnet in other AZ> via <.1 in the locally attached subnet>`. BOOM! Everything works now... and the fix turned out to be a simple one that, in hindsight, should have been obvious. To make the new routes persistent, I added them into the Puppet code that manages each instance.
 
 And that's it. The key here was discovering that the `.1` is the gateway and adding a simple route.
+
+**Edit 2024-06-03**: Another coworker pointed me to <https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html> which actually documentes this along with the reserved adderess for DNS on each subnet (`.2` on a `/24`). Like so many things, this is easy *if* you know where to look...
