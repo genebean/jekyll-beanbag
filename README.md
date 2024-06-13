@@ -6,8 +6,6 @@ Check out the live version of this website at [https://beanbag.technicalissues.u
 
 ## Contributiting
 
-This repo utilizes Git Flow. This means that new content is based on the `develop` branch.
-
-Want to add a post? Create a branch based on the `develop` branch and submit a pull request.
+Want to add a post? Create a branch based on the `main` branch and submit a pull request.
 
 See an error? Open an issue and I'll do my best to get it fixed. You are also welcome to open a pull reqeust.
