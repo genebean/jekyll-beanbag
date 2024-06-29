@@ -26,7 +26,7 @@ command = "jekyll build"
 
 [[redirects]]
   from = "/js/script.js"
-  to = "https://stats.technicalissues.us/js/script.js"
+  to = "https://stats.technicalissues.us/js/script.outbound-links.js"
   status = 200
 [[redirects]]
   from = "/api/event"
