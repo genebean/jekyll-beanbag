@@ -25,7 +25,7 @@ command = "jekyll build"
    X-Frame-Options = "DENY"
 
 [[redirects]]
-  from = "/js/script.js"
+  from = "/js/script.outbound-links.js"
   to = "https://stats.technicalissues.us/js/script.outbound-links.js"
   status = 200
 [[redirects]]
