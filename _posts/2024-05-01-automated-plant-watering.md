@@ -105,6 +105,18 @@ Note: the timer seems to have a built in turn off function after roughly 10 minu
 
 ## Automation with Home Assistant
 
+### Update 2024-06-29
+
+[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fcommunity.home-assistant.io%2Ft%2Fautomated-plant-watering-v1%2F744631)
+
+I have now created a [Blueprint](https://www.home-assistant.io/docs/blueprint/) that makes it easy to use the automations described below. I have one instance of the blueprint associated with each flower bed. The blueprint also allows you to account for needing to water each bed separately as I have found that there isn't enough water volume when watering them at the same time. This is accomplished via the Pre-actions section of the blueprint like shown here:
+
+![Screenshot of pre-actions in blueprint](/assets/images/posts/2024-06-29-blueprint-pre-actions.png)
+
+The screenshot shows a 1 minute delay as the first part of the pre-action. This is to give the other instance of the blueprint time to start running. The other instance has similar valve checks for the dahlia bed, but no delay. That one will water first and then this one will water when its finished. If I add a third valve, I may have to change the logic here. On the plus side, you can put any logic you want in this section.
+
+### Original Automation Information
+
 We are still tweaking the exact watering frequency and durations, but the automations I setup should work for just about anyone. Here's the overview of my Home Assistant automation:
 
 ### The Triggers
@@ -167,6 +179,8 @@ The 10 hour range mentioned just above covers the 7am hour through the 4pm hour.
 ## Code
 
 The code for all of this is too much to include in a blog post, so I've posted it all to GitHub at [github.com/genebean/home-assistant-examples/tree/main/automated-plant-watering](https://github.com/genebean/home-assistant-examples/tree/main/automated-plant-watering)
+
+Do be sure to see the update above where I converted most of this into a blueprint.
 
 ## Closing
 
