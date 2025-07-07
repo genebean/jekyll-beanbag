@@ -2,7 +2,7 @@
 title: The Comfy Seat
 description: The chair I sit in to geek out
 url: https://beanbag.technicalissues.us
-#baseurl: 
+baseurl: ''
 twitter:
   username: technicalissues
   card: summary
