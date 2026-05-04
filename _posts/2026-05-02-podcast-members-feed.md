@@ -10,55 +10,55 @@ This article describes a practical, self-hosted architecture for exactly that. I
 
 One note before we begin: if you and your listeners are already streaming sats and boosting, value-for-value is already working for your public feed. This architecture sits alongside that — it does not replace it. Members get a private feed with bonus content; everyone else keeps listening and paying however they choose.
 
------
+---
 
 ## Subscriber Experience
 
-Before getting into how this works technically, it helps to understand what you are building from your listener’s perspective. This is also the story you will tell your audience when you launch.
+Before getting into how this works technically, it helps to understand what you are building from your listener's perspective. This is also the story you will tell your audience when you launch.
 
 A listener visits your members page and picks a plan — monthly or annual. They pay a Lightning invoice with their wallet of choice. Payment settles in seconds. Within a minute they receive an email containing their private podcast feed URL. They open Fountain, Castamatic, or whichever podcast app they use, find the option to add a podcast by URL, and paste the link. The members feed appears in their library alongside their other shows. New bonus episodes appear automatically when you publish them, exactly like any other podcast. There is no app to install, no account to create, no password to remember.
 
 When their subscription is approaching expiry, they receive a reminder email. They pay again and nothing changes in their podcast app — the same URL keeps working, silently extended in the background.
 
-If a subscription lapses without renewal, the podcast app will eventually try to refresh the feed and receive a different experience depending on timing. On the first poll after expiry, a synthetic episode appears at the top of the feed with a title like “Your subscription has expired” — and if you record a short audio clip, it plays that clip. After that first notification episode is delivered, subsequent polls receive a 402 Payment Required response and the app stops updating. This gives the listener a graceful in-app notice rather than a silent failure.
+If a subscription lapses without renewal, the podcast app will eventually try to refresh the feed and receive a different experience depending on timing. On the first poll after expiry, a synthetic episode appears at the top of the feed with a title like "Your subscription has expired" — and if you record a short audio clip, it plays that clip. After that first notification episode is delivered, subsequent polls receive a 402 Payment Required response and the app stops updating. This gives the listener a graceful in-app notice rather than a silent failure.
 
 **If a subscriber provides their Nostr npub during checkout,** the experience gains two meaningful additions. First, their feed URL arrives as an encrypted direct message in Damus, Primal, Amethyst, YakiHonne, or whichever Nostr client they use — alongside their other messages rather than buried in email. Second, at the same time as the expiry episode is served, they receive a Nostr DM reminding them their subscription has lapsed and directing them to renew. And if they ever lose their feed URL, they can retrieve it themselves without emailing you — see the Nostr section below for how this works.
 
 A subscriber does not need to provide an email address if they provide their Nostr npub, and vice versa. At least one is required. For a Nostr-native listener who prefers not to share their email, npub-only is fully supported.
 
------
+---
 
 ## How It Works
 
 The subscriber experience above is produced by three pieces working together.
 
-When a listener pays, BTCPay Server receives and settles the Lightning invoice, records the subscription, and immediately fires a webhook — an automated HTTP notification — to a small service running on your server. That service, which we call the token service, generates a unique random string, stores it in a database alongside the subscriber’s contact details and expiry date, and constructs a private RSS feed URL containing that token. It then delivers the URL by email and Nostr DM as applicable.
+When a listener pays, BTCPay Server receives and settles the Lightning invoice, records the subscription, and immediately fires a webhook — an automated HTTP notification — to a small service running on your server. That service, which we call the token service, generates a unique random string, stores it in a database alongside the subscriber's contact details and expiry date, and constructs a private RSS feed URL containing that token. It then delivers the URL by email and Nostr DM as applicable.
 
-When a podcast app polls the feed URL, the token service checks the token against the database. If valid and not expired, it fetches the actual RSS feed from PodServer and returns it to the app. PodServer’s real feed URL is never exposed to subscribers. If the token has just expired and has not yet been notified, the service injects a synthetic expiry episode into the feed before returning it, marks the token as notified, and fires a Nostr DM if the subscriber has a pubkey. Subsequent requests for the expired token receive a 402.
+When a podcast app polls the feed URL, the token service checks the token against the database. If valid and not expired, it fetches the actual RSS feed from PodServer and returns it to the app. PodServer's real feed URL is never exposed to subscribers. If the token has just expired and has not yet been notified, the service injects a synthetic expiry episode into the feed before returning it, marks the token as notified, and fires a Nostr DM if the subscriber has a pubkey. Subsequent requests for the expired token receive a 402.
 
-When BTCPay fires a renewal webhook, the token service extends the expiry on the subscriber’s existing token rather than issuing a new URL — the subscriber’s podcast app never needs updating. If a subscriber lapses and then re-subscribes later, a new token is issued and the feed URL is re-delivered.
+When BTCPay fires a renewal webhook, the token service extends the expiry on the subscriber's existing token rather than issuing a new URL — the subscriber's podcast app never needs updating. If a subscriber lapses and then re-subscribes later, a new token is issued and the feed URL is re-delivered.
 
 When a subscription expires or is suspended, any active tokens for that subscriber are revoked immediately.
 
------
+---
 
 ## The Stack
 
 **BTCPay Server** handles everything money-related: Lightning invoices, subscription plans, renewal reminders, and webhooks. It is self-hosted, open-source, and takes no fees. Its native subscription system handles monthly and annual billing, sends renewal reminders automatically, and provides a subscriber management dashboard.
 
-**Alby Hub** is a self-hosted Lightning node management layer that sits in front of LND. It handles channel management, liquidity monitoring, and the connection interface that BTCPay uses to interact with Lightning. On Umbrel it is a one-click app store install. On NixOS it runs as a Podman container alongside nix-bitcoin’s LND service. Both paths connect BTCPay to Alby Hub rather than to LND directly, which makes Lightning significantly more approachable day-to-day.
+**Alby Hub** is a self-hosted Lightning node management layer that sits in front of LND. It handles channel management, liquidity monitoring, and the connection interface that BTCPay uses to interact with Lightning. On Umbrel it is a one-click app store install. On NixOS it runs as a Podman container alongside nix-bitcoin's LND service. Both paths connect BTCPay to Alby Hub rather than to LND directly, which makes Lightning significantly more approachable day-to-day.
 
 **PodServer** is a BTCPay Server plugin that adds podcast hosting to your BTCPay instance. It generates a valid RSS feed with Podcasting 2.0 tags including value splits, and manages your audio files. You will use it to host the members-only feed separately from your public feed.
 
 **The token service** is a small Python application — the glue between BTCPay and your private RSS feed. The complete source is at `pkgs/podcast-token-service/token_service.py` in the repository. It listens for BTCPay webhooks, manages tokenized feed URLs, proxies the private feed, delivers notifications via email and Nostr DM, and exposes Prometheus metrics. This is the only custom code in the stack.
 
------
+---
 
 ## Infrastructure Considerations
 
 ### Bitcoin Node
 
-Both deployment paths require a local Bitcoin node. LND needs a Bitcoin chain backend, and both Umbrel’s LND and nix-bitcoin’s LND are wired to a local Bitcoin Core instance.
+Both deployment paths require a local Bitcoin node. LND needs a Bitcoin chain backend, and both Umbrel's LND and nix-bitcoin's LND are wired to a local Bitcoin Core instance.
 
 **Full node** is the recommended option — roughly 700 GB of disk, several days to sync from scratch, complete transaction verification, and full sovereignty. It also supports the widest range of other Umbrel apps and services.
 
@@ -74,7 +74,7 @@ For Path A, the Umbrel hardware does the heavy lifting. A machine with a 1 TB SS
 
 For Path B on a dedicated server, a Hetzner CX32 (4 vCPU, 8 GB RAM) with an attached 1 TB volume covers the full stack.
 
------
+---
 
 ## Choosing a Deployment Path
 
@@ -86,7 +86,7 @@ Both paths share the same architecture, the same BTCPay configuration, the same 
 
 Neither path is a stepping stone to the other — both are legitimate long-term choices. A podcaster running a healthy Umbrel with active Lightning channels has no compelling reason to migrate to NixOS unless that operational model is what they want.
 
------
+---
 
 ## Path A: Umbrel Deployment
 
@@ -96,9 +96,9 @@ The Umbrel deployment splits across two machines:
 
 **Your Umbrel** (home lab, office, or wherever it lives) runs Bitcoin Core, LND, Alby Hub, BTCPay Server, and PodServer — all installed from the Umbrel app store.
 
-**A small VPS** (Hetzner CX22 or equivalent) runs the token service as a Podman container, nginx with Let’s Encrypt TLS, and Tailscale configured as an exit node.
+**A small VPS** (Hetzner CX22 or equivalent) runs the token service as a Podman container, nginx with Let's Encrypt TLS, and Tailscale configured as an exit node.
 
-The two machines communicate exclusively over Tailscale. The VPS is the only machine with a public IP. Your Umbrel’s home IP is never exposed to the internet — all inbound traffic routes through the VPS, and configuring the VPS as Tailscale exit node means outbound traffic from your Umbrel also routes through it. This keeps your home IP private and gives your Lightning node a stable public address for peer connections.
+The two machines communicate exclusively over Tailscale. The VPS is the only machine with a public IP. Your Umbrel's home IP is never exposed to the internet — all inbound traffic routes through the VPS, and configuring the VPS as Tailscale exit node means outbound traffic from your Umbrel also routes through it. This keeps your home IP private and gives your Lightning node a stable public address for peer connections.
 
 ### VPS Setup
 
@@ -137,19 +137,19 @@ If you want your Bitcoin and Lightning node to be reachable by peers — which s
 
 ### Tailscale: Connecting Umbrel to the VPS
 
-Tailscale is available directly in the Umbrel app store — install it there. Once installed, connect it to your Tailscale account and configure the VPS as the exit node in the Umbrel Tailscale settings. Your Umbrel’s home IP will then be routed through the VPS.
+Tailscale is available directly in the Umbrel app store — install it there. Once installed, connect it to your Tailscale account and configure the VPS as the exit node in the Umbrel Tailscale settings. Your Umbrel's home IP will then be routed through the VPS.
 
-Note the Umbrel’s Tailscale IP from the Tailscale admin console — you will need it for the `PODSERVER_FEED_URL` configuration and for the nginx stream proxy if you set that up.
+Note the Umbrel's Tailscale IP from the Tailscale admin console — you will need it for the `PODSERVER_FEED_URL` configuration and for the nginx stream proxy if you set that up.
 
 ### Umbrel App Installation Order
 
 Install from the Umbrel app store in this sequence — each step depends on the previous one being complete:
 
 1. **Bitcoin Node** — installs Bitcoin Core. Wait for the blockchain to fully sync before continuing. This takes days on a first install and requires significant disk space (700 GB for a full node; around 10–25 GB for pruned).
-1. **Lightning Node** — installs LND. Requires Bitcoin Core to be fully synced.
-1. **Alby Hub** — installs Alby Hub. Connect it to your LND instance using the details shown in the Lightning Node app.
-1. **BTCPay Server** — installs BTCPay. During initial setup, connect it to Alby Hub using the connection string Alby Hub provides.
-1. **PodServer** — install from within the BTCPay admin interface under Plugins, not from the Umbrel app store.
+2. **Lightning Node** — installs LND. Requires Bitcoin Core to be fully synced.
+3. **Alby Hub** — installs Alby Hub. Connect it to your LND instance using the details shown in the Lightning Node app.
+4. **BTCPay Server** — installs BTCPay. During initial setup, connect it to Alby Hub using the connection string Alby Hub provides.
+5. **PodServer** — install from within the BTCPay admin interface under Plugins, not from the Umbrel app store.
 
 ### Token Service: Podman Container on VPS
 
@@ -161,7 +161,7 @@ cd podcast-members-feed/podman
 cp .env.example .env
 ```
 
-Edit `.env` and fill in all values. The `PODSERVER_FEED_URL` uses the Umbrel’s Tailscale IP:
+Edit `.env` and fill in all values. The `PODSERVER_FEED_URL` uses the Umbrel's Tailscale IP:
 
 ```
 PODSERVER_FEED_URL=http://<umbrel-tailscale-ip>/podserver/feed/<feed-id>.xml
@@ -181,7 +181,7 @@ curl -s http://127.0.0.1:8765/health
 # {"status":"ok"}
 ```
 
------
+---
 
 ## Path B: NixOS Deployment
 
@@ -189,7 +189,7 @@ curl -s http://127.0.0.1:8765/health
 
 [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin) is a collection of NixOS modules for Bitcoin and Lightning infrastructure with a strong emphasis on security. It handles BTCPay Server, LND, nbxplorer, PostgreSQL, and their interconnections — you do not write service definitions for these from scratch.
 
-Add inputs to your flake. Your nixpkgs must follow nix-bitcoin’s pinned versions — overriding with your own nixpkgs risks subtle breakage with software nix-bitcoin has not tested against:
+Add inputs to your flake. Your nixpkgs must follow nix-bitcoin's pinned versions — overriding with your own nixpkgs risks subtle breakage with software nix-bitcoin has not tested against:
 
 ```nix
 inputs = {
@@ -235,7 +235,7 @@ services.bitcoind.extraConfig = ''
 
 ### Alby Hub on NixOS
 
-Alby Hub is not in nixpkgs. Run it as a Podman container alongside nix-bitcoin’s LND. Set the container backend explicitly:
+Alby Hub is not in nixpkgs. Run it as a Podman container alongside nix-bitcoin's LND. Set the container backend explicitly:
 
 ```nix
 virtualisation.oci-containers.backend = "podman";
@@ -327,7 +327,7 @@ podman load < result
 
 The GitHub Actions workflow in the repository builds this image and pushes it to `ghcr.io/genebean/podcast-members-feed` automatically on pushes to main and on version tags.
 
------
+---
 
 ## BTCPay Configuration
 
@@ -344,10 +344,9 @@ Navigate to your store and create a Subscription Offering. Add two plans:
 **Annual membership** — same offering, annual interval. A 15–20% discount compared to twelve monthly payments is a conventional starting point and meaningfully reduces renewal friction.
 
 For both plans configure:
-
 - A grace period of 3–5 days so a renewal reminder landing in spam does not immediately cut off a subscriber
 - Email notifications: a reminder 5 days before expiry and a confirmation on successful renewal
-- A custom metadata field on the checkout page labelled “Nostr npub (optional)” — this passes through to the webhook payload and the token service uses it for Nostr DM delivery and NIP-98 self-service recovery
+- A custom metadata field on the checkout page labelled "Nostr npub (optional)" — this passes through to the webhook payload and the token service uses it for Nostr DM delivery and NIP-98 self-service recovery
 
 BTCPay sends renewal reminders automatically once SMTP is configured in Server Settings > Email.
 
@@ -363,7 +362,7 @@ In Store Settings > Webhooks, add a webhook:
 
 Enable **Automatic redelivery** so BTCPay retries failed deliveries if the token service is briefly unavailable.
 
------
+---
 
 ## PodServer Setup
 
@@ -373,9 +372,9 @@ Create a new podcast in PodServer for your members feed. Keep it completely sepa
 
 Add a `<podcast:value>` block to the members feed exactly as you would your public feed. Members who listen in Podcasting 2.0 apps can stream sats and boost episodes on the private feed. Access is what they are paying for; their listening behaviour remains their own.
 
-Note the internal feed URL PodServer generates. On Path A, use the Umbrel’s Tailscale IP in the address. On Path B, this is a localhost address. This URL goes into `PODSERVER_FEED_URL` — subscribers never see it.
+Note the internal feed URL PodServer generates. On Path A, use the Umbrel's Tailscale IP in the address. On Path B, this is a localhost address. This URL goes into `PODSERVER_FEED_URL` — subscribers never see it.
 
------
+---
 
 ## The Token Service
 
@@ -414,7 +413,97 @@ Generate the Nostr service keypair with `nak keygen`. On startup the service log
 - `POST /admin/cleanup` — remove old expired tokens (bearer token, localhost nginx)
 - `GET /health` — liveness check
 
------
+---
+
+## Validating the Token Service
+
+Before committing to the full BTCPay and Lightning setup it is worth validating that the token service container works correctly on its own. The `test-webhook` command in the management CLI handles the full validation flow without needing curl, manual database queries, or a real SMTP server.
+
+### Starting the Container for Testing
+
+You will need a real podcast RSS feed URL to use as the upstream source. This lets you verify that the proxy is returning genuine podcast content rather than test XML. Sample feeds from a wide range of shows can be found at [podcastindex.org](https://podcastindex.org/).
+
+Start the container with a volume mount and explicit `DATABASE_PATH` so the management CLI can reach the database from the host. Without the volume mount the database lives inside the ephemeral container filesystem and is unreachable:
+
+```bash
+mkdir -p data
+
+podman run --rm \
+  --name podcast-token-service \
+  -p 127.0.0.1:8765:8765 \
+  -v $(pwd)/data:/var/lib/podcast-token-service \
+  -e BTCPAY_WEBHOOK_SECRET=testsecret \
+  -e PODSERVER_FEED_URL=https://feeds.npr.org/500005/podcast.xml \
+  -e FEED_BASE_URL=http://localhost:8765 \
+  -e ADMIN_TOKEN=testtoken \
+  -e NOSTR_PRIVATE_KEY=$(openssl rand -hex 32) \
+  -e SMTP_HOST=localhost \
+  -e DATABASE_PATH=/var/lib/podcast-token-service/tokens.db \
+  ghcr.io/genebean/podcast-members-feed:latest
+```
+
+`SMTP_HOST=localhost` is intentionally unreachable — email delivery will fail and be logged, but the webhook returns 200 and the token is created correctly. This is expected behaviour. `--name` is required so `podman exec` can address the container by name.
+
+On startup the service logs its Nostr pubkey:
+
+```
+INFO:token_service:Token service started — Nostr pubkey: npub1...
+```
+
+### Running the Validation
+
+In a second terminal, run the `test-webhook` command. Use a hex pubkey as the test subscriber identity — generate one with `openssl rand -hex 32` or use a real Nostr pubkey:
+
+```bash
+FEED_BASE_URL=http://localhost:8765 \
+ADMIN_TOKEN=testtoken \
+python3 cli/podcast_members_manage.py \
+  --db ./data/tokens.db \
+  test-webhook \
+  --webhook-secret testsecret \
+  --npub $(openssl rand -hex 32) \
+  --feed-url https://feeds.npr.org/500005/podcast.xml \
+  --run-expiry-test
+```
+
+A passing run looks like this:
+
+```
+Stage 1: Health check
+─────────────────────
+  ✓ Health endpoint returned ok
+
+Stage 2: Metrics endpoint
+─────────────────────────
+  ✓ Metrics returned Prometheus data
+  ✓ Unauthenticated request correctly rejected (401)
+
+Stage 3: Webhook
+────────────────
+  ✓ Webhook accepted for subscriber test-1777845664
+
+Stage 4: Token and feed
+───────────────────────
+  ✓ Token created: ...xF3MAkzPfE
+  Feed URL: http://localhost:8765/rss/<token>.xml
+  ✓ Feed URL returns valid RSS content
+  ✓ Upstream feed is valid RSS
+
+Stage 5: Expiry flow
+────────────────────
+  ✓ Token expired in database
+  ✓ First fetch: 200 with expiry episode injected
+  ✓ Second fetch: 402 Payment Required
+  ✓ Token restored to active state
+
+────────────────────────────────────────
+  Passed: 10  Failed: 0
+  All checks passed
+```
+
+Once all checks pass the token service is working correctly and you are ready to proceed with the full BTCPay and Lightning setup.
+
+---
 
 ## Nostr Integration
 
@@ -446,13 +535,13 @@ The result: a subscriber proves they own the npub associated with their subscrip
 
 **On mobile:** standard iOS and Android browsers do not support extensions, so the NIP-07 signing flow is not available on phones. Mobile users should use the email fallback — reply to the subscription confirmation email to have their URL resent. The recovery page makes this clear.
 
------
+---
 
 ## Accounting and Reporting
 
 ### What BTCPay Provides
 
-BTCPay’s built-in reporting covers the essentials: an active/expiring/expired subscriber dashboard filterable by plan, full transaction history exportable to CSV, aggregate revenue views by time period, and email delivery logs for renewal reminders. For most podcast membership programs this is sufficient.
+BTCPay's built-in reporting covers the essentials: an active/expiring/expired subscriber dashboard filterable by plan, full transaction history exportable to CSV, aggregate revenue views by time period, and email delivery logs for renewal reminders. For most podcast membership programs this is sufficient.
 
 ### Management CLI
 
@@ -488,7 +577,7 @@ podman exec podcast-token-service \
   stats
 ```
 
------
+---
 
 ## Operations
 
@@ -585,22 +674,22 @@ Point an uptime monitor at `https://members.yourpodcast.com/health` for basic li
 
 Update prices in BTCPay under the Subscription Offering. Existing active subscribers are unaffected — their tokens remain valid until natural expiry. New subscribers pay the updated price.
 
------
+---
 
 ## Limitations and Honest Tradeoffs
 
-**No automatic recurring charges.** Bitcoin does not support automatic debits. Subscribers must actively renew. BTCPay’s reminder emails handle most of this, but annual plans reduce the friction significantly — make the annual option genuinely attractive.
+**No automatic recurring charges.** Bitcoin does not support automatic debits. Subscribers must actively renew. BTCPay's reminder emails handle most of this, but annual plans reduce the friction significantly — make the annual option genuinely attractive.
 
 **RSS caching.** Podcast apps cache feeds aggressively. A new episode may not appear for 15–60 minutes after publishing. This is normal RSS behaviour.
 
-**Revocation delay.** When a token is revoked, a subscriber’s app does not know until its next poll. Previously downloaded episodes remain playable on the device. This is appropriate — subscribers who paid for access should keep what they downloaded while subscribed.
+**Revocation delay.** When a token is revoked, a subscriber's app does not know until its next poll. Previously downloaded episodes remain playable on the device. This is appropriate — subscribers who paid for access should keep what they downloaded while subscribed.
 
 **Token sharing.** A subscriber could share their feed URL. Use `podcast-members-manage subscribers --active` to spot unusual `last_used_at` patterns and revoke suspicious tokens. Your subscribers support your work in Bitcoin — token sharing is rarely a meaningful problem in practice.
 
-**Single point of failure.** The token service sits on the critical path for feed access. Systemd’s `Restart=on-failure` and Podman’s `restart: unless-stopped` cover most failure modes. Brief downtime is invisible to subscribers since podcast apps retry on the next polling interval.
+**Single point of failure.** The token service sits on the critical path for feed access. Systemd's `Restart=on-failure` and Podman's `restart: unless-stopped` cover most failure modes. Brief downtime is invisible to subscribers since podcast apps retry on the next polling interval.
 
 **Lightning is final.** No chargebacks. Document your refund policy before launch.
 
------
+---
 
 *This article was written with assistance from Claude (Anthropic) and extensive human review, testing, and editorial direction by the author.*
