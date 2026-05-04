@@ -3,12 +3,18 @@ author: gene
 title: Lightning-Gated Podcast Members Feeds with BTCPay Server
 date: 2026-05-04
 description: >-
-  You make a Bitcoin podcast. Your audience already streams sats while they listen and boosts episodes they love. Now you want to offer something more: a members-only feed with bonus content, available only to paying supporters, compatible with the apps your listeners already use — Fountain, Castamatic, and any other Podcasting 2.0 player.
+  A practical guide to self-hosted Bitcoin-native podcast membership using
+  BTCPay Server, private RSS feeds, and a small token service — compatible
+  with Fountain, Castamatic, and any Podcasting 2.0 player.
+image:
+  path: '/assets/images/posts/2026-05-04-lightning-podcast-members.jpg'
 tags:
-  - podcasting
   - bitcoin
   - lightning
-  - BTCPay
+  - podcasting
+  - btcpay
+  - nostr
+  - self-hosted
 ---
 
 ## Introduction
@@ -20,8 +26,6 @@ The catch is that you want to do this without Patreon, without Stripe, and witho
 This article describes a practical, self-hosted architecture for exactly that. It is written for the podcaster who wants to understand how the pieces fit together, and for the developer — perhaps a technically-minded co-host — who will build and maintain it. The complete reference implementation, including all source code, NixOS configuration, and alerting rules, lives at [github.com/genebean/podcast-members-feed](https://github.com/genebean/podcast-members-feed). Two deployment paths are covered: one built on Umbrel that most people can follow without prior server administration experience, and one built on NixOS for a fully declarative, production-grade system.
 
 One note before we begin: if you and your listeners are already streaming sats and boosting, value-for-value is already working for your public feed. This architecture sits alongside that — it does not replace it. Members get a private feed with bonus content; everyone else keeps listening and paying however they choose.
-
----
 
 ## Subscriber Experience
 
@@ -37,8 +41,6 @@ If a subscription lapses without renewal, the podcast app will eventually try to
 
 A subscriber does not need to provide an email address if they provide their Nostr npub, and vice versa. At least one is required. For a Nostr-native listener who prefers not to share their email, npub-only is fully supported.
 
----
-
 ## How It Works
 
 The subscriber experience above is produced by three pieces working together.
@@ -51,8 +53,6 @@ When BTCPay fires a renewal webhook, the token service extends the expiry on the
 
 When a subscription expires or is suspended, any active tokens for that subscriber are revoked immediately.
 
----
-
 ## The Stack
 
 **BTCPay Server** handles everything money-related: Lightning invoices, subscription plans, renewal reminders, and webhooks. It is self-hosted, open-source, and takes no fees. Its native subscription system handles monthly and annual billing, sends renewal reminders automatically, and provides a subscriber management dashboard.
@@ -62,8 +62,6 @@ When a subscription expires or is suspended, any active tokens for that subscrib
 **PodServer** is a BTCPay Server plugin that adds podcast hosting to your BTCPay instance. It generates a valid RSS feed with Podcasting 2.0 tags including value splits, and manages your audio files. You will use it to host the members-only feed separately from your public feed.
 
 **The token service** is a small Python application — the glue between BTCPay and your private RSS feed. The complete source is at `pkgs/podcast-token-service/token_service.py` in the repository. It listens for BTCPay webhooks, manages tokenized feed URLs, proxies the private feed, delivers notifications via email and Nostr DM, and exposes Prometheus metrics. This is the only custom code in the stack.
-
----
 
 ## Infrastructure Considerations
 
@@ -85,8 +83,6 @@ For Path A, the Umbrel hardware does the heavy lifting. A machine with a 1 TB SS
 
 For Path B on a dedicated server, a Hetzner CX32 (4 vCPU, 8 GB RAM) with an attached 1 TB volume covers the full stack.
 
----
-
 ## Choosing a Deployment Path
 
 Both paths share the same architecture, the same BTCPay configuration, the same PodServer setup, and the same token service code. They differ in how the infrastructure is assembled and managed.
@@ -96,8 +92,6 @@ Both paths share the same architecture, the same BTCPay configuration, the same 
 **Path B: NixOS** is the right choice if you want a fully declarative, auditable system where every piece of infrastructure is described in version-controlled configuration, or if you are already running NixOS infrastructure. It uses nix-bitcoin for BTCPay and LND, a custom NixOS module for the token service, and produces the same Podman-compatible container image used in Path A from the same Nix derivation.
 
 Neither path is a stepping stone to the other — both are legitimate long-term choices. A podcaster running a healthy Umbrel with active Lightning channels has no compelling reason to migrate to NixOS unless that operational model is what they want.
-
----
 
 ## Path A: Umbrel Deployment
 
@@ -191,8 +185,6 @@ Verify:
 curl -s http://127.0.0.1:8765/health
 # {"status":"ok"}
 ```
-
----
 
 ## Path B: NixOS Deployment
 
@@ -338,8 +330,6 @@ podman load < result
 
 The GitHub Actions workflow in the repository builds this image and pushes it to `ghcr.io/genebean/podcast-members-feed` automatically on pushes to main and on version tags.
 
----
-
 ## BTCPay Configuration
 
 This section applies to both deployment paths.
@@ -373,8 +363,6 @@ In Store Settings > Webhooks, add a webhook:
 
 Enable **Automatic redelivery** so BTCPay retries failed deliveries if the token service is briefly unavailable.
 
----
-
 ## PodServer Setup
 
 Install PodServer from the BTCPay Plugins menu. Configure audio file storage — a local directory or an S3-compatible bucket both work. [Backblaze B2](https://www.backblaze.com/cloud-storage) is a cost-effective S3-compatible option worth considering for audio hosting.
@@ -384,8 +372,6 @@ Create a new podcast in PodServer for your members feed. Keep it completely sepa
 Add a `<podcast:value>` block to the members feed exactly as you would your public feed. Members who listen in Podcasting 2.0 apps can stream sats and boost episodes on the private feed. Access is what they are paying for; their listening behaviour remains their own.
 
 Note the internal feed URL PodServer generates. On Path A, use the Umbrel's Tailscale IP in the address. On Path B, this is a localhost address. This URL goes into `PODSERVER_FEED_URL` — subscribers never see it.
-
----
 
 ## The Token Service
 
@@ -423,8 +409,6 @@ Generate the Nostr service keypair with `nak keygen`. On startup the service log
 - `GET /metrics` — Prometheus metrics (bearer token required)
 - `POST /admin/cleanup` — remove old expired tokens (bearer token, localhost nginx)
 - `GET /health` — liveness check
-
----
 
 ## Validating the Token Service
 
@@ -514,8 +498,6 @@ Stage 5: Expiry flow
 
 Once all checks pass the token service is working correctly and you are ready to proceed with the full BTCPay and Lightning setup.
 
----
-
 ## Nostr Integration
 
 Nostr plays two roles in this architecture. On the server side it is always active — the service has its own keypair and is ready to publish to relays. On the subscriber side it is opt-in: a subscriber who provides their npub during checkout gets additional capabilities.
@@ -545,8 +527,6 @@ When a subscriber wants to retrieve their feed URL, they visit `https://members.
 The result: a subscriber proves they own the npub associated with their subscription without any password or session — just their key. For an audience that already uses Nostr keys daily, this is the natural model.
 
 **On mobile:** standard iOS and Android browsers do not support extensions, so the NIP-07 signing flow is not available on phones. Mobile users should use the email fallback — reply to the subscription confirmation email to have their URL resent. The recovery page makes this clear.
-
----
 
 ## Accounting and Reporting
 
@@ -587,8 +567,6 @@ podman exec podcast-token-service \
   --db /var/lib/podcast-token-service/tokens.db \
   stats
 ```
-
----
 
 ## Operations
 
@@ -684,8 +662,6 @@ Point an uptime monitor at `https://members.yourpodcast.com/health` for basic li
 ### Changing Subscription Plan Pricing
 
 Update prices in BTCPay under the Subscription Offering. Existing active subscribers are unaffected — their tokens remain valid until natural expiry. New subscribers pay the updated price.
-
----
 
 ## Limitations and Honest Tradeoffs
 
