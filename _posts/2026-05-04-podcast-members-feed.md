@@ -1,4 +1,15 @@
-# Lightning-Gated Podcast Members Feeds with BTCPay Server
+---
+author: gene
+title: Lightning-Gated Podcast Members Feeds with BTCPay Server
+date: 2026-05-04
+description: >-
+  You make a Bitcoin podcast. Your audience already streams sats while they listen and boosts episodes they love. Now you want to offer something more: a members-only feed with bonus content, available only to paying supporters, compatible with the apps your listeners already use — Fountain, Castamatic, and any other Podcasting 2.0 player.
+tags:
+  - podcasting
+  - bitcoin
+  - lightning
+  - BTCPay
+---
 
 ## Introduction
 
