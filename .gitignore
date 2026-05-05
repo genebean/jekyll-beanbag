@@ -5,12 +5,6 @@ resources/
 # Hugo temp files
 .hugo_build.lock
 
-# Jekyll build output and Ruby leftovers
-_site/
-.bundle/
-vendor/
-Gemfile.lock
-
 # Nix direnv cache
 .direnv/
 
