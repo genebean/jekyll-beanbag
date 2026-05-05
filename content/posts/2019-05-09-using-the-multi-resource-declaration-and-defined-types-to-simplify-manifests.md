@@ -8,6 +8,8 @@ Sometimes it seems you just keep repeating the same block of code with only one 
 
 They are also ones I regularly observe when doing code reviews for others. I am often met with interest and a response that is along the lines of “I didn’t know you could do that” when I mention the idea of simplifying the code I am reviewing by using a multi-resource declaration or a defined type. This post will introduce you to multi-resource declarations and defined types and then walk you through a real-world example of putting them to use to configure load balancing of Puppet Enterprise's services.
 
+<!--more-->
+
 ## Multi-resource declarations
 
 Did you know that these two blocks of code are actually identical in function?

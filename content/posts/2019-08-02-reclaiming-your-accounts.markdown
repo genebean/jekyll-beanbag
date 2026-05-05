@@ -5,6 +5,8 @@ author: gene
 ---
 This post is a quick reference guide for what I recommend people do when someone has gotten into their accounts on various platforms.
 
+<!--more-->
+
 ## Facebook
 
 When you notice (or someone tells you) that someone else has been doing things with your account like sending people messages here are the steps you should take:

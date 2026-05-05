@@ -26,6 +26,8 @@ It's modeled after one I have in my own garage with a couple of small modificati
 
 The idea is that [Chris](https://twitter.com/ChrisLAS) will be able to mount this on, or near, the new server cabinet with the microcontroller at the top so that the heat it generates rises above the onboard sensor. The onboard sensor (the purple part) will allow him to monitor the temperature, barometric pressure, and humidity in the garage while the corded sensor will allow for monitoring the temperature inside the server rack.
 
+<!--more-->
+
 ## Accessing the data directly
 
 The microcontroller is configured to present it's data locally in two ways: via a web page and via a Prometheus endpoint.

@@ -5,6 +5,8 @@ date: 2022-02-20T16:00:00-05:00
 
 I bought and setup a leak sensor... but forgot to have it alert me if it detected water 🤦‍♂️ Here's what happened and my new alerting system.
 
+<!--more-->
+
 ## How it started
 
 In September of last year I bought an [Aqara Water Leak Sensor](https://www.amazon.com/Aqara-MCCGQ11LM-Window-Sensor-White/dp/B07D39MSZS/) off Amazon. I placed it between my washing machine and hot water heater in the garage and connected it to [Home Assistant](https://www.home-assistant.io) via [ZHA (Zigbee Home Automation) integration ](https://www.home-assistant.io/integrations/zha/) and my [Zigbee Coordinator](https://www.tubeszb.com/product/cc2652_poe_coordinator/21?cp=true&sa=false&sbp=false&q=false&category_id=2). I then added it to a dashboard that shows me information about the garage and the status of my washer and drier. Finally, I tested that the sensor worked as advertised and that the proper state showed in Home Assistant. Everything checked out... yay for being proactive!

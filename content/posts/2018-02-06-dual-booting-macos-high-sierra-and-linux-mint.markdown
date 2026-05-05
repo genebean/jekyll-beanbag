@@ -8,6 +8,8 @@ This is a step-by-step walkthrough for dual booting a MacBook Pro (Mid-2015 aka 
 
 Before beginning I suggest reading this entire post to see how involved it is or, at a minimum, read the known issues at the bottom.
 
+<!--more-->
+
 #### Full Backup
 
 Any time you start messing with the partitions of existing drives its a good idea to have a full backup you can fall back on as its really easy to have your drive become unbootable. One way to do this is to use [Carbon Copy Cloner](https://bombich.com/). It'll take care of backing up all your files along with the special partitions needed to make things work including the recovery partition. Be sure to put the backup on an external hard drive.

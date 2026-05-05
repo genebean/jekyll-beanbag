@@ -46,6 +46,8 @@ dateext
 ```
 
 
+<!--more-->
+
 #### updatestats.sh
 
 This is the script where all the magic happens. Let's break it down to see what's going on. A copy of the full script will be at the end of this article in case you want to copy it.

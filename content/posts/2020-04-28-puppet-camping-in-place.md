@@ -9,6 +9,8 @@ excerpt: A recap of the first virtual Puppet Camp by an experienced camper.
 
 I pitched a tent at Puppet Camp a couple of times before joining the company and have to say that last week’s event was superb, and it more than lived up to the standards set in ye olden times. It was great to hang out (virtually) with so many community members! There were some faces, or should I say Slack handles, that I knew, but many more I got to meet and chat with for the first time. The work these gurus are doing in their day jobs is just amazing! The best part is that a lot of what was demoed and talked about is directly applicable to the work that I and the other attendees do. Below are some of my takeaways from the event along with a boatload of reference material from the presenters and people in Slack.
 
+<!--more-->
+
 ## The day’s focus
 
 The schedule for last week’s camp can loosely be translated to:

@@ -12,6 +12,8 @@ As expected, there were a variety of opinions. Surprisingly though, there was an
 
 After reading all the comments and thinking about things more, I’ve decided I want to download all my backups, copy out several bits of yaml, export some other settings, and then take the plunge. In my “[Introducing My Home Assistant Setup](https://beanbag.technicalissues.us/introducing-my-home-assistant-setup/)” post I said I’d be following up with one that breaks down all my automations. This new decision is going to delay that a bit. Instead, I’m going to start by chronicling my journey through rebuilding my setup.
 
+<!--more-->
+
 ## Prep Time
 
 Before I actually wipe everything and start over I need to do some prep work. This includes:

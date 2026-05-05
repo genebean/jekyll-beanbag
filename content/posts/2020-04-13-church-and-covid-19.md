@@ -5,6 +5,8 @@ title: Church and COVID-19
 
 My church has been streaming our service for several years and has been live on a local FM station since before I became a member. I setup streaming initially and have been involved in all kinds of services. During that time I’ve run into just about every type of issue or challenge a sound or audio video tech in a midsize church can... or so I thought.
 
+<!--more-->
+
 ## School and Church Closures
 
 When the local schools decided on Thursday evening, March 12th to close down, that meant our church would also close its office and cancel all events per our safety policy. Word went out on Friday the 13th that the closure would start Sunday at noon and that we would only have a single event that day: the 11am service. Our members were also advised to stay home if in any of the high-risk categories. Sitting at the soundboard that Sunday was weird... I’ve never seen an 11 o’clock service so empty.

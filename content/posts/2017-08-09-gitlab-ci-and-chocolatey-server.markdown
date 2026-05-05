@@ -11,6 +11,8 @@ If you are not familiar with [chocolatey](https://chocolatey.org/), its an aweso
 
 This is why I created a quick solution for maintaining your package history in Git and using GitLab CI to automate building and deploying packages to your internal Chocolatey server. This guide assumes you have an internal GitLab instance, an internal Chocolatey server, and a Windows based GitLab Runner with powershell execution. Documentation [here](https://docs.gitlab.com/runner/) on GitLab Runners
 
+<!--more-->
+
 ## Setup
 
 Before getting started I must note that, due to limitations of the Chocolatey API, it is required to store a service account's plain text credentials in the GitLab repo to fully automate this process. I will explain this limitation later. For this reason, create a user account on the Chocolatey server, just for this purpose, and assign least privilege. It is sufficient to add this user to the `Remote Management Users` group and grant the user permissions to the top level installation directory, in my case it was `C:\tools`.

@@ -6,6 +6,8 @@ title: My journey to securing sensitive data in Puppet code
 Dealing with secrets and sensitive data in Puppet is daunting, right? Nope, not at all. Let me show you how to do it. I've wrapped my head around the options available and want to share my journey in hopes of saving you from a few trials and tribulations. Just interested in the end result? Feel free to scroll down to the last section fittingly entitled [_The final product_](#finalproduct).
 
 
+<!--more-->
+
 ## Preface
 
 Puppet’s InfraCore team manages engineering's core infrastructure from hardware to the actual host configuration of running applications and services. The InfraCore team was already utilizing [hiera-eyaml][1] in their control repo when I joined them last April. That control repo is used by all of SRE at Puppet so this meant other teams could take advantage of having secrets, like passwords and AWS keys, versioned in git without fear of exposure to everyone with access to the repo. That's a big deal since we open up our repositories to the entire company by default.

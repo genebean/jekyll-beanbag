@@ -11,6 +11,8 @@ tags:
 In hopes of it helping someone else not spend hours of work like I just did here is my lesson-learned from my first day of using Windows Server 2012 r2 Hyper-V.
 
 
+<!--more-->
+
 ## Lesson 1:
 
 Look at the defaults and read the descriptions… don’t just try and set stuff like you do in VMware…
