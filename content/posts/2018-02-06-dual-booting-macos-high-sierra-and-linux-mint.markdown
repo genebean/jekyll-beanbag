@@ -1,4 +1,6 @@
 ---
+title: "Dual Booting macOS High Sierra and Linux Mint"
+slug: "dual-booting-macos-high-sierra-and-linux-mint"
 author: gene
 ---
 

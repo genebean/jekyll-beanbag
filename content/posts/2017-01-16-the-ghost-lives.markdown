@@ -1,4 +1,6 @@
 ---
+title: "The Ghost Lives"
+slug: "the-ghost-lives"
 author: gene
 ---
 

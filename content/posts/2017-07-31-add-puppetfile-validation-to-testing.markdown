@@ -1,4 +1,6 @@
 ---
+title: "Add Puppetfile Validation to Testing"
+slug: "add-puppetfile-validation-to-testing"
 author: jake
 ---
 

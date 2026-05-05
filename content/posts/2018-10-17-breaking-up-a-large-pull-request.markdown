@@ -1,4 +1,6 @@
 ---
+title: "Breaking Up a Large Pull Request"
+slug: "breaking-up-a-large-pull-request"
 author: gene
 ---
 

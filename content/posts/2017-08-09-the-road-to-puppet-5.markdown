@@ -1,4 +1,6 @@
 ---
+title: "The Road to Puppet 5"
+slug: "the-road-to-puppet-5"
 author: gene
 ---
 

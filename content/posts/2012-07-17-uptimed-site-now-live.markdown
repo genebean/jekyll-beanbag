@@ -1,4 +1,6 @@
 ---
+title: "Uptimed Site Now Live"
+slug: "uptimed-site-now-live"
 author: gene
 ---
 

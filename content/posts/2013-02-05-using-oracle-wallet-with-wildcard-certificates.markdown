@@ -1,4 +1,6 @@
 ---
+title: "Using Oracle Wallet with Wildcard Certificates"
+slug: "using-oracle-wallet-with-wildcard-certificates"
 author: gene
 tags:
 - oracle

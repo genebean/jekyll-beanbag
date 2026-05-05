@@ -1,4 +1,6 @@
 ---
+title: "Upgrade to Puppet 5"
+slug: "upgrade-to-puppet-5"
 author: jake
 tags:
 - puppet

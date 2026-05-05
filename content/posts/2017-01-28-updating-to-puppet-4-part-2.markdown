@@ -1,4 +1,6 @@
 ---
+title: "Updating to Puppet 4 Part 2"
+slug: "updating-to-puppet-4-part-2"
 author: gene
 ---
 

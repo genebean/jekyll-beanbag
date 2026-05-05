@@ -1,4 +1,6 @@
 ---
+title: "The Community Is Forking Puppet"
+slug: "the-community-is-forking-puppet"
 author: gene
 canonical_url: 'https://www.linkedin.com/pulse/community-forking-puppet-gene-liverman-jupke/'
 date: 2024-12-16

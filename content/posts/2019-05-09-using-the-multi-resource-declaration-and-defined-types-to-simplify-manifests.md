@@ -1,4 +1,6 @@
 ---
+title: "Using the Multi-Resource Declaration and Defined Types to Simplify Manifests"
+slug: "using-the-multi-resource-declaration-and-defined-types-to-simplify-manifests"
 author: gene
 canonical_url: 'https://puppet.com/blog/using-multi-resource-declaration-and-defined-types-simplify-manifests'
 ---

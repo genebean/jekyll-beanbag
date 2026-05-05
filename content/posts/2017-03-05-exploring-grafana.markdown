@@ -1,4 +1,6 @@
 ---
+title: "Exploring Grafana"
+slug: "exploring-grafana"
 author: gene
 ---
 
