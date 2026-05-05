@@ -2,6 +2,7 @@
 author: gene
 title: 'Puppet Camping in place: East meets West'
 date: 2020-04-28
+lastmod: 2020-04-28
 description: A recap of the first virtual Puppet Camp by an experienced camper.
 image:
   path: '/assets/images/posts/puppet-camp-tent.png'

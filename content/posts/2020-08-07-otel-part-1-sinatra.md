@@ -1,6 +1,7 @@
 ---
 title: 'OpenTelemetry Part 1: Sinatra'
 date: 2020-08-07T18:27:00-04:00
+lastmod: 2020-08-07T18:27:00-04:00
 description: >-
   OpenTelemetry (aka OTel) is becoming the standard for distributed tracing. This is the first in a multi-part series where I will document my trials, tribulations, and successes along the road of using OTel to instrument multiple applications. The first few are all ruby applications and some that I hope to be able to do later are written in Java. My goal is to instrument the applications using one or more standards-compliant libraries and then send the spans to an OTel collector. The OTel collector will then send them on to one or more backends such as Jaeger, Lightstep, and/or Datadog.
 ---

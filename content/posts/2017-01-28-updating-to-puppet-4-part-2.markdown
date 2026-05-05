@@ -2,6 +2,7 @@
 title: "Updating to Puppet 4 Part 2"
 slug: "updating-to-puppet-4-part-2"
 author: gene
+lastmod: 2017-01-28
 ---
 
 #### **_Four repos become one..._**

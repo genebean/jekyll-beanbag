@@ -1,6 +1,7 @@
 ---
 title: Introducing My Home Assistant Setup
 date: 2022-01-09T23:00:00-05:00
+lastmod: 2022-01-09T23:00:00-05:00
 description: >-
   A year ago today (January 9th, 2021) I deployed what I consider my first production-grade instance of Home Assistant and couldn't be happier.
 image:

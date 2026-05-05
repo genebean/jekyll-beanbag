@@ -1,6 +1,10 @@
 baseURL = 'https://beanbag.technicalissues.us/'
 languageCode = 'en-us'
 title = 'The Comfy Seat'
+enableGitInfo = true
+
+[frontmatter]
+  lastmod = ["lastmod", ":git", ":fileModTime"]
 [pagination]
   pagerSize = 5
 

@@ -2,6 +2,7 @@
 author: gene
 title: An Unsupportable Path
 date: 2025-06-14
+lastmod: 2025-06-14
 canonical_url: https://voxpupuli.org/blog/2025/06/14/an-unsupportable-path/
 description: >-
   The community response to Perforce's continued refusal to actually work with us

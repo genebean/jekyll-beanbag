@@ -5,6 +5,7 @@ tags:
 - configuration-management
 - git
 - puppet
+lastmod: 2014-04-22
 ---
 
 

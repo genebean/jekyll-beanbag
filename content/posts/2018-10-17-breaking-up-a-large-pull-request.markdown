@@ -2,6 +2,7 @@
 title: "Breaking Up a Large Pull Request"
 slug: "breaking-up-a-large-pull-request"
 author: gene
+lastmod: 2018-10-17
 ---
 
 Ever finished up all the changes for a pull request on GitHub and realized it was just too big to review easily or to reason about what's going on? I had just this issue recently. The solution: create multiple patches that each contain a subset of the changes and use them to generate more manageable pull requests.

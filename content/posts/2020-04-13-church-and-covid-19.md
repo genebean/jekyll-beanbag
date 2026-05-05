@@ -1,6 +1,7 @@
 ---
 author: gene 
 title: Church and COVID-19
+lastmod: 2020-04-13
 ---
 
 My church has been streaming our service for several years and has been live on a local FM station since before I became a member. I setup streaming initially and have been involved in all kinds of services. During that time I’ve run into just about every type of issue or challenge a sound or audio video tech in a midsize church can... or so I thought.

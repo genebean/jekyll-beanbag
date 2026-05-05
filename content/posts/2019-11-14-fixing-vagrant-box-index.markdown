@@ -2,6 +2,7 @@
 author: gene
 title: Fixing Vagrant's box index
 date: 2019-11-14T10:36:00-05:00
+lastmod: 2019-11-14T10:36:00-05:00
 ---
 I use Vagrant a lot and sometimes things on my laptop get moved around or deleted by means other than `vagrant destroy`. The problem with this is that when I later run `vagrant global-status` it will show me things that don't actually exist anymore. Today I finally got tired of this and figured out how to fix it with minimal pain.
 

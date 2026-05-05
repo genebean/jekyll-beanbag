@@ -1,6 +1,7 @@
 ---
 author: gene
 title: Python PIP Issues after Homebrew upgrade
+lastmod: 2017-07-24
 ---
 
 This is just a quick note for anyone else out there who recently ran `brew update && brew upgrade` and then found that Python no longer worked as expected. Here are the important points:

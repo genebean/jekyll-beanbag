@@ -4,6 +4,7 @@ title: GitLab CI and Chocolatey Server
 tags:
 - chocolatey
 - gitlab-2
+lastmod: 2017-08-09
 ---
 
 If you are not familiar with [chocolatey](https://chocolatey.org/), its an awesome package manager, like `apt` or `yum`, for Windows. You can also host your own [internal chocolatey feed](https://github.com/chocolatey/choco/wiki/How-To-Host-Feed) and there is even a [Puppet module](https://forge.puppet.com/chocolatey/chocolatey_server) to build it for you. This can be especially useful for machines that cannot reach out to the internet to perform the installations. Chocolatey even provides a [step-by-step guide](https://chocolatey.org/docs/how-to-recompile-packages) on how to internalize packages, this can be a lot of manual steps from building packages, to getting them up to the Chocolatey server, keeping history, and maintaining when there are package updates.

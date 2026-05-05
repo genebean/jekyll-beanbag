@@ -2,6 +2,7 @@
 title: "Updating to Puppet 4 Part 1"
 slug: "updating-to-puppet-4-part-1"
 author: gene
+lastmod: 2017-01-25
 ---
 
 Better than two years ago I created a multi-node Vagrant setup based around a three node Puppet environment with boxes for:

@@ -2,6 +2,7 @@
 author: gene
 title: Lightning-Gated Podcast Members Feeds with BTCPay Server
 date: 2026-05-04
+lastmod: 2026-05-04
 description: >-
   A practical guide to self-hosted Bitcoin-native podcast membership using
   BTCPay Server, private RSS feeds, and a small token service — compatible

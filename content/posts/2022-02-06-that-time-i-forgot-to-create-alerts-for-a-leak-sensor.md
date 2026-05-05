@@ -1,6 +1,7 @@
 ---
 title: That time I forgot to create alerts for a leak sensor
 date: 2022-02-20T16:00:00-05:00
+lastmod: 2022-02-20T16:00:00-05:00
 ---
 
 I bought and setup a leak sensor... but forgot to have it alert me if it detected water 🤦‍♂️ Here's what happened and my new alerting system.

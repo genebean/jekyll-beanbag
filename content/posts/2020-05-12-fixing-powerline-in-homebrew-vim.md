@@ -1,6 +1,7 @@
 ---
 author: gene 
 title: "Fixing powerline in homebrew's vim"
+lastmod: 2020-05-12
 ---
 
 For the last few days I have been trying to figure out why, all of a sudden, [powerline](https://powerline.readthedocs.io/en/latest/usage.html) has stopped working in vim. Whenever I start vim I get this error:

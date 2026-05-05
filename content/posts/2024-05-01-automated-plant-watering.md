@@ -2,6 +2,7 @@
 author: gene
 title: 'Automated Plant Watering'
 date: 2024-05-01T15:00:00-04:00
+lastmod: 2024-05-01T15:00:00-04:00
 description: >-
   How we're going to make sure our plants stay properly watered all season long
 image:

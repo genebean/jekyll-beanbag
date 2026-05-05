@@ -4,6 +4,7 @@ slug: "upgrade-to-puppet-5"
 author: jake
 tags:
 - puppet
+lastmod: 2017-07-15
 ---
 
 Today I successfully upgraded our Puppet Master from Puppet 4.x (puppetserver 2.7.2) to Puppet 5 (puppetserver 5.0.0). It was wildly helpful to go through the entire upgrade process and perform LOTS of testing and troubleshooting with the [Vagrant Puppet Environmet](https://github.com/genebean/vagrant-puppet-environment), which is basically an exact replica of my production environment. This is an all-in-one Open Source Puppet setup and, once the next release is out, I would highly recommend for testing!

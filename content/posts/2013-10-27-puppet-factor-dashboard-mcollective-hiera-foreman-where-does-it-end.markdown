@@ -6,6 +6,7 @@ tags:
 - devops
 - orchestration
 - puppet
+lastmod: 2013-10-27
 ---
 
 

@@ -2,6 +2,7 @@
 title: "Reclaiming Your Accounts"
 slug: "reclaiming-your-accounts"
 author: gene
+lastmod: 2019-08-02
 ---
 This post is a quick reference guide for what I recommend people do when someone has gotten into their accounts on various platforms.
 

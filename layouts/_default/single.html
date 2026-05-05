@@ -34,6 +34,10 @@
                     {{- end }}
                     <i class="far fa-calendar-alt"></i>&nbsp;<time class="valign right-align"
                         datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan. 02, 2006" }}</time>
+                    {{- if not (.Lastmod.Equal .Date) }}
+                    &nbsp;&nbsp;&nbsp;<i class="far fa-edit" title="Updated"></i>&nbsp;<time class="valign right-align"
+                        datetime="{{ .Lastmod.Format "2006-01-02" }}" title="Updated">{{ .Lastmod.Format "Jan. 02, 2006" }}</time>
+                    {{- end }}
                     <div class="divider"></div>
                     <div class="post-content">
                         {{ .Content }}

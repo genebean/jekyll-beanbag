@@ -3,6 +3,7 @@ title: "Building Android"
 slug: "building-android"
 author: gene
 date: 2012-07-18T20:45:45
+lastmod: 2012-07-18T20:45:45
 ---
 
 

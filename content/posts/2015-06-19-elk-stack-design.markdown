@@ -5,6 +5,7 @@ tags:
 - elasticsearch
 - logging
 - logstash
+lastmod: 2015-06-19
 ---
 
 

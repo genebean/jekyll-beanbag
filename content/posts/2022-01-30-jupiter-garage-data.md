@@ -2,6 +2,7 @@
 author: gene
 title: Temperature sensing for Jupiter Garage
 date: 2022-01-30T22:34:00-05:00
+lastmod: 2022-01-30T22:34:00-05:00
 ---
 
 The other day I was listening to [Linux Unplugged 441](https://linuxunplugged.com/441) and heard Chris mention how he wished he had a way to track the temperature in the garage where the server is.

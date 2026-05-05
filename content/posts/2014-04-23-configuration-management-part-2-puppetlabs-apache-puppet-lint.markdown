@@ -6,6 +6,7 @@ tags:
 - configuration-management
 - puppet
 - puppet-me
+lastmod: 2014-04-23
 ---
 
 

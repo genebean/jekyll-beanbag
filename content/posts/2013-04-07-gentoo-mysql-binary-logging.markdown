@@ -4,6 +4,7 @@ title: Gentoo & MySQL Binary Logging
 tags:
 - gentoo
 - mysql
+lastmod: 2013-04-07
 ---
 
 

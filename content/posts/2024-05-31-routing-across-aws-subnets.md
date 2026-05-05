@@ -2,6 +2,7 @@
 author: gene
 title: 'Routing Across AWS Subnets'
 date: 2024-05-31T17:00:00-04:00
+lastmod: 2024-05-31T17:00:00-04:00
 description: >-
   The missing link to having EC2 instances on different internal subnets talk to each other
 image:

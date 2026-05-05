@@ -1,6 +1,7 @@
 ---
 author: gene
 title: Automatically Generate GoAccess stats
+lastmod: 2017-06-16
 ---
 
 I've been using [GoAccess](https://goaccess.io) to look at my logs for a while now. The other day I decided I wanted be able to look at these stats for the different sites on my web server in a variety of ways including:

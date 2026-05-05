@@ -4,6 +4,7 @@ slug: "the-community-is-forking-puppet"
 author: gene
 canonical_url: 'https://www.linkedin.com/pulse/community-forking-puppet-gene-liverman-jupke/'
 date: 2024-12-16
+lastmod: 2024-12-16
 image:
   path: '/assets/images/posts/soft-hard-fork.png'
   alt: 'Soft Fork or Hard Fork'

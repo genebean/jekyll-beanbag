@@ -3,6 +3,7 @@ title: "Using the Multi-Resource Declaration and Defined Types to Simplify Manif
 slug: "using-the-multi-resource-declaration-and-defined-types-to-simplify-manifests"
 author: gene
 canonical_url: 'https://puppet.com/blog/using-multi-resource-declaration-and-defined-types-simplify-manifests'
+lastmod: 2019-05-09
 ---
 Sometimes it seems you just keep repeating the same block of code with only one or two lines changed. Sometimes a single thing you need to do more than once is made up of the same two or three resources. These two scenarios are ones that I experience fairly often.
 

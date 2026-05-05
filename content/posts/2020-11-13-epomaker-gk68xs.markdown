@@ -1,6 +1,7 @@
 ---
 title: 'Epomaker GK68XS: A great keyboard, horrific order fulfillment'
 date: 2020-11-13T20:10:00-05:00
+lastmod: 2020-11-13T20:10:00-05:00
 description: >-
   3 months, 35 emails, and many Facebook Messenger messages later, I finally have all the things I paid for during the GK68XS Kickstarter. I originally ordered 3 keyboards: one of each color combination of the plastic framed wireless models. Sadly, delivery was nothing like what was advertised. Here's the journey I had to take simply to get what I paid for.
 ---
