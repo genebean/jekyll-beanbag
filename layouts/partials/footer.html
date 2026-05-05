@@ -13,35 +13,35 @@
             <div class="social">
                 <ul>
                     {{ range .Site.Params.footer.links }}
+                    {{ if eq .label "Mastodon" }}
+                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ .username }} on Mastodon" rel="me noopener noreferrer" target="_blank"><img
+                                src="/assets/images/social-mastodon.svg"
+                                class="footer-social-icons z-depth-2 circle" /></a></li>
+                    {{ end }}
                     {{ if eq .label "Yakihonne" }}
-                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ .username }} on Yakihonne" rel="me"><img
+                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ .username }} on Yakihonne" rel="me noopener noreferrer" target="_blank"><img
                                 src="/assets/images/social-yakihonne.svg"
                                 class="footer-social-icons z-depth-2 circle" /></a></li>
                     {{ end }}
                     {{ if eq .label "Primal" }}
-                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ .username }} on Primal" rel="me"><img
+                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ .username }} on Primal" rel="me noopener noreferrer" target="_blank"><img
                                 src="/assets/images/social-primal.svg"
                                 class="footer-social-icons z-depth-2 circle" /></a></li>
                     {{ end }}
-                    {{ if eq .label "Mastodon" }}
-                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ .username }} on Mastodon" rel="me"><img
-                                src="/assets/images/social-mastodon.svg"
-                                class="footer-social-icons z-depth-2 circle" /></a></li>
-                    {{ end }}
                     {{ if eq .label "GitHub" }}
-                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ .username }} on GitHub"><img
+                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ .username }} on GitHub" rel="noopener noreferrer" target="_blank"><img
                                 src="/assets/images/social-github.svg"
                                 class="footer-social-icons z-depth-2 circle" /></a></li>
                     {{ end }}
                     {{ end }}
                     <!-- Blog RSS Feed -->
-                    <li><a href="/index.xml" class="footer-social-links" title="Subscribe to RSS feed"><img
+                    <li><a href="/index.xml" class="footer-social-links" title="Subscribe to RSS feed" target="_blank"><img
                                 src="/assets/images/social-rss.svg"
                                 class="footer-social-icons z-depth-2 circle" /></a></li>
-                    <!-- Nostr -->
-                    <li><img src="/assets/images/social-nostr.svg"
+                    <!-- Nostr (decorative, not linked) -->
+                    <li><span class="footer-social-links"><img src="/assets/images/social-nostr.svg"
                                 class="footer-social-icons z-depth-2 circle"
-                                title="Also on Nostr" /></li>
+                                title="Also on Nostr" /></span></li>
                 </ul>
             </div>
         </div>

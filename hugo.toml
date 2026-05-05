@@ -40,6 +40,11 @@ enableGitInfo = true
   url = 'https://app.vagrantup.com/genebean'
 
 [[params.footer.links]]
+  label = 'Mastodon'
+  url = 'https://fosstodon.org/@genebean'
+  username = 'genebean'
+
+[[params.footer.links]]
   label = 'Yakihonne'
   url = 'https://yakihonne.com/profile/npub1mwsk3ly4lk7efdqqjm62dkc699kqapwyyvdley3xljjm0lxruh9qzvu46p'
   username = 'genebean'
@@ -52,11 +57,6 @@ enableGitInfo = true
 [[params.footer.links]]
   label = 'GitHub'
   url = 'https://github.com/genebean'
-  username = 'genebean'
-
-[[params.footer.links]]
-  label = 'Mastodon'
-  url = 'https://fosstodon.org/@genebean'
   username = 'genebean'
 
 [taxonomies]
