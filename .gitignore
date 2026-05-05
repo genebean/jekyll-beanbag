@@ -5,6 +5,12 @@ resources/
 # Hugo temp files
 .hugo_build.lock
 
+# Jekyll build output and Ruby leftovers
+_site/
+.bundle/
+vendor/
+Gemfile.lock
+
 # Editor and tool artifacts
 .vscode/
 .vagrant/

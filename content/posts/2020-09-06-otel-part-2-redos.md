@@ -1,6 +1,6 @@
 ---
 title: 'OpenTelemetry Part 2: Redoing Instrumentation'
-date: 2020-09-06 21:30 -0400
+date: 2020-09-06T21:30:00-04:00
 description: >-
   For part two of my journey in using OpenTelemetry (Otel) with Sinatra I am replacing my Lightstep instrumentation with the OTel version. Besides updating the instrumentation, I am also deploying production instances of an OTel Collector and Jaeger. The goal of part 2 is to have my first three applications shipping traces to both a local Jaeger instance and to Lightstep in both test and production and to have Jaeger included in the Docker compose workflows used during development.
 ---

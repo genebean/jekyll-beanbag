@@ -1,6 +1,6 @@
 ---
 title: 'Burnout Sucks'
-date: 2020-08-18 23:05 -0400
+date: 2020-08-18T23:05:00-04:00
 description: >- 
   My favorite personal project is an application called [PiWeatherRock](https://piweatherrock.technicalissues.us)... or it was before I dove in head-first working to update it and create a community for it’s users. Tons of enthusiasm morphed into something else
 ---

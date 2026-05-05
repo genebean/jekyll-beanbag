@@ -1,7 +1,7 @@
 ---
 author: gene
 title: 'Crash Boom Bang: PoE & Lightning Strikes'
-date: 2022-04-09 09:00 -04:00
+date: 2022-04-09T09:00:00-04:00
 description: >-
   When lightning strikes and a PoE device doesn't initially come back.
 image:

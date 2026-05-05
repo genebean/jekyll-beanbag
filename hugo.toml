@@ -51,4 +51,4 @@ paginate = 5
 [permalinks]
   [permalinks.page]
     posts = '/:slug/'
-    authors = '/authors/:slug/'
+    authors = '/authors/:contentbasename/'

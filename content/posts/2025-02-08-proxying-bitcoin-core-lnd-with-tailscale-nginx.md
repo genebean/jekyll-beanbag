@@ -1,7 +1,7 @@
 ---
 author: gene
 title: 'Proxying Bitcoin Core and LND with Tailscale and Nginx'
-date: 2025-02-08 10:30 +01:00
+date: 2025-02-08T10:30:00+01:00
 description: >-
   How I use Nginx as a TCP proxy for bitcoind and lnd on another host via Tailscale
 # image:

@@ -1,7 +1,7 @@
 ---
 author: gene
 title: 'Puppet Camping in place: East meets West'
-date: '2020-04-28'
+date: 2020-04-28
 excerpt: A recap of the first virtual Puppet Camp by an experienced camper.
 ---
 
