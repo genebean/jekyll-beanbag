@@ -1,6 +1,6 @@
 {{ define "main" }}
 {{ $authorKey := .Params.author | default .Site.Params.author }}
-{{ $author := index hugo.Data.authors $authorKey }}
+{{ $author := index .Site.Data.authors $authorKey }}
 <div class="col l9 m12 s12">
     <div class="content-wrapper">
         <div class="content-wrapper">

@@ -1,5 +1,5 @@
 {{ $authorKey := .Params.author | default .Site.Params.author }}
-{{ $author := index hugo.Data.authors $authorKey }}
+{{ $author := index .Site.Data.authors $authorKey }}
 
 <article class="post blog-list-item-article card-panel grey lighten-5">
     <div class="section">

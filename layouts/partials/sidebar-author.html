@@ -1,5 +1,5 @@
 {{ $authorKey := .Params.author | default .Site.Params.author }}
-{{ $author := index hugo.Data.authors $authorKey }}
+{{ $author := index .Site.Data.authors $authorKey }}
 <div class="col l3 hide-on-med-and-down center-align">
     <div class="sidebar">
         {{ if $author }}

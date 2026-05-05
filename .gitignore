@@ -11,6 +11,9 @@ _site/
 vendor/
 Gemfile.lock
 
+# Nix direnv cache
+.direnv/
+
 # Editor and tool artifacts
 .vscode/
 .vagrant/

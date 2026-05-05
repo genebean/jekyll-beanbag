@@ -1,7 +1,8 @@
 baseURL = 'https://beanbag.technicalissues.us/'
 languageCode = 'en-us'
 title = 'The Comfy Seat'
-paginate = 5
+[pagination]
+  pagerSize = 5
 
 [markup]
   [markup.goldmark]
