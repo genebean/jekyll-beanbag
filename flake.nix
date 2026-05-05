@@ -64,7 +64,6 @@
           default = pkgs.mkShell {
             packages = [
               pkgs.hugo
-              pkgs.dart-sass
               serve
               build
               build-preview

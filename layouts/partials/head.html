@@ -90,7 +90,7 @@
         media="screen,projection">
 
     <!-- Site wide styles -->
-    {{ $opts := dict "transpiler" "dartsass" "outputStyle" "compressed" }}
+    {{ $opts := dict "transpiler" "libsass" "outputStyle" "compressed" }}
     {{ $style := resources.Get "css/main.scss" | css.Sass $opts | fingerprint }}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
 
