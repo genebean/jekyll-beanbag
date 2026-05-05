@@ -59,6 +59,16 @@ enableGitInfo = true
   url = 'https://github.com/genebean'
   username = 'genebean'
 
+[[params.footer.links]]
+  label = 'RSS'
+  url = '/index.xml'
+  title = 'Subscribe to RSS feed'
+
+# Uncomment to show the Nostr icon (no link, just decorative)
+# [[params.footer.links]]
+#   label = 'Nostr'
+#   title = 'Also on Nostr'
+
 [taxonomies]
   tag = 'tags'
   category = 'categories'
