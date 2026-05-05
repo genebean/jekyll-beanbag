@@ -41,13 +41,9 @@
         </div>
         <div class="footer-icon-credits">
             <div class="container center-align">
-                {{ .Site.Title }}
-                {{ with .Site.Params.footer.tagline }}
-                {{ with .preLink }}{{ . }}{{ end }}
-                <a href="{{ .url }}" rel="external" class="link-theme-active-to-white">{{ .label }}</a>
-                {{ end }}
-                and has been doctored up by<br />
+                {{ .Site.Title }} uses
                 <a href="https://gohugo.io" class="link-theme-active-to-white">Hugo</a>
+                to render my musings
             </div>
         </div>
     </div>

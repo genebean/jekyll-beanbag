@@ -26,11 +26,6 @@ enableGitInfo = true
   instance = 'fosstodon.org'
   username = 'genebean'
 
-[params.footer.tagline]
-  preLink = 'resides at'
-  label = 'Linode'
-  url = 'https://www.linode.com/?r=bf96f91b25091ab6d46a6433160cdd112fe5f73c'
-
 [[params.header.links]]
   label = 'GitHub'
   url = 'https://github.com/genebean'
