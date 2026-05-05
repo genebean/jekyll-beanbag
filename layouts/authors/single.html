@@ -1,0 +1,35 @@
+{{ define "main" }}
+{{ $authorKey := .File.ContentBaseName }}
+{{ $author := index .Site.Data.authors $authorKey }}
+<div class="col l9 m12 s12">
+    <div class="content-wrapper">
+        <article class="post card-panel grey lighten-5" itemscope itemtype="https://schema.org/CreativeWork">
+            {{- if $author }}
+            <div class="author__content">
+                <h1 class="author__name" itemprop="name">{{ $author.name }}</h1>
+            </div>
+            {{- end }}
+            <div class="post-content">
+                {{ .Content }}
+            </div>
+            <div class="divider"></div>
+            <div class="section">
+                <div class="post-content">
+                    <h2>Posts</h2>
+                </div>
+                <div class="post-content">
+                    <ul>
+                        {{- if $author }}
+                        {{ $authorShortName := $author.short_name }}
+                        {{ range where .Site.RegularPages "Params.author" $authorShortName }}
+                        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+                        {{ end }}
+                        {{- end }}
+                    </ul>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>
+{{ partial "sidebar-author.html" . }}
+{{ end }}

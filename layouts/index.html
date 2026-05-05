@@ -1,0 +1,13 @@
+{{ define "main" }}
+{{ $posts := where .Site.RegularPages "Section" "posts" }}
+{{ $paginator := .Paginate $posts }}
+<div class="col l9 m12 s12">
+    <div class="content-wrapper">
+        {{ range $paginator.Pages }}
+            {{ partial "archive-single.html" . }}
+        {{ end }}
+        {{ partial "paginator.html" $paginator }}
+    </div>
+</div>
+{{ partial "sidebar-author.html" . }}
+{{ end }}

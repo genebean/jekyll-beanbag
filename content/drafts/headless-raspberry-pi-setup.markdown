@@ -1,6 +1,7 @@
 ---
 author: gene
 title: Headless Raspberry Pi Setup
+draft: true
 ---
 
 Why another setup guide for a Raspberry Pi? Because I can't find a single one that has all the pieces and am tired of having to re-find all the needed pieces of info every time I set one up.

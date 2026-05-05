@@ -1,0 +1,23 @@
+<header>
+    <nav class="grey darken-3">
+        <div class="nav-wrapper">
+            <a href="/" title="{{ .Site.Title }}" class="link-white-to-theme-active brand-logo">
+                <div class="blog-title"><img class="z-depth-3 blog-logo circle valign"
+                        src="{{ .Site.Params.logo }}" /><span class="blog-title-text valign">{{ .Site.Title }}</span></div>
+            </a>
+            <a href="#" data-activates="device-hamburger-menu" class="button-collapse"><i class="fas fa-bars"></i></a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li role="presentation"><a class="link-white-to-theme-active" href="/">Home</a></li>
+                {{ range .Site.Params.header.links }}
+                <li role="presentation"><a class="link-white-to-theme-active" href="{{ .url }}">{{ .label }}</a></li>
+                {{ end }}
+            </ul>
+            <ul class="side-nav" id="device-hamburger-menu">
+                <li role="presentation" class="active"><a class="link-white-to-theme-active" href="/">Home</a></li>
+                {{ range .Site.Params.header.links }}
+                <li role="presentation"><a class="link-white-to-theme-active" href="{{ .url }}">{{ .label }}</a></li>
+                {{ end }}
+            </ul>
+        </div>
+    </nav>
+</header>

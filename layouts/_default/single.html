@@ -1,0 +1,43 @@
+{{ define "main" }}
+{{ $authorKey := .Params.author | default .Site.Params.author }}
+{{ $author := index .Site.Data.authors $authorKey }}
+<div class="col l9 m12 s12">
+    <div class="content-wrapper">
+        <div class="content-wrapper">
+            <article class="post card-panel grey lighten-5" itemscope itemtype="https://schema.org/CreativeWork">
+                {{- with .Title }}
+                <meta itemprop="headline" content="{{ . | htmlEscape }}">
+                {{- end }}
+                {{- with .Description }}
+                <meta itemprop="description" content="{{ . | htmlEscape }}">
+                {{- end }}
+                {{- if not .Date.IsZero }}
+                <meta itemprop="datePublished" content="{{ .Date.Format "Jan. 02, 2006" }}">
+                {{- end }}
+                <div class="section post-title">
+                    {{- with .Title }}
+                    <h1 id="page-title" class="page__title" itemprop="headline">{{ . }}</h1>
+                    {{- end }}
+                    <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> {{ partial "read-time.html" . }}</p>
+                </div>
+                <div class="section">
+                    {{- if $author }}
+                    <i class="far fa-user"></i>&nbsp;<strong>
+                    <a class="link-theme-active-to-black valign left-align" href="/authors/{{ $author.short_name }}/"
+                        title="{{ $author.name }}">{{ $author.name }}</a>
+                    </strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    {{- end }}
+                    <i class="far fa-calendar-alt"></i>&nbsp;<time class="valign right-align"
+                        datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan. 02, 2006" }}</time>
+                    <div class="divider"></div>
+                    <div class="post-content">
+                        {{ .Content }}
+                    </div>
+                </div>
+            </article>
+            {{ partial "post-pagination.html" . }}
+        </div>
+    </div>
+</div>
+{{ partial "sidebar-author.html" . }}
+{{ end }}

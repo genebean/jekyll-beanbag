@@ -1,0 +1,57 @@
+<!-- DISCLAIMER -->
+<div class="row">
+    <div class="col l12 m12 s12 center-align">
+        <strong>Disclaimer:</strong> All code, opinion and information on this
+        blog are my personal view and do not represent or relate my past and / or current employer's
+        view and / or business insides in any way.
+    </div>
+</div>
+<footer class="page-footer transparent">
+    <!-- SOCIAL LINKS -->
+    <div class="row">
+        <div class="col l12 m12 s12">
+            <div class="social">
+                <ul>
+                    {{ range .Site.Params.footer.links }}
+                    {{ if eq .label "GitHub" }}
+                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ .username }} on GitHub"><img
+                                src="/assets/images/social-github.svg"
+                                class="footer-social-icons z-depth-2 circle" /></a></li>
+                    {{ end }}
+                    {{ if eq .label "Mastodon" }}
+                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ .username }} on Mastodon" rel="me"><img
+                                src="/assets/images/social-rss.svg"
+                                class="footer-social-icons z-depth-2 circle" /></a></li>
+                    {{ end }}
+                    {{ end }}
+                    <!-- Blog RSS Feed -->
+                    <li><a href="/index.xml" class="footer-social-links" title="Subscribe to RSS feed"><img
+                                src="/assets/images/social-rss.svg"
+                                class="footer-social-icons z-depth-2 circle" /></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="grey darken-3 white-text">
+        <div class="footer-copyright">
+            <div class="container center-align">
+                &copy; {{ now.Format "2006" }} &bull;
+                All rights reserved &bull;
+                Theme based on
+                <a href="https://github.com/genebean/needy-jekyll-theme" rel="external"
+                    class="link-theme-active-to-white">Needy</a>.
+            </div>
+        </div>
+        <div class="footer-icon-credits">
+            <div class="container center-align">
+                {{ .Site.Title }}
+                {{ with .Site.Params.footer.tagline }}
+                {{ with .preLink }}{{ . }}{{ end }}
+                <a href="{{ .url }}" rel="external" class="link-theme-active-to-white">{{ .label }}</a>
+                {{ end }}
+                and has been doctored up by<br />
+                <a href="https://gohugo.io" class="link-theme-active-to-white">Hugo</a>
+            </div>
+        </div>
+    </div>
+</footer>

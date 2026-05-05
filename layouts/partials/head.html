@@ -1,0 +1,52 @@
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+    <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}" />
+    <meta name="keywords" content="technology" />
+    <meta name="robots" content="index,follow" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="me" href="https://{{ .Site.Params.mastodon.instance }}/@{{ .Site.Params.mastodon.username }}" type="text/html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}" />
+    <meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}" />
+    <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
+    <meta property="og:url" content="{{ .Permalink }}" />
+    {{ with .Params.image }}{{ with .path }}
+    <meta property="og:image" content="{{ . | absURL }}" />
+    {{ end }}{{ end }}
+
+    <!-- RSS feed -->
+    {{ range .AlternativeOutputFormats -}}
+    <link rel="{{ .Rel }}" type="{{ .MediaType.Type | html }}" href="{{ .Permalink | safeURL }}">
+    {{ end -}}
+
+    <!-- Fancybox CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+    <!-- Google Icon Font -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Materialize framework CSS -->
+    <link type="text/css" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"
+        media="screen,projection">
+
+    <!-- Site wide styles -->
+    {{ $opts := dict "transpiler" "dartsass" "outputStyle" "compressed" }}
+    {{ $style := resources.Get "css/main.scss" | css.Sass $opts | fingerprint }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+    <!-- Plausible analytics -->
+    <script defer data-domain="beanbag.technicalissues.us" src="/js/script.outbound-links.js"></script>
+</head>

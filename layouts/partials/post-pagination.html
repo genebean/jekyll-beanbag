@@ -1,0 +1,16 @@
+{{ if or .PrevInSection .NextInSection }}
+<nav class="pagination" style="margin-top: 1rem;">
+    {{ if .NextInSection }}
+    <a href="{{ .NextInSection.RelPermalink }}" class="pagination--pager"
+        title="{{ .NextInSection.Title }}">&larr; Older</a>
+    {{ else }}
+    <a href="#" class="pagination--pager disabled">&larr; Older</a>
+    {{ end }}
+    {{ if .PrevInSection }}
+    <a href="{{ .PrevInSection.RelPermalink }}" class="pagination--pager"
+        title="{{ .PrevInSection.Title }}">Newer &rarr;</a>
+    {{ else }}
+    <a href="#" class="pagination--pager disabled">Newer &rarr;</a>
+    {{ end }}
+</nav>
+{{ end }}

@@ -44,7 +44,7 @@ $monospace-font-family: Menlo, Consolas, Monaco, "Courier New", Courier, monospa
 
 /* Inline code block */
 
-code.highlighter-rouge {
+:not(pre) > code {
   margin: 0;
   padding: 0.2em 0.4em;
   color: $base00;
@@ -55,7 +55,7 @@ code.highlighter-rouge {
 
 /* Multi-line code blocks */
 
-div.highlighter-rouge,
+div.highlight,
 figure.highlight {
   position: relative;
   margin-bottom: 1em;
