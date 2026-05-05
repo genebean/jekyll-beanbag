@@ -1,10 +1,26 @@
 <head>
+    {{- $desc := .Site.Params.description -}}
+    {{- with .Description }}{{ $desc = . }}{{ end -}}
+    {{- $ogTitle := .Site.Title -}}
+    {{- if not .IsHome }}{{ $ogTitle = .Title }}{{ end -}}
+    {{- $imgPath := "" -}}
+    {{- $imgAlt := .Title -}}
+    {{- with .Params.image -}}
+        {{- with .path }}{{ $imgPath = . }}{{ end -}}
+        {{- with .alt }}{{ $imgAlt = . }}{{ end -}}
+    {{- end -}}
+    {{- $isArticle := and .IsPage (eq .Section "posts") -}}
+
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
     <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
-    <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}" />
+    <meta name="description" content="{{ $desc }}" />
+    {{- with .GetTerms "tags" }}
+    <meta name="keywords" content="{{ range $i, $t := . }}{{ if $i }}, {{ end }}{{ $t.Title }}{{ end }}" />
+    {{- else }}
     <meta name="keywords" content="technology" />
+    {{- end }}
     <meta name="robots" content="index,follow" />
 
     <meta name="HandheldFriendly" content="True" />
@@ -16,13 +32,46 @@
     <link rel="me" href="https://{{ .Site.Params.mastodon.instance }}/@{{ .Site.Params.mastodon.username }}" type="text/html">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}" />
-    <meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}" />
-    <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
+    <meta property="og:site_name" content="{{ .Site.Title }}" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="{{ $ogTitle }}" />
+    <meta property="og:description" content="{{ $desc }}" />
+    <meta property="og:type" content="{{ if $isArticle }}article{{ else }}website{{ end }}" />
     <meta property="og:url" content="{{ .Permalink }}" />
-    {{ with .Params.image }}{{ with .path }}
-    <meta property="og:image" content="{{ . | absURL }}" />
-    {{ end }}{{ end }}
+    {{- if $imgPath }}
+    <meta property="og:image" content="{{ $imgPath | absURL }}" />
+    <meta property="og:image:alt" content="{{ $imgAlt }}" />
+    {{- with .Params.image.width }}
+    <meta property="og:image:width" content="{{ . }}" />
+    {{- end }}
+    {{- with .Params.image.height }}
+    <meta property="og:image:height" content="{{ . }}" />
+    {{- end }}
+    {{- end }}
+    {{- if $isArticle }}
+    {{- if not .Date.IsZero }}
+    <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}" />
+    {{- end }}
+    {{- $authorKey := .Params.author | default .Site.Params.author }}
+    {{- $authorData := index .Site.Data.authors $authorKey }}
+    {{- with $authorData }}
+    <meta property="article:author" content="{{ $.Site.BaseURL }}authors/{{ .short_name }}/" />
+    {{- end }}
+    {{- with .GetTerms "tags" }}
+    {{- range . }}
+    <meta property="article:tag" content="{{ .Title }}" />
+    {{- end }}
+    {{- end }}
+    {{- end }}
+
+    <!-- Twitter Card — used by Nostr clients (Primal, Damus, Snort, etc.) for link previews -->
+    <meta name="twitter:card" content="{{ if $imgPath }}summary_large_image{{ else }}summary{{ end }}" />
+    <meta name="twitter:title" content="{{ $ogTitle }}" />
+    <meta name="twitter:description" content="{{ $desc }}" />
+    {{- if $imgPath }}
+    <meta name="twitter:image" content="{{ $imgPath | absURL }}" />
+    <meta name="twitter:image:alt" content="{{ $imgAlt }}" />
+    {{- end }}
 
     <!-- RSS feed -->
     {{ range .AlternativeOutputFormats -}}
