@@ -40,6 +40,16 @@ enableGitInfo = true
   url = 'https://app.vagrantup.com/genebean'
 
 [[params.footer.links]]
+  label = 'Yakihonne'
+  url = 'https://yakihonne.com/profile/npub1mwsk3ly4lk7efdqqjm62dkc699kqapwyyvdley3xljjm0lxruh9qzvu46p'
+  username = 'genebean'
+
+[[params.footer.links]]
+  label = 'Primal'
+  url = 'https://primal.net/p/npub1mwsk3ly4lk7efdqqjm62dkc699kqapwyyvdley3xljjm0lxruh9qzvu46p'
+  username = 'genebean'
+
+[[params.footer.links]]
   label = 'GitHub'
   url = 'https://github.com/genebean'
   username = 'genebean'

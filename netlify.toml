@@ -1,6 +1,6 @@
 [build]
 publish = "public"
-command = "hugo --minify"
+command = "npm ci && hugo --minify"
 
 [build.environment]
 HUGO_VERSION = "0.152.2"
@@ -10,10 +10,10 @@ HUGO_EXTENDED = "true"
 HUGO_ENV = "production"
 
 [context.deploy-preview]
-command = "hugo --minify --buildDrafts --buildFuture"
+command = "npm ci && hugo --minify --buildDrafts --buildFuture"
 
 [context.branch-deploy]
-command = "hugo --minify --buildDrafts --buildFuture"
+command = "npm ci && hugo --minify --buildDrafts --buildFuture"
 
 [[headers]]
   for = "/*"
