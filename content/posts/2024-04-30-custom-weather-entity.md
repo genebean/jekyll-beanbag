@@ -12,8 +12,6 @@ tags:
   - homeassistant
 ---
 
-![Screenshot of weather card in Home Assistant](/assets/images/posts/2024-04-30-weather-card-with-my-data.png)
-
 In Home Assistant 2024.4, this note was in the "Backward-incompatible changes" section of [the release announcement](https://www.home-assistant.io/blog/2024/04/03/release-20244/)
 
 > The previously deprecated `forecast` attribute of weather entities, has now been removed. Use the [`weather.get_forecasts`](https://www.home-assistant.io/integrations/weather#service-weatherget_forecasts) service to get the forecast data instead.
