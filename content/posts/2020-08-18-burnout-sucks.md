@@ -1,11 +1,12 @@
 ---
 title: 'Burnout Sucks'
 date: 2020-08-18T23:05:00-04:00
-description: >- 
-  My favorite personal project is an application called [PiWeatherRock](https://piweatherrock.technicalissues.us)... or it was before I dove in head-first working to update it and create a community for it’s users. Tons of enthusiasm morphed into something else
+description: >-
+  My favorite personal project is an application called PiWeatherRock... or it was before I dove in head-first working to update it and create a community for it’s users. Tons of enthusiasm morphed into something else
+image:
+  path: '/assets/images/posts/flames-over-weather.png'
+  alt: 'Flames over weather'
 ---
-
-![Flames over weather]({{ 'assets/images/posts/flames-over-weather.png' | relative_url }})
 
 My favorite personal project is an application called [PiWeatherRock](https://piweatherrock.technicalissues.us)... or it was before I dove in head-first working to update it and create a community for it’s users. Tons of enthusiasm morphed into something else and, before I realized what was happening, I didn’t even want to touch my computer after work. Months have passed since I even opened anything related to the project and, as best as I can tell, this is that thing I’ve seen others talk about called “burnout.” 
 

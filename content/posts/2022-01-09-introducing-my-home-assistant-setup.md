@@ -3,9 +3,10 @@ title: Introducing My Home Assistant Setup
 date: 2022-01-09T23:00:00-05:00
 description: >-
   A year ago today (January 9th, 2021) I deployed what I consider my first production-grade instance of Home Assistant and couldn't be happier.
+image:
+  path: '/assets/images/posts/home-assistant-logo-with-text.png'
+  alt: 'Home Assistant logo with text'
 ---
-
-![Home Assistant logo with text]({{ 'assets/images/posts/home-assistant-logo-with-text.png' | relative_url }})
 
 A year ago today (January 9th, 2021) I deployed what I consider my first production-grade instance of [Home Assistant](https://www.home-assistant.io) and couldn't be happier. It is an amazingly powerful tool that is 100% free and open source. One of Home Assistant's key features is the fact that it takes a local first approach to everything. By that I mean that every aspect of the project makes a concerted effort to not rely on the internet or cloud services unless they are absolutely required, such as when integrating with a vendor who does not have a local api (or won't provide access to it to the community). This means that if the internet is out I can still control the vast majority of the devices connected to Home Assistant using either the web interface or the app on my phone... and push notifications from Home Assistant to my phone will continue to work too.
 
