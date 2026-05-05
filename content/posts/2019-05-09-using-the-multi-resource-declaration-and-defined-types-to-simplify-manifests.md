@@ -14,7 +14,7 @@ They are also ones I regularly observe when doing code reviews for others. I am 
 
 Did you know that these two blocks of code are actually identical in function?
 
-![standard vs condensed screenshot]({{ "/assets/images/posts/standard-vs-condensed.png" | relative_url }})
+![standard vs condensed screenshot](/assets/images/posts/standard-vs-condensed.png)
 
 The version on the right is an example of a multi-resource declaration. It's not only shorter but it also centralizes the lines that are duplicated in the standard version to a `default` block. This makes for easier upkeep as you have fewer places to edit common parameters like `require` and `notify`. Details on the format of a multi-resource declaration can be found in the [Language: Resources (advanced)](https://puppet.com/docs/puppet/6.4/lang_resources_advanced.html) docs.
 

@@ -14,7 +14,7 @@ I decided that this was something I could help with, so I hit him up on Twitter:
 
 We chatted a tad via direct messages and then I built this:
 
-![Photo of the device I made]({{ 'assets/images/posts/jupiter-garage-data-photo-cropped.png' | relative_url }})
+![Photo of the device I made](/assets/images/posts/jupiter-garage-data-photo-cropped.png)
 
 It's modeled after one I have in my own garage with a couple of small modifications to suite his use case better. The setup is made up of:
 
@@ -36,7 +36,7 @@ The microcontroller is configured to present it's data locally in two ways: via 
 
 This page is presented at [jupiter-garage-data.local](http://jupiter-garage-data.local):
 
-![Screenshot of device web page]({{ 'assets/images/posts/jupiter-garage-data-web-server.png' | relative_url }})
+![Screenshot of device web page](/assets/images/posts/jupiter-garage-data-web-server.png)
 
 ### The Prometheus endpoint
 
@@ -160,7 +160,7 @@ Here are a couple of diagrams to help explain things further.
 
 In the code above the pins `D0`, `D1`, `D2`, and `D4` are referenced. You can see exactly what those correlate to here:
 
-![diagram of d1 mini microcontroller pinout]({{ 'assets/images/posts/esp8266-wemos-d1-mini-pinout.png' | relative_url }})
+![diagram of d1 mini microcontroller pinout](/assets/images/posts/esp8266-wemos-d1-mini-pinout.png)
 
 *The image above was copied from [https://escapequotes.net/esp8266-wemos-d1-mini-pins-and-diagram/](https://escapequotes.net/esp8266-wemos-d1-mini-pins-and-diagram/)*
 
@@ -168,7 +168,7 @@ In the code above the pins `D0`, `D1`, `D2`, and `D4` are referenced. You can se
 
 This diagram shows how I assembled everything:
 
-![diagram of jupiter-garage-data]({{ 'assets/images/posts/jupiter-garage-data.png' | relative_url }})
+![diagram of jupiter-garage-data](/assets/images/posts/jupiter-garage-data.png)
 
 *This diagram was created with [Fritzing](https://fritzing.org/)*
 

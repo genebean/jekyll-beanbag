@@ -78,7 +78,6 @@ The source repository also contains a docker-compose.yaml that sets up a Jaeger 
 
 The first step was to deploy [genebean/sinatra-otel-demo](https://hub.docker.com/r/genebean/sinatra-otel-demo) to Kubernetes and send its spans to the test instance of Jaeger that was already running there. The first challenge I had to overcome here was that the output from my application was directed at UDP port 6831 instead of one of the TCP ports that Jaeger's ingress was listening on. Fortunately, during my research I learned that Jaeger's documentation contained this lovely piece of information: [Manually Defining Jaeger Agent Sidecars](https://www.jaegertracing.io/docs/1.18/operator/#manually-defining-jaeger-agent-sidecars). With that in mind I started crafting a [Helm](https://helm.sh/) chart to manage my deployment and came up with this:
 
-{% raw %}
 
 ```yaml
 ---
@@ -128,7 +127,6 @@ spec:
             {{- toYaml .Values.securityContext.jaeger | nindent 12 }}
 ```
 
-{% endraw %}
 
 The deployment above places both `genebean/sinatra-otel-demo` and `jaegertracing/jaeger-agent` in the same pod. This allows the agent to listen for the traces emitted over UDP, collect them, and then send them back out in "model.proto" format via gRPC to the Jaeger server.
 

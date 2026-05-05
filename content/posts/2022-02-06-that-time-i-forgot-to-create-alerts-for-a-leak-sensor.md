@@ -24,7 +24,7 @@ Having had leaks before, one of the first things that comes to mind is "what is 
 
 I opened up the [Home Assistant app](https://companion.home-assistant.io/) on my phone and pulled up the sensor. It had, indeed, worked as designed and clearly showed that the leak started at about 11:30pm the night before... it was currently about 7:30am.
 
-![screenshot of leak sensor data]({{ 'assets/images/posts/2022-02-04-leak-data.png' | relative_url }})
+![screenshot of leak sensor data](/assets/images/posts/2022-02-04-leak-data.png)
 
 It's at this point that I'm really wishing I hadn't forgotten to have Home Assistant tell me if the sensor detected water. I set a reminder on my phone to rectify that later in the day and then start removing the water via a push broom (they are surprisingly good at this task, by the way). After moving some things to dry ground and pushing lots of water out the door of our garage, the immediate crisis is over. Now to figure out the root cause and get it fixed.
 
@@ -38,7 +38,7 @@ After checking things out, Keihan determined that the water heater itself was th
 
 A few hours later, I noticed that the pressure had spiked to about 90 PSI. Street pressure is only about 80 PSI and the regulator for the house is less than that, so this was a little concerning to us both. I dialed the observation needle back down to the current pressure so that we could see if this was a one-off spike or if there was a pattern. I checked again around 8pm and was greeted with this:
 
-![photo of pressure gauge showing nearly 120 PSI]({{ 'assets/images/posts/2022-02-04-high-pressure.jpeg' | relative_url }})
+![photo of pressure gauge showing nearly 120 PSI](/assets/images/posts/2022-02-04-high-pressure.jpeg)
 
 I sent Keihan this photo showing that the pressure had spiked to nearly 120 PSI and he decided we shouldn't wait until Monday as this much pressure could easily expose other weak areas in my house's plumbing. He said he'd be out the following morning, Saturday, to replace the hot water heater. Did I mention that he's awesome?
 

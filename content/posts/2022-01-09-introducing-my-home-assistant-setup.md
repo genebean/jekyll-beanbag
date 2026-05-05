@@ -18,7 +18,7 @@ My setup is based on a [Raspberry Pi 4](https://www.raspberrypi.com/products/ras
 
 Storage wise, I am using a [Kingston 250GB A2000 M.2 2280 NVMe drive](https://www.amazon.com/gp/product/B07VYG5HQD) housed in a [FIDECO USB C Gen 2 enclosure](https://www.amazon.com/gp/product/B07W74BN5B). The picture below was taken right after I put things together and just before I slid the lower parts into the black housing.
 
-![NVMe drive for my Home Assistant]({{ 'assets/images/posts/2021-01-09-home-assistant-drive.jpg' | relative_url }})
+![NVMe drive for my Home Assistant](/assets/images/posts/2021-01-09-home-assistant-drive.jpg)
 
 I configured my Pi so that it will boot from the NVMe drive and then installed Home Assistant Operating System [per their instructions](https://www.home-assistant.io/installation/raspberrypi). There is no SD card in my Pi at all.
 
@@ -54,7 +54,7 @@ I also ended up replacing deCONZ there too, though it was a good bit after I'd s
 
 Before moving on, I want to call out explicitly that Zigbee and Wi-Fi utilize the same frequencies. This means that to avoid having problems with both you need to plan accordingly. I found the article "[ZigBee and Wi-Fi Coexistence](https://www.metageek.com/training/resources/zigbee-wifi-coexistence/)" on metageek to be supremely helpful. For me, this translated to telling my Wi-Fi gear to only use channels 1 and 6 and telling my Zigbee coordinator (by way of ZHA) to use channel 25. The image below was taken from that article and shows how this setup keeps each system from fighting with the other (I picked 25 even though 24 is shown in the image).
 
-![Zigbee channel plan]({{ 'assets/images/posts/ZigBee-channel-plan.png' | relative_url }})
+![Zigbee channel plan](/assets/images/posts/ZigBee-channel-plan.png)
 
 ## Putting Home Assistant To Use
 
@@ -95,7 +95,7 @@ That was quickly followed by starting to install smart switches. I felt (and sti
 Next up was combining a [HEMMA cord set](https://www.ikea.com/us/en/p/hemma-cord-set-white-10175810/), a [NYMÖ
 Lamp shade](https://www.ikea.com/us/en/p/nymoe-lamp-shade-black-brass-color-00377210/), and a [Philips Hue Soft White bulb](https://www.homedepot.com/p/Philips-Hue-Soft-White-A19-75W-Equivalent-Dimmable-LED-Smart-Light-Bulb-563007/316148568) to add light to places like above our couch and over the dresser in our nursery.
 
-![Light over couch]({{ 'assets/images/posts/lamp-over-sofa-2022-01-09.jpg' | relative_url }})
+![Light over couch](/assets/images/posts/lamp-over-sofa-2022-01-09.jpg)
 
 The lights over the couch were, and still are, really nice because we can have smaller amounts of light in more focused locations instead of one set of central, really bright lights on the ceiling. My wife and I both find this to be much easier on our eyes and significantly more effective when reading.
 

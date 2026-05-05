@@ -122,7 +122,6 @@ To be able to deploy the new version of CITH and validate everything worked as d
 
 CITH's chart was actually pretty easy: I just needed to delete all the Lightstep related bits from it and add a Jaeger sidecar to the API's pod. The sidecar is able to collect the traces emitted to localhost and then send them via gRPC to the OTel collector. Here are the flags I added to the Jaeger agent:
 
-{% raw %}
 
 ```yaml
 args:
@@ -131,7 +130,6 @@ args:
   - --jaeger.tags=helm_chart={{ include "dio-cith.chart" . }},service.version={{ .Chart.AppVersion }}
 ```
 
-{% endraw %}
 
 Breaking those args entries down:
 
@@ -150,7 +148,6 @@ When I started on this phase there wasn't a repository for Lightstep's Helm char
 
 With the satellites up and running it is time to add Lightstep as a destination in my collector configuration. Doing so is as simple as adding this to my exporters section and then adding `otlp/lightstep` to the array of locations listed in the exporters part of the pipeline:
 
-{% raw %}
 
 ```yaml
 otlp/lightstep:
@@ -160,7 +157,6 @@ otlp/lightstep:
     "lightstep-access-token": {{ .Values.lightstepAccessToken }}
 ```
 
-{% endraw %}
 
 This simply sets up an exporter that sends data in OTLP format to the service named `lightstep` in the `lightstep` namespace on port 8184 and adds a header that includes the access token that matches the desired project in Lightstep. Fortunately, this is all that is needed to get data to Lightstep - no custom exporter or other hacks at all.
 
@@ -217,7 +213,6 @@ docker::run_instance::instance:
 
 To make this work I also had to add an ingress resource to my OTel collector's deployment. The ingress looks like this:
 
-{% raw %}
 
 ```yaml
 {{- if .Values.ingress.enabled -}}
@@ -251,7 +246,6 @@ spec:
 {{- end }}
 ```
 
-{% endraw %}
 
 The only thing special about this ingress is this line:
 
