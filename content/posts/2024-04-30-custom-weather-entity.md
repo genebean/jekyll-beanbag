@@ -6,6 +6,7 @@ description: >-
   How I created a custom weather entity that pulls current conditions from the weather station in my back yard and forecast data from the Tomorrow.io integration.
 image:
   path: '/assets/images/posts/2024-04-30-weather-card-with-my-data.png'
+  alt: 'Screenshot of weather card in Home Assistant'
 tags:
   - weather
   - forecasts

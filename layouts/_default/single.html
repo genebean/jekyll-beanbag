@@ -14,9 +14,9 @@
                 {{- if not .Date.IsZero }}
                 <meta itemprop="datePublished" content="{{ .Date.Format "Jan. 02, 2006" }}">
                 {{- end }}
-                {{- with .Params.image }}{{- with .path }}
+                {{- with .Params.image }}{{- if .path }}
                 <div class="post-header-image">
-                    <img src="{{ . }}" alt="{{ $.Title }}">
+                    <img src="{{ .path }}" alt="{{ .alt | default $.Title }}">
                 </div>
                 {{- end }}{{- end }}
                 <div class="section post-title">
