@@ -106,7 +106,7 @@ main {
 *******************************************************************************/
 .sidebar {
 	margin: 20px 10px 20px 10px;
-	opacity: 0;
+	animation: fadeIn 0.5s ease-in forwards;
 }
 /******************************************************************************/
 
@@ -166,9 +166,14 @@ main {
 
 /** 08.	Main content - Index / Post
 *******************************************************************************/
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
 .content-wrapper {
 	margin: 20px 10px 20px 10px;
-	opacity: 0;
+	animation: fadeIn 0.5s ease-in forwards;
 }
 /******************************************************************************/
 
@@ -187,6 +192,7 @@ main {
 
 	img {
 		width: 100%;
+		height: auto;
 		display: block;
 		border-radius: 2px 2px 0 0;
 	}
@@ -218,6 +224,12 @@ main {
 
 .post-content {
 	overflow-wrap: break-word;
+
+	iframe {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		border: 0;
+	}
 
 	h1 {
 		font-size: 2em;

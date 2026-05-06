@@ -21,10 +21,10 @@
                     {{ if $url }}
                     <li><a href="{{ $url }}" class="footer-social-links" title="{{ $title }}"
                                 rel="{{ if in $me .label }}me noopener noreferrer{{ else }}noopener noreferrer{{ end }}"
-                                target="_blank"><img src="{{ $img }}" class="footer-social-icons z-depth-2 circle" /></a></li>
+                                target="_blank"><img src="{{ $img }}" alt="{{ $title }}" class="footer-social-icons z-depth-2 circle" /></a></li>
                     {{ else }}
-                    <li><span class="footer-social-links"><img src="{{ $img }}"
-                                class="footer-social-icons z-depth-2 circle" title="{{ $title }}" /></span></li>
+                    <li><span class="footer-social-links"><img src="{{ $img }}" alt="{{ $title }}"
+                                class="footer-social-icons z-depth-2 circle" /></span></li>
                     {{ end }}
                     {{ end }}
                 </ul>

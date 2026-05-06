@@ -15,7 +15,19 @@
                 {{- end }}
                 {{- with .Params.image }}{{- if .path }}
                 <div class="post-header-image">
-                    <img src="{{ .path }}" alt="{{ .alt | default $.Title }}">
+                    {{- $imgSrc := .path -}}
+                    {{- $imgAlt := .alt | default $.Title -}}
+                    {{- if strings.HasPrefix $imgSrc "/" -}}
+                        <img src="{{ $imgSrc }}" alt="{{ $imgAlt }}">
+                    {{- else -}}
+                        {{- with $.Resources.GetMatch $imgSrc -}}
+                            {{- $img := . -}}
+                            {{- if gt .Width 960 -}}{{- $img = .Resize "960x q90" -}}{{- end -}}
+                            <img src="{{ $img.RelPermalink }}" alt="{{ $imgAlt }}">
+                        {{- else -}}
+                            <img src="{{ $imgSrc }}" alt="{{ $imgAlt }}">
+                        {{- end -}}
+                    {{- end -}}
                 </div>
                 {{- end }}{{- end }}
                 <div class="section post-title">

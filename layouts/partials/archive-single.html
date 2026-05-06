@@ -1,27 +1,41 @@
-{{ $authorKey := .Params.author | default .Site.Params.author }}
-{{ $author := index .Site.Data.authors $authorKey }}
+{{ $page := .Page }}
+{{ $isFirst := .IsFirst }}
+{{ $authorKey := $page.Params.author | default $page.Site.Params.author }}
+{{ $author := index $page.Site.Data.authors $authorKey }}
 
 <article class="post blog-list-item-article card-panel grey lighten-5">
-    {{- with .Params.image }}{{- if .path }}
+    {{- with $page.Params.image }}{{- if .path }}
     <div class="post-list-image">
-        <a href="{{ $.RelPermalink }}" rel="permalink">
-            <img src="{{ .path }}" alt="{{ .alt | default $.Title }}">
+        <a href="{{ $page.RelPermalink }}" rel="permalink">
+            {{- $imgSrc := .path -}}
+            {{- $imgAlt := .alt | default $page.Title -}}
+            {{- if strings.HasPrefix $imgSrc "/" -}}
+                <img src="{{ $imgSrc }}" alt="{{ $imgAlt }}"{{ if $isFirst }} fetchpriority="high"{{ else }} loading="lazy"{{ end }}>
+            {{- else -}}
+                {{- with $page.Resources.GetMatch $imgSrc -}}
+                    {{- $img := . -}}
+                    {{- if gt .Width 960 -}}{{- $img = .Resize "960x q90" -}}{{- end -}}
+                    <img src="{{ $img.RelPermalink }}" alt="{{ $imgAlt }}"{{ if $isFirst }} fetchpriority="high"{{ else }} loading="lazy"{{ end }}>
+                {{- else -}}
+                    <img src="{{ $imgSrc }}" alt="{{ $imgAlt }}"{{ if $isFirst }} fetchpriority="high"{{ else }} loading="lazy"{{ end }}>
+                {{- end -}}
+            {{- end -}}
         </a>
     </div>
     {{- end }}{{- end }}
     <div class="section">
-        <h5 class="link-theme-active-to-black"><a href="{{ .RelPermalink }}" rel="permalink"
-                class="link-theme-active-to-black">{{ .Title }}</a></h5>
-        <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> {{ partial "read-time.html" . }}</p>
-        {{ if .Description }}
+        <h5 class="link-theme-active-to-black"><a href="{{ $page.RelPermalink }}" rel="permalink"
+                class="link-theme-active-to-black">{{ $page.Title }}</a></h5>
+        <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> {{ partial "read-time.html" $page }}</p>
+        {{ if $page.Description }}
         <p class="valign" itemprop="description">
-            {{ .Description }}
-            <a class="link-theme-active-to-black" href="{{ .RelPermalink }}" rel="permalink">&raquo; Read more</a>
+            {{ $page.Description }}
+            <a class="link-theme-active-to-black" href="{{ $page.RelPermalink }}" rel="permalink">&raquo; Read more</a>
         </p>
-        {{ else if .Summary }}
+        {{ else if $page.Summary }}
         <p class="valign" itemprop="description">
-            {{ .Summary | truncate 160 }}
-            <a class="link-theme-active-to-black" href="{{ .RelPermalink }}" rel="permalink">&raquo; Read more</a>
+            {{ $page.Summary | truncate 160 }}
+            <a class="link-theme-active-to-black" href="{{ $page.RelPermalink }}" rel="permalink">&raquo; Read more</a>
         </p>
         {{ end }}
     </div>
@@ -34,6 +48,6 @@
         </strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         {{ end }}
         <i class="far fa-calendar-alt"></i>&nbsp;<time class="valign right-align"
-            datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan. 02, 2006" }}</time>
+            datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "Jan. 02, 2006" }}</time>
     </div>
 </article>

@@ -6,8 +6,9 @@
             <h1 id="page-title" class="archive__subtitle card-panel grey lighten-5">{{ . }}</h1>
             {{- end }}
             {{ $paginator := .Paginate .Pages }}
-            {{ range $paginator.Pages }}
-                {{ partial "archive-single.html" . }}
+            {{ range $i, $page := $paginator.Pages }}
+                {{ $isFirst := and (eq $paginator.PageNumber 1) (eq $i 0) }}
+                {{ partial "archive-single.html" (dict "Page" $page "IsFirst" $isFirst) }}
             {{ end }}
             {{ partial "paginator.html" $paginator }}
         </div>

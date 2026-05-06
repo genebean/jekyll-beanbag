@@ -6,14 +6,23 @@
     {{- $imgPath := "" -}}
     {{- $imgAlt := .Title -}}
     {{- with .Params.image -}}
-        {{- with .path }}{{ $imgPath = . }}{{ end -}}
+        {{- with .path -}}
+            {{- if strings.HasPrefix . "/" -}}
+                {{- $imgPath = . | absURL -}}
+            {{- else -}}
+                {{- $res := $.Resources.GetMatch . -}}
+                {{- if $res -}}
+                    {{- $imgPath = $res.Permalink -}}
+                {{- else -}}
+                    {{- $imgPath = . -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
         {{- with .alt }}{{ $imgAlt = . }}{{ end -}}
     {{- end -}}
     {{- $isArticle := and .IsPage (eq .Section "posts") -}}
 
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
     <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
     <meta name="description" content="{{ $desc }}" />
     {{- with .GetTerms "tags" }}
@@ -24,7 +33,7 @@
     <meta name="robots" content="index,follow" />
 
     <meta name="HandheldFriendly" content="True" />
-    <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
@@ -39,7 +48,7 @@
     <meta property="og:type" content="{{ if $isArticle }}article{{ else }}website{{ end }}" />
     <meta property="og:url" content="{{ .Permalink }}" />
     {{- if $imgPath }}
-    <meta property="og:image" content="{{ $imgPath | absURL }}" />
+    <meta property="og:image" content="{{ $imgPath }}" />
     <meta property="og:image:alt" content="{{ $imgAlt }}" />
     {{- with .Params.image.width }}
     <meta property="og:image:width" content="{{ . }}" />
@@ -69,7 +78,7 @@
     <meta name="twitter:title" content="{{ $ogTitle }}" />
     <meta name="twitter:description" content="{{ $desc }}" />
     {{- if $imgPath }}
-    <meta name="twitter:image" content="{{ $imgPath | absURL }}" />
+    <meta name="twitter:image" content="{{ $imgPath }}" />
     <meta name="twitter:image:alt" content="{{ $imgAlt }}" />
     {{- end }}
 
@@ -78,21 +87,41 @@
     <link rel="{{ .Rel }}" type="{{ .MediaType.Type | html }}" href="{{ .Permalink | safeURL }}">
     {{ end -}}
 
-    <!-- Fancybox CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
-
-    <!-- Google Icon Font -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <!-- Materialize framework CSS -->
-    <link type="text/css" rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"
-        media="screen,projection">
+    <!-- Vendor CSS (self-hosted) -->
+    <!-- Materialize and Fancybox are render-critical; load synchronously -->
+    <link rel="stylesheet" href="/assets/css/vendor/materialize.min.css" media="screen,projection">
+    <link rel="stylesheet" href="/assets/css/vendor/jquery.fancybox.min.css">
+    <!-- Icon fonts are not render-critical; defer with media=print trick -->
+    <link rel="stylesheet" href="/assets/css/vendor/material-icons.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="/assets/css/vendor/material-icons.css"></noscript>
+    <link rel="stylesheet" href="/assets/css/vendor/fontawesome.all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="/assets/css/vendor/fontawesome.all.min.css"></noscript>
 
     <!-- Site wide styles -->
     {{ $opts := dict "transpiler" "libsass" "outputStyle" "compressed" }}
     {{ $style := resources.Get "css/main.scss" | css.Sass $opts | fingerprint }}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+
+    {{- if .IsHome -}}
+        {{- $homePosts := where .Site.RegularPages "Section" "posts" -}}
+        {{- if $homePosts -}}
+            {{- $firstPost := index $homePosts 0 -}}
+            {{- with $firstPost.Params.image -}}
+                {{- with .path -}}
+                    {{- if strings.HasPrefix . "/" -}}
+                        <link rel="preload" as="image" href="{{ . | absURL }}">
+                    {{- else -}}
+                        {{- $res := $firstPost.Resources.GetMatch . -}}
+                        {{- if $res -}}
+                            {{- $img := $res -}}
+                            {{- if gt $res.Width 960 -}}{{- $img = $res.Resize "960x q90" -}}{{- end -}}
+                            <link rel="preload" as="image" href="{{ $img.RelPermalink }}">
+                        {{- end -}}
+                    {{- end -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
 
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
