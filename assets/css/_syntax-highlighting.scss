@@ -55,6 +55,10 @@ $monospace-font-family: Menlo, Consolas, Monaco, "Courier New", Courier, monospa
 
 /* Multi-line code blocks */
 
+pre {
+  overflow-x: auto;
+}
+
 div.highlight,
 figure.highlight {
   position: relative;
