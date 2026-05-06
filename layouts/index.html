@@ -3,8 +3,9 @@
 {{ $paginator := .Paginate $posts }}
 <div class="col l9 m12 s12">
     <div class="content-wrapper">
-        {{ range $paginator.Pages }}
-            {{ partial "archive-single.html" . }}
+        {{ range $i, $page := $paginator.Pages }}
+            {{ $isFirst := and (eq $paginator.PageNumber 1) (eq $i 0) }}
+            {{ partial "archive-single.html" (dict "Page" $page "IsFirst" $isFirst) }}
         {{ end }}
         {{ partial "paginator.html" $paginator }}
     </div>

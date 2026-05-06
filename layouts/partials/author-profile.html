@@ -4,7 +4,7 @@
     {{ with $author.avatar }}
     <div class="author__avatar">
         <a href="/authors/{{ $author.short_name }}/">
-            <img src="{{ . }}" alt="{{ $author.name }}" itemprop="image">
+            <img src="{{ . }}" alt="{{ $author.name }}" itemprop="image" loading="lazy">
         </a>
     </div>
     {{ end }}

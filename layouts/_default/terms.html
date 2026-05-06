@@ -18,7 +18,7 @@
                 <h2 class="archive__subtitle">{{ .Page.Title }}</h2>
                 <div class="entries-list">
                     {{ range .Pages }}
-                    {{ partial "archive-single.html" . }}
+                    {{ partial "archive-single.html" (dict "Page" . "IsFirst" false) }}
                     {{ end }}
                 </div>
                 <a href="#page-title" class="link-theme-active-to-black">Back to Top &uarr;</a>
