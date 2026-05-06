@@ -1,4 +1,5 @@
 ---
+author: gene
 title: 'OpenTelemetry Part 2: Redoing Instrumentation'
 date: 2020-09-06T21:30:00-04:00
 lastmod: 2020-09-06T21:30:00-04:00
