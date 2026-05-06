@@ -422,6 +422,16 @@ footer.page-footer {
   .blog-title span {
 			 display: inline;
 	}
+
+    .content-wrapper,
+    .sidebar {
+        margin: 4px 2px 4px 2px;
+    }
+
+    .content-wrapper .card-panel,
+    .sidebar .card-panel {
+        padding: 12px;
+    }
 }
 
 /* The full size text is 2.1rem but that doesn't work well on mobile... */
