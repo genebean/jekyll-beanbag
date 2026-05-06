@@ -379,6 +379,10 @@ footer.page-footer {
         align-items: center;
         gap: 0.75em;
         max-width: 46%;
+
+        a.btn-floating {
+            flex-shrink: 0;
+        }
     }
 
     .post-nav-next {
