@@ -4,7 +4,9 @@
 <article class="post blog-list-item-article card-panel grey lighten-5">
     {{- with .Params.image }}{{- if .path }}
     <div class="post-list-image">
-        <img src="{{ .path }}" alt="{{ .alt | default $.Title }}">
+        <a href="{{ $.RelPermalink }}" rel="permalink">
+            <img src="{{ .path }}" alt="{{ .alt | default $.Title }}">
+        </a>
     </div>
     {{- end }}{{- end }}
     <div class="section">
