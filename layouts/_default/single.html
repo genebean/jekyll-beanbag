@@ -3,8 +3,7 @@
 {{ $author := index .Site.Data.authors $authorKey }}
 <div class="col l9 m12 s12">
     <div class="content-wrapper">
-        <div class="content-wrapper">
-            <article class="post card-panel grey lighten-5" itemscope itemtype="https://schema.org/CreativeWork">
+        <article class="post card-panel grey lighten-5" itemscope itemtype="https://schema.org/CreativeWork">
                 {{- with .Title }}
                 <meta itemprop="headline" content="{{ . | htmlEscape }}">
                 {{- end }}
@@ -43,8 +42,7 @@
                         {{ .Content }}
                     </div>
                 </div>
-            </article>
-        </div>
+        </article>
     </div>
 </div>
 {{ partial "sidebar-author.html" . }}
