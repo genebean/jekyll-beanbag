@@ -55,6 +55,11 @@ enableGitInfo = true
   username = 'genebean'
 
 [[params.footer.links]]
+  label = 'LinkedIn'
+  url_prefix = 'https://www.linkedin.com/in/'
+  username = 'geneliverman'
+
+[[params.footer.links]]
   label = 'RSS'
   url = '/index.xml'
   title = 'Subscribe to RSS feed'

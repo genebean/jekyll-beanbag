@@ -16,6 +16,7 @@ tags:
   - btcpay
   - nostr
   - self-hosted
+draft: true
 ---
 
 ## Introduction

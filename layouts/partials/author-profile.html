@@ -37,6 +37,14 @@
             </li>
             {{ end }}
 
+            {{ with $author.nostr }}
+            <li>
+                <a href="https://yakihonne.com/profile/{{ . }}" itemprop="sameAs" target="_blank" rel="nofollow noopener noreferrer">
+                    <img src="/assets/images/social-nostr.svg" style="width:1.28571429em;height:1em;object-fit:contain;vertical-align:-0.125em" alt=""> Nostr
+                </a>
+            </li>
+            {{ end }}
+
             {{ with $author.twitter }}
             <li>
                 <a href="https://twitter.com/{{ . }}" itemprop="sameAs" target="_blank" rel="nofollow noopener noreferrer">

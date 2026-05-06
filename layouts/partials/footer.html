@@ -16,8 +16,10 @@
                     {{ range .Site.Params.footer.links }}
                     {{- $img := printf "/assets/images/social-%s.svg" (.label | lower) }}
                     {{- $title := .title | default (printf "%s on %s" .username .label) }}
-                    {{ if .url }}
-                    <li><a href="{{ .url }}" class="footer-social-links" title="{{ $title }}"
+                    {{- $url := .url }}
+                    {{- if and (not $url) .url_prefix .username }}{{- $url = printf "%s%s" .url_prefix .username }}{{- end }}
+                    {{ if $url }}
+                    <li><a href="{{ $url }}" class="footer-social-links" title="{{ $title }}"
                                 rel="{{ if in $me .label }}me noopener noreferrer{{ else }}noopener noreferrer{{ end }}"
                                 target="_blank"><img src="{{ $img }}" class="footer-social-icons z-depth-2 circle" /></a></li>
                     {{ else }}

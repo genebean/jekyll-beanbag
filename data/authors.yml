@@ -10,6 +10,7 @@ gene:
   mastodon:
     instance: fosstodon.org
     username: genebean
+  nostr: 'npub1mwsk3ly4lk7efdqqjm62dkc699kqapwyyvdley3xljjm0lxruh9qzvu46p'
   # links:
   #   - label: 'Vagrant Boxes'
   #     icon: 'fas fa-fw fa-link'
