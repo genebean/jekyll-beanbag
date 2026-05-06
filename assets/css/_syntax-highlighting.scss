@@ -65,6 +65,7 @@ figure.highlight {
   line-height: 1.8;
   border-style: solid;
   border-width: thin;
+  overflow-x: auto;
 
   > pre,
   pre.highlight {
