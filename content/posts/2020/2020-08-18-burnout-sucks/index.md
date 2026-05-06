@@ -1,4 +1,5 @@
 ---
+author: gene
 title: 'Burnout Sucks'
 date: 2020-08-18T23:05:00-04:00
 lastmod: 2020-08-18T23:05:00-04:00

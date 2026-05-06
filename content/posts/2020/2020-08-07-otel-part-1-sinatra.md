@@ -1,4 +1,5 @@
 ---
+author: gene
 title: 'OpenTelemetry Part 1: Sinatra'
 date: 2020-08-07T18:27:00-04:00
 lastmod: 2020-08-07T18:27:00-04:00

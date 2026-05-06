@@ -1,4 +1,5 @@
 ---
+author: gene
 title: 'OpenTelemetry Part 3: v0.6.0 gems and VMPooler'
 date: 2020-10-05T18:20:00-04:00
 lastmod: 2020-10-05T18:20:00-04:00

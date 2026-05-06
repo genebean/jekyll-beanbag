@@ -1,4 +1,5 @@
 ---
+author: gene
 title: 'Epomaker GK68XS: A great keyboard, horrific order fulfillment'
 date: 2020-11-13T20:10:00-05:00
 lastmod: 2020-11-13T20:10:00-05:00

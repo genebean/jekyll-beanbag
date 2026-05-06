@@ -1,4 +1,5 @@
 ---
+author: gene
 title: Introducing My Home Assistant Setup
 date: 2022-01-09T23:00:00-05:00
 lastmod: 2022-01-09T23:00:00-05:00
