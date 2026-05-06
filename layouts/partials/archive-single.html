@@ -1,0 +1,39 @@
+{{ $authorKey := .Params.author | default .Site.Params.author }}
+{{ $author := index .Site.Data.authors $authorKey }}
+
+<article class="post blog-list-item-article card-panel grey lighten-5">
+    {{- with .Params.image }}{{- if .path }}
+    <div class="post-list-image">
+        <a href="{{ $.RelPermalink }}" rel="permalink">
+            <img src="{{ .path }}" alt="{{ .alt | default $.Title }}">
+        </a>
+    </div>
+    {{- end }}{{- end }}
+    <div class="section">
+        <h5 class="link-theme-active-to-black"><a href="{{ .RelPermalink }}" rel="permalink"
+                class="link-theme-active-to-black">{{ .Title }}</a></h5>
+        <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> {{ partial "read-time.html" . }}</p>
+        {{ if .Description }}
+        <p class="valign" itemprop="description">
+            {{ .Description }}
+            <a class="link-theme-active-to-black" href="{{ .RelPermalink }}" rel="permalink">&raquo; Read more</a>
+        </p>
+        {{ else if .Summary }}
+        <p class="valign" itemprop="description">
+            {{ .Summary | truncate 160 }}
+            <a class="link-theme-active-to-black" href="{{ .RelPermalink }}" rel="permalink">&raquo; Read more</a>
+        </p>
+        {{ end }}
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+        {{ if $author }}
+        <i class="far fa-user"></i>&nbsp;<strong>
+        <a class="link-theme-active-to-black valign left-align" href="/authors/{{ $author.short_name }}/"
+            title="{{ $author.name }}">{{ $author.name }}</a>
+        </strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {{ end }}
+        <i class="far fa-calendar-alt"></i>&nbsp;<time class="valign right-align"
+            datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan. 02, 2006" }}</time>
+    </div>
+</article>

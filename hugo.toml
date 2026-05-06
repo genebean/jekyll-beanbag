@@ -1,0 +1,79 @@
+baseURL = 'https://beanbag.technicalissues.us/'
+languageCode = 'en-us'
+title = 'The Comfy Seat'
+enableGitInfo = true
+
+[frontmatter]
+  lastmod = ["lastmod", ":git", ":fileModTime"]
+[pagination]
+  pagerSize = 5
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    noClasses = false
+    tabWidth = 4
+
+[params]
+  description = 'The chair I sit in to geek out'
+  email = 'gene@technicalissues.us'
+  logo = '/assets/images/Front-Row.png'
+  author = 'gene'
+
+[params.mastodon]
+  instance = 'fosstodon.org'
+  username = 'genebean'
+
+[[params.header.links]]
+  label = 'GitHub'
+  url = 'https://github.com/genebean'
+
+[[params.header.links]]
+  label = 'Vagrant Boxes'
+  url = 'https://app.vagrantup.com/genebean'
+
+[[params.footer.links]]
+  label = 'Mastodon'
+  url = 'https://fosstodon.org/@genebean'
+  username = 'genebean'
+
+[[params.footer.links]]
+  label = 'Yakihonne'
+  url = 'https://yakihonne.com/profile/npub1mwsk3ly4lk7efdqqjm62dkc699kqapwyyvdley3xljjm0lxruh9qzvu46p'
+  username = 'genebean'
+
+[[params.footer.links]]
+  label = 'Primal'
+  url = 'https://primal.net/p/npub1mwsk3ly4lk7efdqqjm62dkc699kqapwyyvdley3xljjm0lxruh9qzvu46p'
+  username = 'genebean'
+
+[[params.footer.links]]
+  label = 'GitHub'
+  url = 'https://github.com/genebean'
+  username = 'genebean'
+
+[[params.footer.links]]
+  label = 'LinkedIn'
+  url_prefix = 'https://www.linkedin.com/in/'
+  username = 'geneliverman'
+
+[[params.footer.links]]
+  label = 'RSS'
+  url = '/index.xml'
+  title = 'Subscribe to RSS feed'
+
+# Uncomment to show the Nostr icon (no link, just decorative)
+# [[params.footer.links]]
+#   label = 'Nostr'
+#   title = 'Also on Nostr'
+
+[taxonomies]
+  tag = 'tags'
+  category = 'categories'
+
+[permalinks]
+  [permalinks.page]
+    posts = '/:slug/'
+    authors = '/authors/:contentbasename/'

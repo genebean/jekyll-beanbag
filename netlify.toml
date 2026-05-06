@@ -1,21 +1,19 @@
 [build]
-publish = "_site"
-command = "jekyll build"
+publish = "public"
+command = "hugo --minify"
+
+[build.environment]
+HUGO_VERSION = "0.152.2"
+HUGO_EXTENDED = "true"
 
 [context.production.environment]
-JEKYLL_ENV = "production"
-
-[context.split1]
-command = "jekyll build"
-
-[context.split1.environment]
-JEKYLL_ENV = "production"
+HUGO_ENV = "production"
 
 [context.deploy-preview]
-command = "jekyll build  --drafts"
+command = "hugo --minify --buildDrafts --buildFuture"
 
 [context.branch-deploy]
-command = "jekyll build"
+command = "hugo --minify --buildDrafts --buildFuture"
 
 [[headers]]
   for = "/*"
@@ -28,8 +26,8 @@ command = "jekyll build"
   from = "/js/script.outbound-links.js"
   to = "https://stats.technicalissues.us/js/script.outbound-links.js"
   status = 200
+
 [[redirects]]
   from = "/api/event"
   to = "https://stats.technicalissues.us/api/event"
   status = 200
-

@@ -1,9 +1,14 @@
-_site/
-.bundle/
-.jekyll-cache/
-.jekyll-metadata
-.sass-cache/
-.vagrant/
+# Hugo output
+public/
+resources/
+
+# Hugo temp files
+.hugo_build.lock
+
+# Nix direnv cache
+.direnv/
+
+# Editor and tool artifacts
 .vscode/
-Gemfile.lock
-vendor/
+.vagrant/
+.claude/

@@ -1,0 +1,31 @@
+{{ define "main" }}
+{{ $terms := .Data.Terms.ByCount }}
+<div class="col l9 m12 s12">
+    <div class="content-wrapper">
+        <div class="content-wrapper">
+            <ul class="taxonomy__index">
+                {{ range $terms }}
+                <li>
+                    <a href="#{{ .Page.Title | urlize }}">
+                        <strong>{{ .Page.Title }}</strong> <span class="taxonomy__count">{{ .Count }}</span>
+                    </a>
+                </li>
+                {{ end }}
+            </ul>
+
+            {{ range $terms }}
+            <section id="{{ .Page.Title | urlize }}" class="taxonomy__section">
+                <h2 class="archive__subtitle">{{ .Page.Title }}</h2>
+                <div class="entries-list">
+                    {{ range .Pages }}
+                    {{ partial "archive-single.html" . }}
+                    {{ end }}
+                </div>
+                <a href="#page-title" class="link-theme-active-to-black">Back to Top &uarr;</a>
+            </section>
+            {{ end }}
+        </div>
+    </div>
+</div>
+{{ partial "sidebar-author.html" . }}
+{{ end }}

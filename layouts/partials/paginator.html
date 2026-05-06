@@ -1,0 +1,24 @@
+{{ $paginator := . }}
+{{ if gt $paginator.TotalPages 1 }}
+<div class="pagination center-align" role="navigation">
+    {{ if $paginator.HasPrev }}
+    <a class="btn-floating btn-small waves-effect waves-light deep-orange valign" href="{{ $paginator.Prev.URL }}"
+        title="Newer posts"><i class="fas fa-chevron-left"></i></a>
+    {{ end }}
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <span class="page-number valign">
+        {{ range $paginator.Pagers }}
+        {{ if eq .PageNumber $paginator.PageNumber }}
+        &nbsp;{{ .PageNumber }}&nbsp;
+        {{ else }}
+        &nbsp;<a href="{{ .URL }}">{{ .PageNumber }}</a>&nbsp;
+        {{ end }}
+        {{ end }}
+    </span>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    {{ if $paginator.HasNext }}
+    <a class="btn-floating btn-small waves-effect waves-light deep-orange valign" href="{{ $paginator.Next.URL }}"
+        title="Older posts"><i class="fas fa-chevron-right"></i></a>
+    {{ end }}
+</div>
+{{ end }}

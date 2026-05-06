@@ -1,0 +1,77 @@
+{{ $author := .author }}
+<div itemscope itemtype="https://schema.org/Person">
+
+    {{ with $author.avatar }}
+    <div class="author__avatar">
+        <a href="/authors/{{ $author.short_name }}/">
+            <img src="{{ . }}" alt="{{ $author.name }}" itemprop="image">
+        </a>
+    </div>
+    {{ end }}
+
+    <div class="author__content">
+        <h3 class="author__name" itemprop="name">{{ $author.name }}</h3>
+    </div>
+
+    <div class="author__urls-wrapper">
+        <ul class="author__urls social-icons">
+            {{ with $author.location }}
+            <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+                <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">{{ . }}</span>
+            </li>
+            {{ end }}
+
+            {{ with $author.github }}
+            <li>
+                <a href="https://github.com/{{ . }}" itemprop="sameAs" target="_blank" rel="nofollow noopener noreferrer">
+                    <i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub
+                </a>
+            </li>
+            {{ end }}
+
+            {{ with $author.mastodon }}
+            <li>
+                <a href="https://{{ .instance }}/@{{ .username }}" itemprop="sameAs" target="_blank" rel="nofollow noopener noreferrer me">
+                    <i class="fab fa-fw fa-mastodon" aria-hidden="true"></i> Mastodon
+                </a>
+            </li>
+            {{ end }}
+
+            {{ with $author.nostr }}
+            <li>
+                <a href="https://yakihonne.com/profile/{{ . }}" itemprop="sameAs" target="_blank" rel="nofollow noopener noreferrer">
+                    <img src="/assets/images/social-nostr.svg" style="width:1.28571429em;height:1em;object-fit:contain;vertical-align:-0.125em" alt=""> Nostr
+                </a>
+            </li>
+            {{ end }}
+
+            {{ with $author.twitter }}
+            <li>
+                <a href="https://twitter.com/{{ . }}" itemprop="sameAs" target="_blank" rel="nofollow noopener noreferrer">
+                    <i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter
+                </a>
+            </li>
+            {{ end }}
+
+            {{ with $author.linkedin }}
+            <li>
+                <a href="https://www.linkedin.com/in/{{ . }}" itemprop="sameAs" target="_blank" rel="nofollow noopener noreferrer">
+                    <i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> LinkedIn
+                </a>
+            </li>
+            {{ end }}
+
+            {{ with $author.links }}
+            {{ range . }}
+            {{ if and .label .url }}
+            <li>
+                <a href="{{ .url }}" target="_blank" rel="nofollow noopener noreferrer">
+                    <i class="{{ .icon | default "fas fa-link" }}" aria-hidden="true"></i> {{ .label }}
+                </a>
+            </li>
+            {{ end }}
+            {{ end }}
+            {{ end }}
+        </ul>
+    </div>
+</div>

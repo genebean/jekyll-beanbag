@@ -1,0 +1,14 @@
+{{ $authorKey := .Params.author | default .Site.Params.author }}
+{{ $author := index .Site.Data.authors $authorKey }}
+<div class="col l3 hide-on-med-and-down center-align">
+    <div class="sidebar">
+        {{ if $author }}
+        <div class="card-panel grey lighten-5 left-align">
+            {{ partial "author-profile.html" (dict "author" $author "page" . "site" .Site) }}
+        </div>
+        <div class="card-panel grey lighten-5 left-align">
+            {{ partial "mastodon-timeline.html" (dict "author" $author "site" .Site) }}
+        </div>
+        {{ end }}
+    </div>
+</div>

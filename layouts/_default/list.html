@@ -1,0 +1,17 @@
+{{ define "main" }}
+<div class="col l9 m12 s12">
+    <div class="content-wrapper">
+        <div class="content-wrapper">
+            {{- with .Title }}
+            <h1 id="page-title" class="archive__subtitle card-panel grey lighten-5">{{ . }}</h1>
+            {{- end }}
+            {{ $paginator := .Paginate .Pages }}
+            {{ range $paginator.Pages }}
+                {{ partial "archive-single.html" . }}
+            {{ end }}
+            {{ partial "paginator.html" $paginator }}
+        </div>
+    </div>
+</div>
+{{ partial "sidebar-author.html" . }}
+{{ end }}

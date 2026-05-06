@@ -1,0 +1,50 @@
+<!-- DISCLAIMER -->
+<div class="row">
+    <div class="col l12 m12 s12 center-align">
+        <strong>Disclaimer:</strong> All code, opinion and information on this
+        blog are my personal view and do not represent or relate my past and / or current employer's
+        view and / or business insides in any way.
+    </div>
+</div>
+<footer class="page-footer transparent">
+    <!-- SOCIAL LINKS -->
+    <div class="row">
+        <div class="col l12 m12 s12">
+            <div class="social">
+                <ul>
+                    {{- $me := slice "Mastodon" "Yakihonne" "Primal" }}
+                    {{ range .Site.Params.footer.links }}
+                    {{- $img := printf "/assets/images/social-%s.svg" (.label | lower) }}
+                    {{- $title := .title | default (printf "%s on %s" .username .label) }}
+                    {{- $url := .url }}
+                    {{- if and (not $url) .url_prefix .username }}{{- $url = printf "%s%s" .url_prefix .username }}{{- end }}
+                    {{ if $url }}
+                    <li><a href="{{ $url }}" class="footer-social-links" title="{{ $title }}"
+                                rel="{{ if in $me .label }}me noopener noreferrer{{ else }}noopener noreferrer{{ end }}"
+                                target="_blank"><img src="{{ $img }}" class="footer-social-icons z-depth-2 circle" /></a></li>
+                    {{ else }}
+                    <li><span class="footer-social-links"><img src="{{ $img }}"
+                                class="footer-social-icons z-depth-2 circle" title="{{ $title }}" /></span></li>
+                    {{ end }}
+                    {{ end }}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="grey darken-3 white-text">
+        <div class="footer-copyright">
+            <div class="container center-align">
+                &copy; {{ now.Format "2006" }} &bull;
+                All rights reserved &bull;
+                Theme based on Needy.
+            </div>
+        </div>
+        <div class="footer-icon-credits">
+            <div class="container center-align">
+                {{ .Site.Title }} uses
+                <a href="https://gohugo.io" class="link-theme-active-to-white">Hugo</a>
+                to render my musings
+            </div>
+        </div>
+    </div>
+</footer>
