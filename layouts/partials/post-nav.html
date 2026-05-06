@@ -1,0 +1,20 @@
+{{ $prev := .PrevInSection }}
+{{ $next := .NextInSection }}
+{{ if or $prev $next }}
+<div class="post-navigation card-panel grey lighten-5" role="navigation">
+    <div class="post-nav-prev">
+        {{ with $prev }}
+        <a class="btn-floating btn-small waves-effect waves-light deep-orange valign" href="{{ .RelPermalink }}"
+            title="{{ .Title }}"><i class="fas fa-chevron-left"></i></a>
+        <a class="post-nav-title valign link-theme-active-to-black" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        {{ end }}
+    </div>
+    <div class="post-nav-next">
+        {{ with $next }}
+        <a class="post-nav-title valign link-theme-active-to-black" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        <a class="btn-floating btn-small waves-effect waves-light deep-orange valign" href="{{ .RelPermalink }}"
+            title="{{ .Title }}"><i class="fas fa-chevron-right"></i></a>
+        {{ end }}
+    </div>
+</div>
+{{ end }}
