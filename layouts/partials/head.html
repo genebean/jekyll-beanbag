@@ -62,7 +62,7 @@
     <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}" />
     {{- end }}
     {{- $authorKey := .Params.author | default .Site.Params.author }}
-    {{- $authorData := index .Site.Data.authors $authorKey }}
+    {{- $authorData := index hugo.Data.authors $authorKey }}
     {{- with $authorData }}
     <meta property="article:author" content="{{ $.Site.BaseURL }}authors/{{ .short_name }}/" />
     {{- end }}
@@ -98,7 +98,7 @@
     <noscript><link rel="stylesheet" href="/assets/css/vendor/fontawesome.all.min.css"></noscript>
 
     <!-- Site wide styles -->
-    {{ $opts := dict "transpiler" "libsass" "outputStyle" "compressed" }}
+    {{ $opts := dict "transpiler" "dartsass" "outputStyle" "compressed" }}
     {{ $style := resources.Get "css/main.scss" | css.Sass $opts | fingerprint }}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
 

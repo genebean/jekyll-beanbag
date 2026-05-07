@@ -3,9 +3,13 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    hugo-overlay = {
+      url = "github:pineapplehunter/hugo-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, hugo-overlay }:
     let
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
@@ -14,6 +18,7 @@
       devShells = forAllSystems (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          hugoPackage = hugo-overlay.packages.${system}.hugo_0_161_1_extended_withdeploy;
 
           serve = pkgs.writeShellScriptBin "serve" ''
             exec hugo server --watch --buildDrafts --buildFuture "$@"
@@ -28,8 +33,9 @@
           '';
 
           clean = pkgs.writeShellScriptBin "clean" ''
-            rm -rf public/ resources/
-            echo "Cleaned public/ and resources/"
+            rm -rf public/ resources/_gen/assets/
+            echo "Cleaned public/ and CSS fingerprint cache."
+            echo "(Image cache in resources/_gen/images/ preserved — run 'git checkout resources/_gen/images/' to restore committed images)"
           '';
 
           new-post = pkgs.writeShellScriptBin "new-post" ''
@@ -154,7 +160,8 @@
         {
           default = pkgs.mkShell {
             packages = [
-              pkgs.hugo
+              hugoPackage
+              pkgs.dart-sass
               pkgs.imagemagick
               pkgs.libwebp
               serve
@@ -172,7 +179,7 @@
               echo "  serve                       start local server (watch, drafts, future posts)"
               echo "  build                       production build (minified)"
               echo "  build-preview               preview build (drafts + future posts)"
-              echo "  clean                       remove public/ and resources/"
+              echo "  clean                       remove public/ and CSS fingerprint cache"
               echo "  new-post <slug>             scaffold a new post bundle"
               echo "  add-post-image <img> [slug] convert image to WebP and add to post bundle"
               echo ""

@@ -1,19 +1,20 @@
 [build]
 publish = "public"
-command = "hugo --minify"
+command = "curl -fsSL https://github.com/sass/dart-sass/releases/download/1.94.2/dart-sass-1.94.2-linux-x64.tar.gz | tar xz -C /tmp && PATH=$PATH:/tmp/dart-sass hugo --minify"
 
 [build.environment]
-HUGO_VERSION = "0.152.2"
+HUGO_VERSION = "0.161.1"
 HUGO_EXTENDED = "true"
+DART_SASS_VERSION = "1.94.2"
 
 [context.production.environment]
 HUGO_ENV = "production"
 
 [context.deploy-preview]
-command = "hugo --minify --buildDrafts --buildFuture"
+command = "curl -fsSL https://github.com/sass/dart-sass/releases/download/1.94.2/dart-sass-1.94.2-linux-x64.tar.gz | tar xz -C /tmp && PATH=$PATH:/tmp/dart-sass hugo --minify --buildDrafts --buildFuture"
 
 [context.branch-deploy]
-command = "hugo --minify --buildDrafts --buildFuture"
+command = "curl -fsSL https://github.com/sass/dart-sass/releases/download/1.94.2/dart-sass-1.94.2-linux-x64.tar.gz | tar xz -C /tmp && PATH=$PATH:/tmp/dart-sass hugo --minify --buildDrafts --buildFuture"
 
 [[headers]]
   for = "/*"
