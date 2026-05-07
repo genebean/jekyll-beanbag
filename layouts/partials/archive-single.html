@@ -1,7 +1,7 @@
 {{ $page := .Page }}
 {{ $isFirst := .IsFirst }}
 {{ $authorKey := $page.Params.author | default $page.Site.Params.author }}
-{{ $author := index $page.Site.Data.authors $authorKey }}
+{{ $author := index hugo.Data.authors $authorKey }}
 
 <article class="post blog-list-item-article card-panel grey lighten-5">
     {{- with $page.Params.image }}{{- if .path }}

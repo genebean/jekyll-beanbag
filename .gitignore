@@ -1,6 +1,9 @@
 # Hugo output
 public/
-resources/
+
+# Hugo resource cache — _gen/ is committed so Netlify skips image reprocessing
+resources/*
+!resources/_gen/
 
 # Hugo temp files
 .hugo_build.lock
@@ -12,3 +15,4 @@ resources/
 .vscode/
 .vagrant/
 .claude/
+node_modules/
